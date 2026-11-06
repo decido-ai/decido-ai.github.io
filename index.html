@@ -245,17 +245,17 @@
     </div>
     <figure class="figcard">
       <table>
-        <thead><tr><th>Measured on an Apple M4 Pro, CPU only</th><th>Time</th></tr></thead>
+        <thead><tr><th>Measured on an Apple M4 Pro</th><th>CPU</th><th>Mac GPU</th></tr></thead>
         <tbody>
-          <tr class="us"><td>Decido-1-Fast · one yes/no check<small>short message, 10 threads</small></td><td class="v">0.08–0.10 s</td></tr>
-          <tr class="us"><td>Decido-1-Ultra · 5 questions<small>1,000-token document, p50</small></td><td class="v">0.41 s</td></tr>
-          <tr class="us"><td>Decido-1-Fast · 5 questions<small>1,000-token document, p50</small></td><td class="v">0.64 s</td></tr>
-          <tr class="us"><td>Decido-1 · 5 questions<small>1,000-token document, p50</small></td><td class="v">4.1 s</td></tr>
-          <tr class="us"><td>Decido-1-Think · per question<small>reasons first; median over benchmark questions</small></td><td class="v">~19 s</td></tr>
-          <tr><td>Jev 1.13 · cloud API<small>published latency</small></td><td class="v">~0.3 s</td></tr>
+          <tr class="us"><td>Decido-1-Fast · one yes/no check<small>short message, 10 threads</small></td><td class="v">0.08–0.10 s</td><td class="v">—</td></tr>
+          <tr class="us"><td>Decido-1-Ultra · 5 questions<small>1,000-token document, p50</small></td><td class="v">0.41 s</td><td class="v">0.13 s</td></tr>
+          <tr class="us"><td>Decido-1-Fast · 5 questions<small>1,000-token document, p50</small></td><td class="v">0.64 s</td><td class="v">0.30 s</td></tr>
+          <tr class="us"><td>Decido-1 · 5 questions<small>1,000-token document, p50</small></td><td class="v">4.1 s</td><td class="v">1.1 s</td></tr>
+          <tr class="us"><td>Decido-1-Think · per question<small>reasons first; over benchmark questions</small></td><td class="v">~19 s</td><td class="v">~10 s</td></tr>
+          <tr><td>Jev 1.13 · cloud API<small>published latency</small></td><td class="v" colspan="2">~0.3 s</td></tr>
         </tbody>
       </table>
-      <figcaption><b>TABLE 1</b> Wall-clock time. The document is processed once per request; each extra question adds only its own tokens.</figcaption>
+      <figcaption><b>TABLE 1</b> Wall-clock time. On a Mac, Decido uses the GPU (Metal) by default; results match the CPU on 98.5–99.5% of questions and are identical on every call. The document is processed once per request; each extra question adds only its own tokens.</figcaption>
     </figure>
   </div>
 </section>
@@ -335,28 +335,28 @@ curl localhost:8080/v1/systemone -H <span class="s">"content-type: application/j
   <div class="models">
     <div class="model">
       <div class="k">Fastest</div><h3>Decido-1-Ultra</h3><div class="d">0.6B parameters. The smallest and fastest, for very high volume.</div>
-      <dl><dt>Benchmark mean</dt><dd>62.2</dd><dt>5 questions, 1k tokens</dt><dd>0.41 s</dd><dt>Hardware</dt><dd>CPU · ~1.5 GB RAM</dd><dt>Deterministic</dt><dd>bit-identical</dd></dl>
+      <dl><dt>Benchmark mean</dt><dd>62.2</dd><dt>5 questions, 1k tokens</dt><dd>0.41 s CPU · 0.13 s Mac GPU</dd><dt>Hardware</dt><dd>laptop · ~1.5 GB RAM</dd><dt>Deterministic</dt><dd>bit-identical</dd></dl>
       <div class="foot"><a href="https://huggingface.co/decido-ai/decido-1-ultra-0.6b">Open weights ↗</a></div>
     </div>
     <div class="model">
       <div class="k">Fast</div><h3>Decido-1-Fast</h3><div class="d">1.7B parameters. For high-volume checks inside agent loops.</div>
-      <dl><dt>Benchmark mean</dt><dd>73.0</dd><dt>5 questions, 1k tokens</dt><dd>0.64 s</dd><dt>Hardware</dt><dd>CPU · ~3 GB RAM</dd><dt>Deterministic</dt><dd>bit-identical</dd></dl>
+      <dl><dt>Benchmark mean</dt><dd>73.0</dd><dt>5 questions, 1k tokens</dt><dd>0.64 s CPU · 0.30 s Mac GPU</dd><dt>Hardware</dt><dd>laptop · ~3 GB RAM</dd><dt>Deterministic</dt><dd>bit-identical</dd></dl>
       <div class="foot"><a href="https://huggingface.co/decido-ai/decido-1-fast-1.7b">Open weights ↗</a></div>
     </div>
     <div class="model">
       <div class="k">Accurate on CPU</div><h3>Decido-1</h3><div class="d">Mixture of experts, 4B active parameters. More accurate than the leading decision API, on a laptop.</div>
-      <dl><dt>Benchmark mean</dt><dd>85.4</dd><dt>5 questions, 1k tokens</dt><dd>4.1 s</dd><dt>Hardware</dt><dd>CPU · ~30 GB RAM · GPU</dd><dt>Deterministic</dt><dd>bit-identical</dd></dl>
+      <dl><dt>Benchmark mean</dt><dd>85.4</dd><dt>5 questions, 1k tokens</dt><dd>4.1 s CPU · 1.1 s Mac GPU</dd><dt>Hardware</dt><dd>laptop · ~30 GB RAM · GPU</dd><dt>Deterministic</dt><dd>bit-identical</dd></dl>
       <div class="foot"><a href="https://huggingface.co/decido-ai/decido-1-26b-a4b">Open weights ↗</a></div>
     </div>
     <div class="model">
       <div class="k">Most accurate</div><h3>Decido-1-Think</h3><div class="d">Decido-1 that reasons before answering. Ahead of Jev 1.13 on all six benchmarks.</div>
-      <dl><dt>Benchmark mean</dt><dd>88.7</dd><dt>Per question</dt><dd>~19 s CPU · ~0.25 GPU-s</dd><dt>Hardware</dt><dd>GPU · CPU ~30 GB RAM (slow)</dd><dt>Deterministic</dt><dd>greedy decoding</dd></dl>
+      <dl><dt>Benchmark mean</dt><dd>88.7</dd><dt>Per question</dt><dd>~19 s CPU · ~10 s Mac GPU</dd><dt>Hardware</dt><dd>laptop · ~30 GB RAM · GPU</dd><dt>Deterministic</dt><dd>greedy decoding</dd></dl>
       <div class="foot"><a href="https://huggingface.co/decido-ai/decido-1-think-26b-a4b">Open weights ↗</a></div>
     </div>
-    <div class="model soon">
-      <div class="k">Coming soon</div><h3>Decido-1-XL</h3><div class="d">The Decido recipe on DeepSeek-V4-Flash, for GPU clusters.</div>
-      <dl><dt>Benchmark mean</dt><dd>87.3</dd><dt>Hardware</dt><dd>4× A100 80 GB</dd><dt>Status</dt><dd>GPU validation</dd></dl>
-      <div class="foot">Coming soon</div>
+    <div class="model">
+      <div class="k">Largest</div><h3>Decido-1-XL</h3><div class="d">The Decido recipe on DeepSeek-V4-Flash, for GPU servers.</div>
+      <dl><dt>Benchmark mean</dt><dd>87.3</dd><dt>Hardware</dt><dd>4× A100 80 GB</dd><dt>Install</dt><dd>decido-ai[xl]</dd></dl>
+      <div class="foot"><a href="https://huggingface.co/decido-ai/decido-1-xl">Open weights ↗</a></div>
     </div>
   </div>
   <p class="research-note">Research: <b>Decido Max</b>, a gated mixture of Decido-1, Decido-1-Think and an open 27B reasoning model, reaches 89.6 on GPU. It is a research system, not a released model — see the <a href="research.html">technical report</a>.</p>

@@ -152,13 +152,13 @@
     <thead><tr><th></th><th>Jev 1.13</th><th class="us">Decido-1</th><th class="us">Decido-1-Think</th><th class="us">Decido-1-Fast</th><th class="us">Decido-1-Ultra</th><th class="us">Decido Max</th></tr></thead>
     <tbody>
       <tr><td>Runs on</td><td>vendor cloud</td><td class="us">laptop CPU</td><td class="us">GPU · laptop CPU (slow)</td><td class="us">laptop CPU</td><td class="us">laptop CPU</td><td class="us">1× A100 GPU</td></tr>
-      <tr><td>Time (1k-token document, 5 questions)</td><td>~0.3 s (published)</td><td class="us">4.1 s</td><td class="us">~19 s per question (CPU) · ~0.25 GPU-s</td><td class="us">0.64 s</td><td class="us">0.41 s</td><td class="us">~0.7 GPU-s per question</td></tr>
+      <tr><td>Time (1k-token document, 5 questions)</td><td>~0.3 s (published)</td><td class="us">4.1 s CPU · 1.1 s Mac GPU</td><td class="us">~19 s CPU · ~10 s Mac GPU per question</td><td class="us">0.64 s CPU · 0.30 s Mac GPU</td><td class="us">0.41 s CPU · 0.13 s Mac GPU</td><td class="us">~0.7 GPU-s per question</td></tr>
       <tr><td>Answers that change on a repeat call</td><td>4.3%</td><td class="us">0% (bit-identical)</td><td class="us">greedy decoding</td><td class="us">0% (bit-identical)</td><td class="us">0% (bit-identical)</td><td class="us">top answer 0 of 50</td></tr>
       <tr><td>Answers that flip when options are reordered</td><td>14.6%</td><td class="us">4.8%</td><td class="us">4.3%</td><td class="us">6.1%</td><td class="us">8.8%</td><td class="us">1.4–4.1%</td></tr>
       <tr><td>Brier score ≤ Jev (5 checks)</td><td>—</td><td class="us">4 of 5</td><td class="us">4 of 5</td><td class="us">2 of 5</td><td class="us">1 of 5</td><td class="us">5 of 5</td></tr>
     </tbody>
   </table></div>
-  <p class="cap"><b>TABLE 2</b> Reliability and cost. CPU timings on an Apple M4 Pro (10 threads, p50). Jev's latency, repeat-call and flip rates are its published figures; its flip and repeat-call rates were measured with 64 options, ours on each benchmark's own option counts. Decido Max's probabilities vary slightly between runs (GPU numerics); its top answer did not change.</p>
+  <p class="cap"><b>TABLE 2</b> Reliability and cost. Timings on an Apple M4 Pro, p50 (CPU: 10 threads; Mac GPU: Metal, the default on a Mac). Jev's latency, repeat-call and flip rates are its published figures; its flip and repeat-call rates were measured with 64 options, ours on each benchmark's own option counts. Decido Max's probabilities vary slightly between runs (GPU numerics); its top answer did not change.</p>
 </section>
 
 <section id="example">
