@@ -3,381 +3,388 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Decido — the judgment layer for AI agents</title>
-<meta name="description" content="Decido is a model built to decide. Calibrated yes/no, choice and score answers for AI agents in ~0.1 s on your own CPU or GPU, the same answer every time.">
-<meta property="og:title" content="Decido — the judgment layer for AI agents">
-<meta property="og:description" content="A model built to decide. ~0.1 s per check on a CPU, deterministic, runs inside your walls.">
+<title>Decido — open, calibrated decision models for AI agents</title>
+<meta name="description" content="Decido answers an AI agent's yes/no, choice and score questions with a calibrated probability for every option. Five open models, from 0.4 s on a laptop CPU to 88.7 on the six-benchmark suite (Jev 1.13: 83.9). pip install decido-ai.">
+<link rel="canonical" href="https://getdecido.ai/">
+<meta property="og:title" content="Decido — open, calibrated decision models for AI agents">
+<meta property="og:description" content="Open models: 85.4 on a laptop CPU and 88.7 with reasoning, vs 83.9 for Jev 1.13. Deterministic, private, calibrated. pip install decido-ai.">
+<meta property="og:url" content="https://getdecido.ai/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect x='4' y='6' width='32' height='30' rx='10' fill='%232a78d6' stroke='%231c1b19' stroke-width='3'/%3E%3Ccircle cx='15' cy='19' r='4.5' fill='white'/%3E%3Ccircle cx='26' cy='19' r='4.5' fill='white'/%3E%3Ccircle cx='16' cy='20' r='2'/%3E%3Ccircle cx='27' cy='20' r='2'/%3E%3C/svg%3E">
 <style>
   :root {
-    --paper: #fbfaf7; --panel: #f2f0ea; --ink: #141414; --muted: #5c5a55; --faint: #8a877f; --rule: #d8d4cb;
-    --accent: #2a78d6; --accent-ink: #1d5fb3; --accent-soft: #e6eefa; --gray: #8f8d86; --pos: #1a7f4b; --neg: #b5402a;
-    --serif: Charter, "Iowan Old Style", "Palatino Linotype", Georgia, serif;
-    --mono: ui-monospace, Menlo, "SF Mono", Consolas, monospace;
+    --bg: #fffcf3; --card: #ffffff; --panel: #fff7e0; --ink: #1c1b19; --muted: #5a5853; --faint: #8a8781; --line: #e9e3d3;
+    --accent: #2a78d6; --accent-ink: #1d5fb3; --ref: #8f8d86; --shadow: #1c1b19;
+    --yellow: #ffe27a; --blue: #d6e6ff; --pink: #ffd7e1; --mint: #cff2df;
+    --round: ui-rounded, "SF Pro Rounded", "Nunito", "Varela Round", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Helvetica, Arial, sans-serif;
+    --hand: "Bradley Hand", "Segoe Print", "Chalkboard SE", "Comic Sans MS", cursive;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
   }
   @media (prefers-color-scheme: dark) {
-    :root {
-      --paper: #141413; --panel: #1d1d1b; --ink: #ecebe7; --muted: #a6a39b; --faint: #8a877f; --rule: #34332f;
-      --accent: #5b9bea; --accent-ink: #7fb2f0; --accent-soft: #1b2a3d; --gray: #77746d; --pos: #4cc38a; --neg: #f07a5f;
-    }
+    :root { --bg: #17161a; --card: #1f1e23; --panel: #25231f; --ink: #f1efe8; --muted: #b0ada5; --faint: #8f8c85; --line: #34322e;
+            --accent: #5592e3; --accent-ink: #8dbbf2; --ref: #77746d; --shadow: #000000;
+            --yellow: #6b5a17; --blue: #22344f; --pink: #4d2a35; --mint: #1f4433; }
   }
   * { box-sizing: border-box; }
   html { scroll-behavior: smooth; }
-  body { margin: 0; background: var(--paper); color: var(--ink); font: 18px/1.55 var(--serif); -webkit-font-smoothing: antialiased; }
-  a { color: var(--accent-ink); text-decoration: none; }
-  a:hover { text-decoration: underline; }
-  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 28px; }
-  .mono { font-family: var(--mono); }
-  .label { font: 700 12px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent-ink); display: flex; align-items: center; gap: 10px; }
-  .label::before { content: ""; width: 22px; height: 3px; background: var(--accent); }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 17px/1.6 var(--sans); -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 28px; }
+  .hl { background: linear-gradient(transparent 55%, var(--yellow) 55%, var(--yellow) 92%, transparent 92%); padding: 0 .08em; }
 
   /* nav */
-  nav { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--paper) 92%, transparent); backdrop-filter: blur(6px); border-bottom: 1px solid var(--rule); }
-  nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 56px; }
-  nav .brand { font: 700 14px var(--mono); letter-spacing: .12em; color: var(--ink); }
-  nav .links { display: flex; gap: 22px; font: 13px var(--mono); }
-  nav .links a { color: var(--muted); }
-  @media (max-width: 760px) { nav .links a:not(.cta) { display: none; } }
+  header.nav { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(8px); border-bottom: 2px solid var(--ink); }
+  header.nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+  .brand { display: flex; align-items: center; gap: 10px; font: 800 19px var(--round); letter-spacing: .02em; text-decoration: none; }
+  .brand svg { width: 30px; height: 30px; }
+  .menu { display: flex; align-items: center; gap: 26px; font: 600 15px var(--round); }
+  .menu a { text-decoration: none; color: var(--muted); }
+  .menu a:hover { color: var(--ink); }
+  @media (max-width: 760px) { .menu a:not(.btn) { display: none; } }
+  .btn { display: inline-block; text-decoration: none; font: 700 15px var(--round); padding: 11px 20px; border-radius: 12px; background: var(--yellow); color: var(--ink) !important; border: 2px solid var(--ink); box-shadow: 3px 3px 0 var(--shadow); transition: transform .12s, box-shadow .12s; }
+  .btn:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--shadow); }
+  .btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--shadow); }
+  .btn.line { background: var(--card); }
+  .btn.sm { padding: 7px 14px; font-size: 14px; }
 
   /* hero */
-  header { padding: 88px 0 56px; border-bottom: 1px solid var(--rule); }
-  h1 { font-size: clamp(44px, 7vw, 76px); line-height: 1.02; margin: 18px 0 0; letter-spacing: -.02em; }
-  h1 .accent { color: var(--accent); }
-  .sub { font-size: clamp(19px, 2.3vw, 23px); color: var(--muted); margin: 22px 0 0; max-width: 720px; }
-  .buttons { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 34px; }
-  .btn { font: 600 14px var(--mono); padding: 12px 18px; border-radius: 8px; border: 1px solid var(--ink); color: var(--ink); }
-  .btn.primary { background: var(--ink); color: var(--paper); }
-  .btn:hover { text-decoration: none; opacity: .88; }
-  .stats { display: grid; grid-template-columns: repeat(4, 1fr); margin-top: 64px; border-top: 1px solid var(--rule); }
-  .stat { padding: 22px 18px 0 0; }
-  .stat + .stat { padding-left: 18px; border-left: 1px solid var(--rule); }
-  .stat .v { font-size: 40px; font-weight: 700; line-height: 1.1; }
-  .stat .t { font-size: 15px; color: var(--muted); margin-top: 6px; }
-  @media (max-width: 760px) { .stats { grid-template-columns: 1fr 1fr; } .stat:nth-child(3) { border-left: 0; padding-left: 0; } }
+  .hero { text-align: center; padding: 64px 0 30px; }
+  .mascot { width: 170px; height: auto; display: block; margin: 0 auto; overflow: visible; }
+  .kicker { display: inline-block; font: 700 12.5px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink); background: var(--blue); border: 2px solid var(--ink); border-radius: 999px; padding: 4px 12px; }
+  .hero .kicker { margin-top: 18px; }
+  h1 { font: 800 clamp(56px, 9vw, 100px)/1 var(--round); letter-spacing: -.03em; margin: 16px 0 0; }
+  .squiggle { display: block; width: 230px; height: 18px; margin: 4px auto 0; }
+  .squiggle path { fill: none; stroke: var(--accent); stroke-width: 5; stroke-linecap: round; }
+  .hero p { font-size: 20px; color: var(--muted); margin: 22px auto 0; max-width: 640px; line-height: 1.5; }
+  .hero .ctas { display: flex; justify-content: center; gap: 14px; margin-top: 32px; flex-wrap: wrap; }
+  .date { margin-top: 20px; font: 15px var(--hand); color: var(--faint); }
+
+  /* figures */
+  figure { margin: 0; }
+  .figcard { background: var(--card); border: 2px solid var(--ink); border-radius: 20px; padding: 32px 38px 24px; box-shadow: 6px 6px 0 var(--shadow); }
+  .figcard.hero-fig { margin: 50px auto 0; max-width: 940px; }
+  figcaption { font-size: 14px; color: var(--muted); margin-top: 16px; line-height: 1.5; }
+  figcaption b { font: 700 12px var(--mono); letter-spacing: .05em; color: var(--ink); margin-right: 6px; }
+  .chart { width: 100%; height: auto; display: block; overflow: visible; font-family: var(--sans); }
+  .chart .g { stroke: var(--line); stroke-width: 1.5; stroke-dasharray: 4 4; }
+  .chart .tk { font: 11px var(--mono); fill: var(--faint); }
+  .chart .nm { font: 700 15.5px var(--round); fill: var(--ink); }
+  .chart .nm.bd { font-weight: 800; }
+  .chart .sb { font: 400 12.5px var(--sans); fill: var(--muted); }
+  .chart .vl { font: 700 14px var(--mono); fill: var(--ink); }
+  .chart .b { stroke: var(--ink); stroke-width: 2; }
+  .chart .us .b, .chart circle.us { fill: var(--accent); }
+  .chart .ref .b, .chart circle.ref { fill: var(--ref); }
+  .chart circle { stroke: var(--ink); stroke-width: 2; }
+  .chart .cn { stroke: var(--ink); stroke-width: 2; opacity: .35; }
+  .chart .lg text { font-size: 13px; fill: var(--muted); }
+  .chart .hit { fill: transparent; }
+  .chart .note text { font: 19px var(--hand); fill: var(--accent-ink); }
+  .chart .note .arr, .chart .note .ah { fill: none; stroke: var(--accent-ink); stroke-width: 2; stroke-linecap: round; }
+
+  /* highlight stickers */
+  .highlights { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin-top: 58px; }
+  .highlights a { text-decoration: none; display: block; padding: 22px 24px 20px; border: 2px solid var(--ink); border-radius: 18px; box-shadow: 4px 4px 0 var(--shadow); transition: transform .15s; }
+  .highlights a:nth-child(1) { background: var(--yellow); transform: rotate(-1.2deg); }
+  .highlights a:nth-child(2) { background: var(--blue); transform: rotate(.8deg); }
+  .highlights a:nth-child(3) { background: var(--pink); transform: rotate(-.6deg); }
+  .highlights a:hover { transform: rotate(0) translateY(-3px); }
+  .highlights .k { font: 700 12px var(--mono); letter-spacing: .06em; text-transform: uppercase; }
+  .highlights .v { font: 800 46px/1.05 var(--round); letter-spacing: -.02em; margin-top: 8px; }
+  .highlights .t { font-size: 15px; color: var(--ink); opacity: .8; margin-top: 6px; }
+  @media (max-width: 760px) { .highlights { grid-template-columns: 1fr; } }
 
   /* sections */
-  section { padding: 76px 0; border-bottom: 1px solid var(--rule); }
-  h2 { font-size: clamp(30px, 4vw, 40px); line-height: 1.15; margin: 16px 0 0; letter-spacing: -.01em; max-width: 860px; }
-  .lede { color: var(--muted); font-size: 20px; max-width: 760px; margin: 16px 0 0; }
-  .questions { display: flex; flex-wrap: wrap; gap: 10px 26px; margin: 30px 0 0; font: 700 15px var(--mono); color: var(--accent-ink); }
-  .cols { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin-top: 34px; border-top: 1px solid var(--rule); }
-  .cols > div { padding: 20px 18px 0 0; }
-  .cols > div + div { padding-left: 18px; border-left: 1px solid var(--rule); }
-  .cols .v { font-size: 30px; font-weight: 700; }
-  .cols .t { color: var(--muted); font-size: 16px; }
-  .cols.three { grid-template-columns: repeat(3, 1fr); }
-  @media (max-width: 760px) { .cols, .cols.three { grid-template-columns: 1fr; } .cols > div + div { border-left: 0; padding-left: 0; } }
-  .quote { font-style: italic; font-size: 26px; margin: 44px 0 0; }
+  section { padding: 110px 0 0; }
+  h2 { font: 800 clamp(32px, 4.2vw, 46px)/1.1 var(--round); letter-spacing: -.02em; margin: 14px 0 0; }
+  .split { display: grid; grid-template-columns: 0.85fr 1.15fr; gap: 60px; align-items: center; }
+  .split.rev { grid-template-columns: 1.15fr 0.85fr; }
+  .split.rev > :first-child { order: 2; }
+  @media (max-width: 900px) { .split, .split.rev { grid-template-columns: 1fr; gap: 30px; } .split.rev > :first-child { order: 0; } }
+  .split p { color: var(--muted); margin: 18px 0 0; }
+  .split .big { font: 800 58px/1 var(--round); letter-spacing: -.03em; margin-top: 28px; }
+  .split .big small { display: block; font: 14.5px/1.45 var(--sans); color: var(--muted); letter-spacing: 0; margin-top: 10px; }
+  .more { display: inline-block; margin-top: 22px; font: 700 15px var(--round); color: var(--accent-ink); text-decoration: none; }
+  .more:hover { text-decoration: underline; text-decoration-style: wavy; }
 
-  /* pipeline */
-  .pipe { margin-top: 36px; display: grid; gap: 16px; }
-  .row { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
-  .row .who { width: 120px; font: 700 12px var(--mono); letter-spacing: .06em; color: var(--muted); }
-  .row.us .who { color: var(--accent-ink); }
-  .step { border: 1px solid var(--gray); border-radius: 6px; padding: 7px 14px; font-size: 17px; }
-  .row.us .step { border-color: var(--accent); background: var(--accent-soft); font-weight: 700; }
-  .arrow { color: var(--faint); }
-  .note { font: 700 13px var(--mono); margin-left: 8px; color: var(--neg); }
-  .row.us .note { color: var(--accent-ink); }
-  .grid2 { display: grid; grid-template-columns: 1.25fr 1fr; gap: 40px; margin-top: 44px; align-items: start; }
-  @media (max-width: 860px) { .grid2 { grid-template-columns: 1fr; } }
-  pre { margin: 0; background: var(--panel); border-radius: 10px; padding: 20px 22px; overflow-x: auto; font: 13.5px/1.65 var(--mono); color: var(--ink); }
+  /* speed table */
+  table { width: 100%; border-collapse: collapse; font-size: 15px; font-variant-numeric: tabular-nums; }
+  th, td { text-align: left; padding: 13px 0; border-bottom: 2px dashed var(--line); }
+  th { font: 700 12px var(--mono); letter-spacing: .05em; text-transform: uppercase; color: var(--faint); }
+  td:last-child, th:last-child { text-align: right; }
+  td small { display: block; color: var(--muted); font-size: 13px; }
+  td.v { font: 700 15px var(--mono); }
+  tr.us td.v { color: var(--accent-ink); }
+  tr:last-child td { border-bottom: 0; }
+
+  /* how it works */
+  .how { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin-top: 40px; }
+  @media (max-width: 900px) { .how { grid-template-columns: 1fr; } }
+  .how div { background: var(--card); border: 2px solid var(--ink); border-radius: 16px; padding: 20px 22px; box-shadow: 4px 4px 0 var(--shadow); }
+  .how i { font: normal 800 15px var(--round); display: inline-grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--mint); border: 2px solid var(--ink); margin-bottom: 10px; }
+  .how b { display: block; font: 800 18px var(--round); }
+  .how span { color: var(--muted); font-size: 15.5px; }
+  .code { margin-top: 30px; border: 2px solid var(--ink); border-radius: 18px; overflow: hidden; background: var(--card); box-shadow: 6px 6px 0 var(--shadow); }
+  .code input { position: absolute; opacity: 0; pointer-events: none; }
+  .tabs { display: flex; gap: 6px; padding: 10px 12px; border-bottom: 2px solid var(--ink); background: var(--panel); overflow-x: auto; }
+  .tabs label { font: 700 13.5px var(--round); color: var(--muted); padding: 6px 14px; cursor: pointer; border: 2px solid transparent; border-radius: 10px; white-space: nowrap; }
+  .tabs label:hover { color: var(--ink); }
+  .panes pre { display: none; margin: 0; padding: 24px 28px; font: 13.5px/1.7 var(--mono); overflow-x: auto; }
+  #t1:checked ~ .tabs label[for=t1], #t2:checked ~ .tabs label[for=t2], #t3:checked ~ .tabs label[for=t3], #t4:checked ~ .tabs label[for=t4] { color: var(--ink); background: var(--yellow); border-color: var(--ink); }
+  #t1:checked ~ .panes .p1, #t2:checked ~ .panes .p2, #t3:checked ~ .panes .p3, #t4:checked ~ .panes .p4 { display: block; }
+  .code input:focus-visible ~ .tabs { outline: 3px solid var(--accent); outline-offset: -3px; }
   pre .c { color: var(--faint); } pre .s { color: var(--accent-ink); }
-  .feat { display: grid; gap: 18px; }
-  .feat b { display: block; font-size: 19px; }
-  .feat span { color: var(--muted); font-size: 16px; }
-  .caption { font: 12px/1.5 var(--mono); color: var(--muted); margin-top: 12px; }
-  .caption b { color: var(--ink); }
+  .avail { font-size: 14.5px; color: var(--muted); margin-top: 18px; }
+  .avail a { color: var(--accent-ink); }
 
-  /* chart */
-  .chartbox { margin-top: 40px; display: grid; grid-template-columns: 1.2fr 1fr; gap: 44px; }
-  @media (max-width: 860px) { .chartbox { grid-template-columns: 1fr; } }
-  .ctitle { font: 700 12px var(--mono); letter-spacing: .06em; color: var(--muted); margin-bottom: 10px; }
-  #bench { width: 100%; height: auto; display: block; overflow: visible; }
-  #bench text { font-family: var(--serif); fill: var(--muted); }
-  #bench .axis text { font: 11px var(--mono); fill: var(--faint); }
-  #bench .grid line { stroke: var(--rule); stroke-width: 1; }
-  #bench .lead { stroke-width: 2; }
-  #bench .hit { fill: transparent; cursor: default; }
-  #tip { position: fixed; pointer-events: none; background: var(--ink); color: var(--paper); font: 12px/1.45 var(--mono); padding: 7px 10px; border-radius: 6px; opacity: 0; transition: opacity .1s; z-index: 20; max-width: 260px; }
-  .rel { display: grid; gap: 26px; }
-  .rel h4 { margin: 0 0 8px; font-size: 17px; }
-  .bar { display: grid; grid-template-columns: 76px 1fr 52px; align-items: center; gap: 10px; font-size: 15px; color: var(--muted); margin: 6px 0; }
-  .bar .track { height: 14px; }
-  .bar .fill { height: 14px; border-radius: 0 4px 4px 0; min-width: 2px; }
-  .bar .num { font: 13px var(--mono); color: var(--ink); text-align: right; }
+  /* models */
+  .models { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin-top: 40px; }
+  @media (max-width: 900px) { .models { grid-template-columns: 1fr; } }
+  .model { background: var(--card); border: 2px solid var(--ink); border-radius: 20px; padding: 26px; display: flex; flex-direction: column; box-shadow: 5px 5px 0 var(--shadow); }
+  .model .k { align-self: flex-start; font: 700 11.5px var(--mono); letter-spacing: .06em; text-transform: uppercase; border: 2px solid var(--ink); border-radius: 999px; padding: 3px 10px; }
+  .model:nth-child(1) .k { background: var(--mint); } .model:nth-child(2) .k { background: var(--yellow); } .model:nth-child(3) .k { background: var(--blue); } .model:nth-child(4) .k { background: var(--pink); } .model:nth-child(5) .k { background: var(--panel); }
+  .model.soon { opacity: .75; border-style: dashed; }
+  .install { display: inline-block; margin-top: 26px; font: 600 15px var(--mono); background: var(--card); border: 2px solid var(--ink); border-radius: 12px; padding: 9px 16px; box-shadow: 3px 3px 0 var(--shadow); user-select: all; }
+  .research-note { margin-top: 26px; font-size: 15px; color: var(--muted); }
+  .research-note a { color: var(--accent-ink); }
+  .model h3 { font: 800 28px/1.1 var(--round); margin: 14px 0 0; }
+  .model .d { color: var(--muted); font-size: 15px; margin-top: 8px; }
+  .model dl { display: grid; grid-template-columns: 1fr auto; gap: 9px 12px; margin: 22px 0 0; font-size: 14.5px; padding-top: 16px; border-top: 2px dashed var(--line); }
+  .model dt { color: var(--muted); } .model dd { margin: 0; font: 600 14px var(--mono); }
+  .model .foot { margin-top: auto; padding-top: 22px; font: 700 15px var(--round); }
+  .model .foot a { color: var(--accent-ink); text-decoration: none; }
 
-  /* table */
-  .tablewrap { overflow-x: auto; margin-top: 48px; }
-  table { border-collapse: collapse; width: 100%; min-width: 760px; font-size: 16px; }
-  th, td { text-align: left; padding: 11px 12px; border-bottom: 1px solid var(--rule); vertical-align: middle; }
-  thead th { border-top: 1.5px solid var(--ink); border-bottom: 1px solid var(--ink); font-size: 16px; }
-  thead th small { display: block; font: 11px var(--mono); color: var(--faint); font-weight: 400; letter-spacing: .04em; }
-  tbody tr:last-child td, tbody tr:last-child th { border-bottom: 1.5px solid var(--ink); }
-  tbody th { font-weight: 700; }
-  td.us, th.us { background: var(--accent-soft); }
-  .win { color: var(--pos); font-weight: 700; } .lose { color: var(--neg); }
-  .foot { font: 12px/1.6 var(--mono); color: var(--faint); margin-top: 14px; max-width: 900px; }
+  /* research */
+  .papers { margin-top: 36px; display: grid; gap: 16px; }
+  .paper { display: grid; grid-template-columns: 130px 1fr auto; gap: 24px; align-items: center; padding: 20px 24px; background: var(--card); border: 2px solid var(--ink); border-radius: 16px; box-shadow: 4px 4px 0 var(--shadow); text-decoration: none; transition: transform .12s, box-shadow .12s; }
+  .paper:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--shadow); }
+  .paper .when { font: 700 12.5px var(--mono); color: var(--muted); }
+  .paper h3 { font: 800 20px/1.25 var(--round); margin: 0; }
+  .paper p { margin: 4px 0 0; color: var(--muted); font-size: 15px; }
+  .paper .go { font: 800 22px var(--round); }
+  @media (max-width: 700px) { .paper { grid-template-columns: 1fr; gap: 6px; } .paper .go { display: none; } }
 
-  /* uses + business */
-  .cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 36px; }
-  @media (max-width: 760px) { .cards { grid-template-columns: 1fr; } }
-  .card { background: var(--panel); border-radius: 10px; padding: 22px 24px; }
-  .card h3 { margin: 0; font-size: 20px; }
-  .card p { margin: 8px 0 0; color: var(--muted); font-size: 16px; }
-  .card .q { font: 12.5px/1.6 var(--mono); color: var(--accent-ink); margin-top: 12px; }
-  .steps { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 36px; border-top: 1px solid var(--rule); }
-  .steps > div { padding: 22px 20px 0 0; }
-  .steps > div + div { padding-left: 20px; border-left: 1px solid var(--rule); }
-  .steps .n { font: 700 12px var(--mono); color: var(--accent-ink); letter-spacing: .06em; }
-  .steps h3 { margin: 8px 0 0; font-size: 21px; }
-  .steps p { margin: 6px 0 0; color: var(--muted); font-size: 16px; }
-  @media (max-width: 760px) { .steps { grid-template-columns: 1fr; } .steps > div + div { border-left: 0; padding-left: 0; } }
+  /* contact */
+  .contact { margin-top: 120px; text-align: center; padding: 56px 28px 60px; background: var(--blue); border: 2px solid var(--ink); border-radius: 26px; box-shadow: 8px 8px 0 var(--shadow); position: relative; }
+  .contact .kicker { background: var(--card); }
+  .contact p { color: var(--ink); opacity: .8; font-size: 18px; max-width: 560px; margin: 16px auto 0; }
+  .contact .ctas { display: flex; justify-content: center; gap: 12px; margin-top: 28px; flex-wrap: wrap; }
+  .contact .doodle { position: absolute; right: 34px; top: -26px; font: 22px var(--hand); color: var(--accent-ink); transform: rotate(6deg); background: var(--bg); padding: 0 8px; }
+  footer { margin-top: 70px; border-top: 2px solid var(--ink); }
+  footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 14px; padding: 24px 28px 44px; font-size: 14px; color: var(--faint); }
+  footer a { color: var(--muted); text-decoration: none; margin-left: 22px; font-weight: 600; }
+  footer a:hover { color: var(--ink); }
 
-  /* team + contact */
-  .team { display: grid; grid-template-columns: 1fr 1.6fr; gap: 40px; margin-top: 30px; }
-  @media (max-width: 760px) { .team { grid-template-columns: 1fr; } }
-  .team .name { font-size: 28px; font-weight: 700; }
-  .team .creds { color: var(--muted); font-style: italic; margin-top: 4px; }
-  .team ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 12px; }
-  .team li { display: grid; grid-template-columns: 90px 1fr; gap: 12px; font-size: 17px; }
-  .team li b { font: 700 13px/1.9 var(--mono); color: var(--muted); }
-  .team li.hl, .team li.hl b { color: var(--accent-ink); font-weight: 700; }
-  .vision { font-size: clamp(32px, 4.6vw, 48px); line-height: 1.12; font-weight: 700; margin: 18px 0 0; letter-spacing: -.01em; }
-  .vision .accent { color: var(--accent); }
-  footer { padding: 34px 0 48px; font: 12px var(--mono); color: var(--faint); }
-  footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+  .m-ink { stroke: var(--ink); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+  .m-body { fill: var(--accent); } .m-eye { fill: #fff; } .m-pupil { fill: #1c1b19; } .m-cheek { fill: #ff9fb4; opacity: .8; }
+  .m-sign { fill: var(--yellow); } .m-bulb { fill: var(--yellow); } .m-shadow { fill: var(--ink); opacity: .12; }
+  .m-text { font: 800 13px var(--round); fill: var(--ink); } .m-spark { fill: var(--accent); stroke: none; }
+  .m-none { fill: none; }
 </style>
 </head>
 <body>
 
-<nav>
-  <div class="wrap">
-    <a class="brand" href="#">DECIDO</a>
-    <div class="links">
-      <a href="#problem">Problem</a><a href="#how">How it works</a><a href="#results">Results</a>
-      <a href="#business">Pricing</a><a href="#team">Team</a><a class="cta" href="#contact">Contact →</a>
-    </div>
-  </div>
-</nav>
+<header class="nav"><div class="wrap">
+  <a class="brand" href="index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect class="m-body m-ink" x="4" y="6" width="32" height="30" rx="10"/><circle class="m-eye m-ink" cx="15" cy="19" r="4.5" style="stroke-width:2"/><circle class="m-eye m-ink" cx="26" cy="19" r="4.5" style="stroke-width:2"/><circle class="m-pupil" cx="16" cy="20" r="2"/><circle class="m-pupil" cx="27" cy="20" r="2"/><path class="m-none m-ink" d="M16 28 Q20.5 31 25 28" style="stroke-width:2"/></svg>Decido</a>
+  <nav class="menu">
+    <a href="#results">Results</a><a href="#how">How it works</a><a href="#models">Models</a><a href="research.html">Research</a>
+    <a class="btn sm" href="#contact">Get early access</a>
+  </nav>
+</div></header>
 
-<header>
-  <div class="wrap">
-    <div class="label">A model built to decide</div>
-    <h1>The <span class="accent">judgment layer</span><br>for AI agents</h1>
-    <p class="sub">Agents make thousands of small decisions. Decido makes them in about a tenth of a second, on your own CPU or GPU, with a confidence score for every option and the same answer every time.</p>
-    <div class="buttons">
-      <a class="btn primary" href="#contact">Become a design partner</a>
-      <a class="btn" href="https://huggingface.co/decido-ai/decido-26b-a4b">Model on Hugging Face ↗</a>
-    </div>
-    <div class="stats">
-      <div class="stat"><div class="v">85.4</div><div class="t">six-benchmark score, vs 83.9 for the leading decision API</div></div>
-      <div class="stat"><div class="v">~0.1 s</div><div class="t">per yes/no check, on a laptop CPU</div></div>
-      <div class="stat"><div class="v">0%</div><div class="t">answers that change on a repeat call (Jev: 4.3%)</div></div>
-      <div class="stat"><div class="v">0 bytes</div><div class="t">sent to anyone's cloud. Runs inside your walls</div></div>
-    </div>
-  </div>
-</header>
+<main class="wrap">
 
-<section id="problem">
-  <div class="wrap">
-    <div class="label">01 Problem</div>
-    <h2>Every agent decision is a slow, expensive LLM call.</h2>
-    <p class="lede">Most of an agent's model calls don't write anything. They decide. And each one goes to a giant text generator.</p>
-    <div class="questions"><span>Is this safe?</span><span>Which tool next?</span><span>Does a human need to see this?</span><span>Is the task done?</span></div>
-    <div class="cols">
-      <div><div class="v">2–5 s</div><div class="t">per call, with reasoning</div></div>
-      <div><div class="v">~3¢</div><div class="t">per call, at every step</div></div>
-      <div><div class="v">Varies</div><div class="t">same input, different answer</div></div>
-      <div><div class="v">Leaves</div><div class="t">your data goes to a vendor</div></div>
+<div class="hero">
+  <svg class="mascot" viewBox="0 0 200 160" role="img" aria-label="Decido mascot holding a sign that says yes, 0.97"><ellipse class="m-shadow" cx="88" cy="150" rx="46" ry="6"/><line class="m-ink" x1="88" y1="44" x2="88" y2="24"/><circle class="m-bulb m-ink" cx="88" cy="18" r="8"/><rect class="m-body m-ink" x="40" y="44" width="96" height="92" rx="28"/><circle class="m-eye m-ink" cx="70" cy="84" r="12"/><circle class="m-eye m-ink" cx="106" cy="84" r="12"/><circle class="m-pupil" cx="73" cy="87" r="5"/><circle class="m-pupil" cx="109" cy="87" r="5"/><ellipse class="m-cheek" cx="58" cy="104" rx="7" ry="4.5"/><ellipse class="m-cheek" cx="118" cy="104" rx="7" ry="4.5"/><path class="m-none m-ink" d="M76 106 Q88 117 100 106"/><path class="m-none m-ink" d="M134 96 Q150 86 156 62"/><g transform="rotate(8 166 40)"><rect class="m-sign m-ink" x="136" y="20" width="58" height="42" rx="8"/><text class="m-text" x="165" y="38" text-anchor="middle">yes</text><text class="m-text" x="165" y="54" text-anchor="middle">p 0.97</text></g><path class="m-spark" d="M24 40 l3 8 8 3 -8 3 -3 8 -3 -8 -8 -3 8 -3z"/><path class="m-spark" d="M184 108 l2 5 5 2 -5 2 -2 5 -2 -5 -5 -2 5 -2z" style="opacity:.7"/></svg>
+  <div class="kicker">Introducing</div>
+  <h1>Decido</h1>
+  <svg class="squiggle" viewBox="0 0 230 18" aria-hidden="true"><path d="M4 10 Q 18 2 32 10 T 60 10 T 88 10 T 116 10 T 144 10 T 172 10 T 200 10 T 226 10"/></svg>
+  <p>Open, calibrated decision models for AI agents. Ask yes/no, choice or score questions about any text and get <span class="hl">a probability for every option</span>, on your own hardware.</p>
+  <div class="install">pip install decido-ai</div>
+  <div class="ctas">
+    <a class="btn" href="#how">Get started</a>
+    <a class="btn line" href="https://huggingface.co/collections/decido-ai/decido-1-6aed66fd09af05c057795ca8">Models on Hugging Face ↗</a>
+  </div>
+  <div class="date">launched November 2026</div>
+</div>
+
+<figure class="figcard hero-fig">
+<svg class="chart" viewBox="0 0 880 316" role="img" aria-labelledby="f1t"><line class="g" x1="190.0" x2="190.0" y1="8" y2="288"/><text class="tk" x="190.0" y="308" text-anchor="middle">0</text><line class="g" x1="315.0" x2="315.0" y1="8" y2="288"/><text class="tk" x="315.0" y="308" text-anchor="middle">25</text><line class="g" x1="440.0" x2="440.0" y1="8" y2="288"/><text class="tk" x="440.0" y="308" text-anchor="middle">50</text><line class="g" x1="565.0" x2="565.0" y1="8" y2="288"/><text class="tk" x="565.0" y="308" text-anchor="middle">75</text><line class="g" x1="690.0" x2="690.0" y1="8" y2="288"/><text class="tk" x="690.0" y="308" text-anchor="middle">100</text><g class="us"><title>Decido-1-Think (GPU · laptop CPU): 88.71</title><text class="nm" x="0" y="35.0">Decido-1-Think</text><text class="sb" x="0" y="52.0">GPU · laptop CPU</text><path class="b" d="M190.0,24.0h438.5a5,5 0 0 1 5,5v14a5,5 0 0 1 -5,5h-438.5z"/><text class="vl" x="645.5" y="41.0">88.7</text></g><g class="us"><title>Decido-1 (laptop CPU): 85.38</title><text class="nm" x="0" y="91.0">Decido-1</text><text class="sb" x="0" y="108.0">laptop CPU</text><path class="b" d="M190.0,80.0h421.9a5,5 0 0 1 5,5v14a5,5 0 0 1 -5,5h-421.9z"/><text class="vl" x="628.9" y="97.0">85.4</text></g><g class="ref"><title>Jev 1.13 (cloud API · published): 83.85</title><text class="nm" x="0" y="147.0">Jev 1.13</text><text class="sb" x="0" y="164.0">cloud API · published</text><path class="b" d="M190.0,136.0h414.2a5,5 0 0 1 5,5v14a5,5 0 0 1 -5,5h-414.2z"/><text class="vl" x="621.2" y="153.0">83.9</text></g><g class="us"><title>Decido-1-Fast (laptop CPU): 73.01</title><text class="nm" x="0" y="203.0">Decido-1-Fast</text><text class="sb" x="0" y="220.0">laptop CPU</text><path class="b" d="M190.0,192.0h360.1a5,5 0 0 1 5,5v14a5,5 0 0 1 -5,5h-360.1z"/><text class="vl" x="567.0" y="209.0">73.0</text></g><g class="us"><title>Decido-1-Ultra (laptop CPU): 62.16</title><text class="nm" x="0" y="259.0">Decido-1-Ultra</text><text class="sb" x="0" y="276.0">laptop CPU</text><path class="b" d="M190.0,248.0h305.8a5,5 0 0 1 5,5v14a5,5 0 0 1 -5,5h-305.8z"/><text class="vl" x="512.8" y="265.0">62.2</text></g><g class="note"><text x="726" y="78">on a laptop.</text><text x="726" y="100">no GPU!</text><path class="arr" d="M720,86 C704,84 690,86 676,92"/><path class="ah" d="M676,92 l9,-6 M676,92 l8,6"/></g></svg>
+  <figcaption id="f1t"><b>FIG. 1</b> Six-benchmark mean (JevBench, Kev, OpenJev, Nimble, VitaminC, MASSIVE), the suite used to evaluate Jev 1.13. Decido-1, Fast and Ultra measured CPU-only on a laptop; Decido-1-Think measured on GPU (it also runs on a laptop CPU, ~19 s per question).</figcaption>
+</figure>
+
+<div class="highlights" id="results">
+  <a href="#accuracy"><div class="k">Accurate</div><div class="v">85.4</div><div class="t">on a laptop CPU, vs 83.9 for the leading decision API</div></a>
+  <a href="#speed"><div class="k">Fast</div><div class="v">~0.1 s</div><div class="t">per yes/no check with Decido-1-Fast, CPU only</div></a>
+  <a href="#reliability"><div class="k">Deterministic</div><div class="v">0%</div><div class="t">answers that change on a repeat call on CPU (Jev 1.13: 4.3%)</div></a>
+</div>
+
+<section id="accuracy">
+  <div class="split">
+    <div>
+      <div class="kicker">Accuracy</div>
+      <h2>Ahead of the leading decision API, <span class="hl">without a GPU</span>.</h2>
+      <p>Decido-1 is a mixture-of-experts model with 4B active parameters, quantized to 8 bits. It scores higher than Jev 1.13 on four of the six benchmarks and on the mean. Decido-1-Think, which reasons before it answers, reaches 88.7 and is ahead on all six.</p>
+      <p>Every model is trained on public data, with no outputs from Jev or any closed model, and every training set is audited for overlap with the benchmarks.</p>
+      <a class="more" href="research.html#results">Per-benchmark results →</a>
     </div>
-    <p class="quote">You don't need a supercomputer to flip a light switch.</p>
+    <figure class="figcard">
+<svg class="chart" viewBox="0 0 560 294" role="img" aria-labelledby="f2t"><g class="lg"><circle class="us" cx="96" cy="10" r="6"/><text x="108" y="14">Decido-1 (laptop CPU)</text><circle class="ref" cx="292" cy="10" r="6"/><text x="304" y="14">Jev 1.13 (published)</text></g><line class="g" x1="96.0" x2="96.0" y1="30" y2="268"/><text class="tk" x="96.0" y="286" text-anchor="middle">70</text><line class="g" x1="184.8" x2="184.8" y1="30" y2="268"/><text class="tk" x="184.8" y="286" text-anchor="middle">75</text><line class="g" x1="273.6" x2="273.6" y1="30" y2="268"/><text class="tk" x="273.6" y="286" text-anchor="middle">80</text><line class="g" x1="362.4" x2="362.4" y1="30" y2="268"/><text class="tk" x="362.4" y="286" text-anchor="middle">85</text><line class="g" x1="451.2" x2="451.2" y1="30" y2="268"/><text class="tk" x="451.2" y="286" text-anchor="middle">90</text><line class="g" x1="540.0" x2="540.0" y1="30" y2="268"/><text class="tk" x="540.0" y="286" text-anchor="middle">95</text><g><title>JevBench: Decido-1 87.61 · Jev 1.13 87.18</title><rect class="hit" x="0" y="30.0" width="560" height="34"/><text class="nm" x="0" y="52.0">JevBench</text><line class="cn" x1="401.1" x2="408.8" y1="47.0" y2="47.0"/><circle class="ref" cx="401.1" cy="47.0" r="7"/><circle class="us" cx="408.8" cy="47.0" r="7"/></g><g><title>Kev: Decido-1 84.35 · Jev 1.13 85.52</title><rect class="hit" x="0" y="64.0" width="560" height="34"/><text class="nm" x="0" y="86.0">Kev</text><line class="cn" x1="350.9" x2="371.6" y1="81.0" y2="81.0"/><circle class="ref" cx="371.6" cy="81.0" r="7"/><circle class="us" cx="350.9" cy="81.0" r="7"/></g><g><title>OpenJev: Decido-1 78.37 · Jev 1.13 72.96</title><rect class="hit" x="0" y="98.0" width="560" height="34"/><text class="nm" x="0" y="120.0">OpenJev</text><line class="cn" x1="148.6" x2="244.7" y1="115.0" y2="115.0"/><circle class="ref" cx="148.6" cy="115.0" r="7"/><circle class="us" cx="244.7" cy="115.0" r="7"/></g><g><title>Nimble: Decido-1 87.23 · Jev 1.13 91.84</title><rect class="hit" x="0" y="132.0" width="560" height="34"/><text class="nm" x="0" y="154.0">Nimble</text><line class="cn" x1="402.0" x2="483.9" y1="149.0" y2="149.0"/><circle class="ref" cx="483.9" cy="149.0" r="7"/><circle class="us" cx="402.0" cy="149.0" r="7"/></g><g><title>VitaminC: Decido-1 86.14 · Jev 1.13 78.46</title><rect class="hit" x="0" y="166.0" width="560" height="34"/><text class="nm" x="0" y="188.0">VitaminC</text><line class="cn" x1="246.2" x2="382.6" y1="183.0" y2="183.0"/><circle class="ref" cx="246.2" cy="183.0" r="7"/><circle class="us" cx="382.6" cy="183.0" r="7"/></g><g><title>MASSIVE: Decido-1 88.57 · Jev 1.13 87.14</title><rect class="hit" x="0" y="200.0" width="560" height="34"/><text class="nm" x="0" y="222.0">MASSIVE</text><line class="cn" x1="400.4" x2="425.8" y1="217.0" y2="217.0"/><circle class="ref" cx="400.4" cy="217.0" r="7"/><circle class="us" cx="425.8" cy="217.0" r="7"/></g><line class="g" x1="0" x2="540" y1="234.0" y2="234.0"/><g><title>Mean: Decido-1 85.38 · Jev 1.13 83.85</title><rect class="hit" x="0" y="234.0" width="560" height="34"/><text class="nm bd" x="0" y="256.0">Mean</text><line class="cn" x1="342.0" x2="369.1" y1="251.0" y2="251.0"/><circle class="ref" cx="342.0" cy="251.0" r="7"/><circle class="us" cx="369.1" cy="251.0" r="7"/></g></svg>
+      <figcaption id="f2t"><b>FIG. 2</b> Accuracy (%) per benchmark. Jev 1.13 figures are as published; we have not run Jev on our harness.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="speed">
+  <div class="split rev">
+    <div>
+      <div class="kicker">Speed</div>
+      <h2>A decision in <span class="hl">a tenth of a second</span>, on a laptop.</h2>
+      <p>Decido reads the answer straight from the model's probabilities: one pass over the text, a single token per option, nothing generated and nothing to parse. That makes it fast enough to check every step of an agent loop.</p>
+      <div class="big">0 bytes<small>sent to anyone's cloud. Decido runs on your laptop, server or air-gapped machine, with no per-call fees.</small></div>
+    </div>
+    <figure class="figcard">
+      <table>
+        <thead><tr><th>Measured on an Apple M4 Pro, CPU only</th><th>Time</th></tr></thead>
+        <tbody>
+          <tr class="us"><td>Decido-1-Fast · one yes/no check<small>short message, 10 threads</small></td><td class="v">0.08–0.10 s</td></tr>
+          <tr class="us"><td>Decido-1-Ultra · 5 questions<small>1,000-token document, p50</small></td><td class="v">0.41 s</td></tr>
+          <tr class="us"><td>Decido-1-Fast · 5 questions<small>1,000-token document, p50</small></td><td class="v">0.64 s</td></tr>
+          <tr class="us"><td>Decido-1 · 5 questions<small>1,000-token document, p50</small></td><td class="v">4.1 s</td></tr>
+          <tr class="us"><td>Decido-1-Think · per question<small>reasons first; median over benchmark questions</small></td><td class="v">~19 s</td></tr>
+          <tr><td>Jev 1.13 · cloud API<small>published latency</small></td><td class="v">~0.3 s</td></tr>
+        </tbody>
+      </table>
+      <figcaption><b>TABLE 1</b> Wall-clock time. The document is processed once per request; each extra question adds only its own tokens.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="reliability">
+  <div class="split">
+    <div>
+      <div class="kicker">Reliability</div>
+      <h2>The same answer, <span class="hl">every time</span>.</h2>
+      <p>On CPU, Decido's outputs are bit-identical across calls and request history (at a fixed thread count), so any decision can be replayed exactly for an audit. It is also far less sensitive to the order in which answer options are listed.</p>
+      <p>Probabilities are calibrated on held-out tasks, so a threshold can be set like an error budget: act automatically when the model is sure, and ask a person when it isn't.</p>
+    </div>
+    <figure class="figcard">
+<svg class="chart" viewBox="0 0 560 214" role="img" aria-labelledby="f3t"><text class="nm" x="0" y="18">Answers that change on a repeat call</text><g class="us"><title>Answers that change on a repeat call: Decido-1 0.0%</title><path class="b" d="M0.0,30.0h2.0v20h-2.0z"/><text class="vl" x="12.0" y="45">0.0% <tspan class="sb">Decido-1</tspan></text></g><g class="ref"><title>Answers that change on a repeat call: Jev 1.13 4.3%</title><path class="b" d="M0.0,58.0h121.3a5,5 0 0 1 5,5v10a5,5 0 0 1 -5,5h-121.3z"/><text class="vl" x="138.3" y="73">4.3% <tspan class="sb">Jev 1.13</tspan></text></g><text class="nm" x="0" y="122">Answers that flip when options are reordered</text><g class="us"><title>Answers that flip when options are reordered: Decido-1 4.8%</title><path class="b" d="M0.0,134.0h136.0a5,5 0 0 1 5,5v10a5,5 0 0 1 -5,5h-136.0z"/><text class="vl" x="153.0" y="149">4.8% <tspan class="sb">Decido-1</tspan></text></g><g class="ref"><title>Answers that flip when options are reordered: Jev 1.13 14.6%</title><path class="b" d="M0.0,162.0h423.9a5,5 0 0 1 5,5v10a5,5 0 0 1 -5,5h-423.9z"/><text class="vl" x="440.9" y="177">14.6% <tspan class="sb">Jev 1.13</tspan></text></g><g class="note"><text x="250" y="48">← literally zero</text></g></svg>
+      <figcaption id="f3t"><b>FIG. 3</b> Lower is better. Decido-1 on CPU; Jev 1.13 published figures (measured with 64 options; ours on each benchmark's own options).</figcaption>
+    </figure>
   </div>
 </section>
 
 <section id="how">
-  <div class="wrap">
-    <div class="label">02 How it works</div>
-    <h2>Decido reads the decision straight from the model. Nothing is generated.</h2>
-    <div class="pipe" role="img" aria-label="An LLM call goes prompt, generate text, parse, answer, in 2 to 5 seconds. Decido goes typed question, read probabilities, answer, in about 0.1 seconds.">
-      <div class="row"><span class="who">LLM TODAY</span><span class="step">Prompt</span><span class="arrow">→</span><span class="step">Generate text</span><span class="arrow">→</span><span class="step">Parse it</span><span class="arrow">→</span><span class="step">Answer</span><span class="note">2–5 s · varies</span></div>
-      <div class="row us"><span class="who">DECIDO</span><span class="step">Typed question</span><span class="arrow">→</span><span class="step">Read probabilities</span><span class="arrow">→</span><span class="step">Answer</span><span class="note">~0.1 s · deterministic</span></div>
-    </div>
-    <div class="grid2">
-      <div>
-<pre><span class="c"># situation + typed questions in, probabilities out</span>
+  <div class="narrow" style="max-width:none">
+    <div class="kicker">How it works</div>
+    <h2>A document and typed questions in. Probabilities out.</h2>
+  </div>
+  <div class="how">
+    <div><i>1</i><b>Describe the situation</b><span>Any text or JSON: a support ticket, a tool call, a claim, an agent's next step.</span></div>
+    <div><i>2</i><b>Ask typed questions</b><span>Yes/no, pick one option, or a score on a scale, written in plain English. Many questions per call.</span></div>
+    <div><i>3</i><b>Act on the probabilities</b><span>Each answer comes with a probability for every option. Set a threshold to act, block or ask a person.</span></div>
+  </div>
+  <div class="code">
+    <input type="radio" name="tab" id="t1" checked><input type="radio" name="tab" id="t2"><input type="radio" name="tab" id="t3">
+    <div class="tabs"><label for="t1">Python</label><label for="t2">Command line</label><label for="t3">HTTP (Jev-compatible)</label></div>
+    <div class="panes">
+<pre class="p1"><span class="c"># pip install decido-ai</span>
 from decido import Decido
 
-d = Decido()
-r = d.decide(ticket, {
-  "refund":  <span class="s">"Is the customer asking for a refund?"</span>,
-  "team":    {"type": "choice", "question": <span class="s">"Which team?"</span>,
-              "options": [<span class="s">"billing"</span>, <span class="s">"technical"</span>, <span class="s">"sales"</span>]},
-  "urgency": {"type": "score", "question": <span class="s">"How urgent?"</span>,
-              "levels": [<span class="s">"Low"</span>, <span class="s">"Medium"</span>, <span class="s">"High"</span>]},
+ticket = <span class="s">"Hi, I was charged twice for my March invoice. Can you refund the duplicate?"</span>
+m = Decido(<span class="s">"decido-ai/decido-1-fast-1.7b"</span>)        <span class="c"># downloads once, then runs on your CPU</span>
+r = m.decide(ticket, {
+    <span class="s">"refund"</span>:  <span class="s">"Is the customer asking for a refund?"</span>,
+    <span class="s">"team"</span>:    {<span class="s">"q"</span>: <span class="s">"Which team?"</span>, <span class="s">"options"</span>: [<span class="s">"billing"</span>, <span class="s">"technical"</span>, <span class="s">"sales"</span>]},
+    <span class="s">"urgency"</span>: {<span class="s">"q"</span>: <span class="s">"How urgent?"</span>, <span class="s">"scale"</span>: [<span class="s">"low"</span>, <span class="s">"medium"</span>, <span class="s">"high"</span>]},
 })
+<span class="c"># r["refund"] -> {"yes": 0.98, "no": 0.02}    r["team"] -> {"billing": 0.95, "technical": 0.02, "sales": 0.03}</span>
 
-if r["refund"].answer == "yes" and r["refund"].p &gt;= 0.95:
-    issue_refund()       <span class="c"># confident: act</span>
+if r[<span class="s">"refund"</span>][<span class="s">"yes"</span>] &gt;= 0.95:
+    issue_refund()                                   <span class="c"># sure: act</span>
 else:
-    send_to_human()      <span class="c"># unsure: escalate</span></pre>
-        <div class="caption"><b>PYTHON SDK.</b> Same JSON over a local HTTP API, an MCP server (Claude Code, Cursor) and LangChain / LangGraph tools.</div>
-      </div>
-      <div class="feat">
-        <div><b>Any question type</b><span>Yes/no, pick one, or a score. Write the question in plain English.</span></div>
-        <div><b>A confidence score for every option</b><span>Temperature-calibrated on held-out tasks, so you can set a threshold: act when sure, ask a human when not.</span></div>
-        <div><b>The same answer every time</b><span>Bit-for-bit repeatable on CPU. Replay any past decision for an audit.</span></div>
-        <div><b>Runs anywhere</b><span>Laptop, server, private cloud or air-gapped. CPU or GPU. No per-call fees.</span></div>
-        <div><b>Two sizes</b><span>Decido Full (26B mixture of experts, 4B active) for accuracy. Decido Fast (1.7B) for speed.</span></div>
-      </div>
-    </div>
-  </div>
-</section>
+    send_to_human()                                  <span class="c"># unsure: ask a person</span></pre>
+<pre class="p2">decido models                                         <span class="c"># the five models, scores and latency</span>
+decido run decido-ai/decido-1-fast-1.7b <span class="s">"Hi, I was charged twice for my March invoice."</span> \
+    -q refund=<span class="s">"Is the customer asking for a refund?"</span> \
+    -q team=<span class="s">"Which team?|billing,technical,sales"</span> \
+    -q urgency=<span class="s">"How urgent?|scale:low,medium,high"</span></pre>
+<pre class="p3">decido serve decido-ai/decido-1-fast-1.7b --port 8080    <span class="c"># local API, Jev 1.13 wire format</span>
 
-<section id="results">
-  <div class="wrap">
-    <div class="label">03 Results</div>
-    <h2>More accurate than the leading decision API. On a CPU.</h2>
-    <p class="lede">Scored on the six public benchmark groups used to compare decision models. Trained on public data, with no outputs from Jev or any closed model, and audited for benchmark leakage.</p>
-    <div class="chartbox">
-      <div>
-        <div class="ctitle">SIX-BENCHMARK MEAN (HIGHER IS BETTER)</div>
-        <svg id="bench" viewBox="0 0 520 250" role="img" aria-label="Six-benchmark mean: Decido Full 85.4, Jev 1.13 83.9, NeoHorse-Jev-4B 77.7, Open-Jev-9B 75.7, Kev-4B 74.3, Decido Fast 73.0, Laya 58.2. Full table below."></svg>
-        <div class="caption"><b>FIG. 1</b> Blue: Decido (our measurements, CPU). Gray: published or self-reported scores. Hover for values.</div>
-      </div>
-      <div class="rel">
-        <div class="ctitle">RELIABILITY (LOWER IS BETTER)</div>
-        <div>
-          <h4>Answers that change on a repeat call</h4>
-          <div class="bar"><span>Decido</span><div class="track"><div class="fill" style="width:1%;background:var(--accent)"></div></div><span class="num">0%</span></div>
-          <div class="bar"><span>Jev 1.13</span><div class="track"><div class="fill" style="width:29%;background:var(--gray)"></div></div><span class="num">4.3%</span></div>
-        </div>
-        <div>
-          <h4>Answers that flip when options are reordered</h4>
-          <div class="bar"><span>Decido</span><div class="track"><div class="fill" style="width:32%;background:var(--accent)"></div></div><span class="num">4.8%</span></div>
-          <div class="bar"><span>Jev 1.13</span><div class="track"><div class="fill" style="width:97%;background:var(--gray)"></div></div><span class="num">14.6%</span></div>
-        </div>
-        <div class="caption"><b>FIG. 2</b> Decido Full on CPU vs Jev 1.13's published figures.</div>
-      </div>
-    </div>
-
-    <div class="tablewrap">
-      <table>
-        <thead>
-          <tr><th></th><th class="us">Decido Full<small>26B MOE · CPU</small></th><th class="us">Decido Fast<small>1.7B · CPU</small></th><th>Jev 1.13<small>LEADING DECISION API</small></th><th>Frontier LLM<small>AS A JUDGE</small></th></tr>
-        </thead>
-        <tbody>
-          <tr><th>Six-benchmark accuracy</th><td class="us win">85.4</td><td class="us">73.0</td><td>83.9</td><td>not measured</td></tr>
-          <tr><th>Time per decision</th><td class="us">~0.8 s</td><td class="us win">~0.1 s</td><td class="win">~0.1–0.3 s</td><td class="lose">~2–5 s (est.)</td></tr>
-          <tr><th>Same answer every time</th><td class="us win">Yes</td><td class="us win">Yes</td><td class="lose">No (4.3% vary)</td><td class="lose">No</td></tr>
-          <tr><th>Runs on</th><td class="us win">Your CPU or GPU</td><td class="us win">Your CPU or GPU</td><td class="lose">Their cloud</td><td class="lose">Their cloud</td></tr>
-          <tr><th>Trained on your decisions</th><td class="us win">Yes</td><td class="us win">Yes</td><td class="lose">No</td><td>Prompting only</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <p class="foot">Decido Full: the shipped 8-bit model, five benchmark groups measured CPU-only and OpenJev on the same file via llama.cpp on GPU. Without in-domain training data it scores 82.0, which is why we train on each customer's own decisions. Jev 1.13: figures as published (not run on our harness). Other models: model cards and the Jev Decision Index, October 2026. Timing: Apple M4 Pro, CPU only; Decido Full ~4.1 s for a 1k-token request with 5 questions; Decido Fast 84–96 ms for one yes/no check, 0.64 s for 5 questions. Frontier LLM: average estimate for one agent call (~5k tokens of context, ~0.5k output).</p>
-  </div>
-</section>
-
-<section id="uses">
-  <div class="wrap">
-    <div class="label">04 Where it fits</div>
-    <h2>Anywhere an agent has to make a call.</h2>
-    <div class="cards">
-      <div class="card"><h3>Agent guardrails</h3><p>Check every action before it runs. Block the dangerous ones, ask a human about the borderline ones.</p><div class="q">"Is it safe to run this command?"</div></div>
-      <div class="card"><h3>Routing and triage</h3><p>Send each ticket, call or case to the right place, and only escalate when the model isn't sure.</p><div class="q">"Which team should handle this?"</div></div>
-      <div class="card"><h3>Voice and support agents</h3><p>Decide mid-conversation, in a fraction of a second, without sending the conversation to a third party.</p><div class="q">"Does the caller want a human?"</div></div>
-      <div class="card"><h3>Decisions on private data</h3><p>Refunds, claims, alerts and approvals, with a record of every decision that you can replay exactly.</p><div class="q">"Is this refund within policy?"</div></div>
-    </div>
-  </div>
-</section>
-
-<section id="business">
-  <div class="wrap">
-    <div class="label">05 Pricing</div>
-    <h2>Free to run. Paid to own.</h2>
-    <div class="steps">
-      <div><div class="n">01 FREE</div><h3>Open models and runtime</h3><p>Add Decido to any agent in minutes. Open weights on Hugging Face, SDK, API, MCP.</p></div>
-      <div><div class="n">02 TRAIN</div><h3>Your own decision model</h3><p>We train Decido on your past decisions and human corrections, and show you the accuracy before anything ships.</p></div>
-      <div><div class="n">03 LICENSE</div><h3>Production, inside your walls</h3><p>An annual license to run your models on your own servers, with every decision recorded for audit.</p></div>
-    </div>
-  </div>
-</section>
-
-<section id="team">
-  <div class="wrap">
-    <div class="label">06 Team</div>
-    <div class="team">
-      <div>
-        <div class="name">Gaurav Agarwal</div>
-        <div class="creds">Founder<br>IIT Delhi (Electrical Engineering)<br>Purdue (Computer Science)</div>
-      </div>
-      <ul>
-        <li><b>Meta</b><span>Fine-tunes LLMs and optimizes LLM inference. Two research papers on LLM inference in 2026.</span></li>
-        <li><b>Uber</b><span>Built the storage infrastructure from 0 to 1 to 100.</span></li>
-        <li><b>Amazon</b><span>Built a recommendation engine.</span></li>
-        <li><b>Startups</b><span>Founded two before: AI explainability, and adrex.ai (agentic ad campaigns).</span></li>
-        <li class="hl"><b>Decido</b><span>Trained the models and built the product, solo.</span></li>
-      </ul>
-    </div>
-  </div>
-</section>
-
-<section id="contact">
-  <div class="wrap">
-    <div class="label">07 Vision</div>
-    <p class="vision">Today, intelligence is rented.<br>Tomorrow, every company <span class="accent">owns</span> its decision models.</p>
-    <p class="lede">We're working with a small number of design partners building AI agents. If your agents make decisions you'd rather own, let's talk.</p>
-    <div class="buttons">
-      <a class="btn primary" href="mailto:gaurav.iit219@gmail.com?subject=Decido%20design%20partner">gaurav.iit219@gmail.com</a>
-      <a class="btn" href="https://huggingface.co/decido-ai/decido-26b-a4b">Model on Hugging Face ↗</a>
-    </div>
-  </div>
-</section>
-
-<footer>
-  <div class="wrap"><span>DECIDO · the judgment layer for AI agents</span><span>© 2026 Decido</span></div>
-</footer>
-
-<div id="tip" role="tooltip"></div>
-<script>
-// Fig. 1: emphasis dot plot (Decido in the accent hue, everything else gray), hover tooltip per row.
-(function () {
-  const data = [
-    ["Decido Full (CPU)", 85.38, "ours", "Our measurement · shipped 8-bit model"],
-    ["Jev 1.13", 83.85, "jev", "Published figure (leading decision API)"],
-    ["NeoHorse-Jev-4B", 77.70, "other", "Self-reported"],
-    ["Open-Jev-9B", 75.67, "other", "Self-reported"],
-    ["Kev-4B", 74.25, "other", "Self-reported"],
-    ["Decido Fast (CPU)", 73.01, "ours", "Our measurement · 1.7B, 8-bit"],
-    ["Laya", 58.24, "other", "Self-reported"],
-  ];
-  const svg = document.getElementById("bench"), tip = document.getElementById("tip"), NS = "http://www.w3.org/2000/svg";
-  const x0 = 150, x1 = 470, lo = 50, hi = 90, top = 8, rowH = 32;
-  const X = v => x0 + (v - lo) / (hi - lo) * (x1 - x0);
-  const el = (n, a, p = svg) => { const e = document.createElementNS(NS, n); for (const k in a) e.setAttribute(k, a[k]); p.appendChild(e); return e; };
-  const grid = el("g", { class: "grid" }), axis = el("g", { class: "axis" });
-  const base = top + rowH * data.length;
-  for (let v = lo; v <= hi; v += 10) {
-    el("line", { x1: X(v), x2: X(v), y1: top, y2: base }, grid);
-    el("text", { x: X(v), y: base + 18, "text-anchor": "middle" }, axis).textContent = v;
+curl localhost:8080/v1/systemone -H <span class="s">"content-type: application/json"</span> -d <span class="s">'{
+  "state": "Hi, I was charged twice for my March invoice. Can you refund the duplicate?",
+  "questions": {
+    "refund": {"type": "noul", "instructions": "Is the customer asking for a refund?"},
+    "team": {"type": "choice", "instructions": "Which team?",
+             "criteria": {"billing": "", "technical": "", "sales": ""}}
   }
-  data.forEach(([name, v, kind, src], i) => {
-    const y = top + rowH * i + rowH / 2, strong = kind !== "other";
-    const col = kind === "ours" ? "var(--accent)" : "var(--gray)";
-    const g = el("g", {});
-    const t = el("text", { x: x0 - 12, y: y + 5, "text-anchor": "end", "font-size": 14, "font-weight": strong ? 700 : 400 }, g);
-    t.textContent = name; if (strong) t.style.fill = "var(--ink)";
-    el("line", { class: "lead", x1: X(lo), x2: X(v), y1: y, y2: y, stroke: col, opacity: kind === "other" ? .55 : 1 }, g);
-    el("circle", { cx: X(v), cy: y, r: 6, fill: col, stroke: "var(--paper)", "stroke-width": 2 }, g);
-    if (strong) { const l = el("text", { x: X(v) + 12, y: y + 4, "font-size": 12, "font-family": "var(--mono)" }, g); l.textContent = v.toFixed(1); l.style.fill = "var(--ink)"; }
-    const hit = el("rect", { class: "hit", x: 0, y: y - rowH / 2, width: 520, height: rowH }, g);
-    hit.addEventListener("mousemove", e => {
-      tip.innerHTML = `<b>${name}</b><br>${v.toFixed(2)} six-benchmark mean<br>${src}`;
-      tip.style.left = Math.min(e.clientX + 14, innerWidth - 270) + "px"; tip.style.top = (e.clientY + 14) + "px"; tip.style.opacity = 1;
-    });
-    hit.addEventListener("mouseleave", () => { tip.style.opacity = 0; });
-  });
-})();
-</script>
+}'</span>
+<span class="c"># -> {"answers": {"refund": {"type": "noul", "noul": 0.98},
+#                 "team": {"type": "choice", "choice": "billing", "confidence": 0.92,
+#                          "probabilities": {"billing": 0.95, "technical": 0.02, "sales": 0.03}}}, ...}
+# Existing Jev SDK clients work unchanged: TYPESAFE_BASE_URL=http://127.0.0.1:8080</span></pre>
+    </div>
+  </div>
+  <div class="avail">Open source (Apache-2.0): <a href="https://pypi.org/project/decido-ai/">decido-ai on PyPI</a> · <a href="https://huggingface.co/collections/decido-ai/decido-1-6aed66fd09af05c057795ca8">models on Hugging Face</a>. Apple Silicon Macs need no compiler; on Linux run <code>decido build-runtime</code> once. On a GPU: <code>pip install "decido-ai[gpu]"</code> and <code>device="cuda"</code>.</div>
+</section>
+
+<section id="models">
+  <div class="kicker">Models</div>
+  <h2>Five open models, one interface.</h2>
+  <div class="models">
+    <div class="model">
+      <div class="k">Fastest</div><h3>Decido-1-Ultra</h3><div class="d">0.6B parameters. The smallest and fastest, for very high volume.</div>
+      <dl><dt>Benchmark mean</dt><dd>62.2</dd><dt>5 questions, 1k tokens</dt><dd>0.41 s</dd><dt>Hardware</dt><dd>CPU · ~1.5 GB RAM</dd><dt>Deterministic</dt><dd>bit-identical</dd></dl>
+      <div class="foot"><a href="https://huggingface.co/decido-ai/decido-1-ultra-0.6b">Open weights ↗</a></div>
+    </div>
+    <div class="model">
+      <div class="k">Fast</div><h3>Decido-1-Fast</h3><div class="d">1.7B parameters. For high-volume checks inside agent loops.</div>
+      <dl><dt>Benchmark mean</dt><dd>73.0</dd><dt>5 questions, 1k tokens</dt><dd>0.64 s</dd><dt>Hardware</dt><dd>CPU · ~3 GB RAM</dd><dt>Deterministic</dt><dd>bit-identical</dd></dl>
+      <div class="foot"><a href="https://huggingface.co/decido-ai/decido-1-fast-1.7b">Open weights ↗</a></div>
+    </div>
+    <div class="model">
+      <div class="k">Accurate on CPU</div><h3>Decido-1</h3><div class="d">Mixture of experts, 4B active parameters. More accurate than the leading decision API, on a laptop.</div>
+      <dl><dt>Benchmark mean</dt><dd>85.4</dd><dt>5 questions, 1k tokens</dt><dd>4.1 s</dd><dt>Hardware</dt><dd>CPU · ~30 GB RAM · GPU</dd><dt>Deterministic</dt><dd>bit-identical</dd></dl>
+      <div class="foot"><a href="https://huggingface.co/decido-ai/decido-1-26b-a4b">Open weights ↗</a></div>
+    </div>
+    <div class="model">
+      <div class="k">Most accurate</div><h3>Decido-1-Think</h3><div class="d">Decido-1 that reasons before answering. Ahead of Jev 1.13 on all six benchmarks.</div>
+      <dl><dt>Benchmark mean</dt><dd>88.7</dd><dt>Per question</dt><dd>~19 s CPU · ~0.25 GPU-s</dd><dt>Hardware</dt><dd>GPU · CPU ~30 GB RAM (slow)</dd><dt>Deterministic</dt><dd>greedy decoding</dd></dl>
+      <div class="foot"><a href="https://huggingface.co/decido-ai/decido-1-think-26b-a4b">Open weights ↗</a></div>
+    </div>
+    <div class="model soon">
+      <div class="k">Coming soon</div><h3>Decido-1-XL</h3><div class="d">The Decido recipe on DeepSeek-V4-Flash, for GPU clusters.</div>
+      <dl><dt>Benchmark mean</dt><dd>87.3</dd><dt>Hardware</dt><dd>4× A100 80 GB</dd><dt>Status</dt><dd>GPU validation</dd></dl>
+      <div class="foot">Coming soon</div>
+    </div>
+  </div>
+  <p class="research-note">Research: <b>Decido Max</b>, a gated mixture of Decido-1, Decido-1-Think and an open 27B reasoning model, reaches 89.6 on GPU. It is a research system, not a released model — see the <a href="research.html">technical report</a>.</p>
+</section>
+
+<section id="research">
+  <div class="kicker">Research</div>
+  <h2>How we built it, and where it falls short.</h2>
+  <div class="papers">
+    <a class="paper" href="research.html"><span class="when">Nov 2026</span><div><h3>Decido: calibrated decision models for AI agents</h3><p>Technical report: benchmarks, method, reliability and cost.</p></div><span class="go">→</span></a>
+    <a class="paper" href="research.html#method"><span class="when">Method</span><div><h3>Readout, calibration and deterministic CPU inference</h3><p>Single-token labels, temperatures fitted on held-out tasks, and bit-identical outputs on llama.cpp.</p></div><span class="go">→</span></a>
+    <a class="paper" href="research.html#limitations"><span class="when">Limitations</span><div><h3>What the numbers do and don't show</h3><p>In-domain training, published-vs-measured comparisons, and calibration outside benchmarks.</p></div><span class="go">→</span></a>
+  </div>
+</section>
+
+<div class="contact" id="contact">
+  <span class="doodle" aria-hidden="true">say hi! ✉</span>
+  <div class="kicker">Early access</div>
+  <h2>Own your agent's decisions.</h2>
+  <p>We're working with a small number of design partners building AI agents. We fine-tune Decido on your own decisions and you run it on your own servers.</p>
+  <div class="ctas"><a class="btn" href="mailto:founders@getdecido.ai?subject=Decido%20early%20access">founders@getdecido.ai</a></div>
+</div>
+
+</main>
+
+<footer><div class="wrap">
+  <span>© 2026 Decido</span>
+  <span><a href="research.html">Research</a><a href="https://huggingface.co/collections/decido-ai/decido-1-6aed66fd09af05c057795ca8">Hugging Face</a><a href="https://pypi.org/project/decido-ai/">PyPI</a><a href="mailto:founders@getdecido.ai">Contact</a></span>
+</div></footer>
 </body>
 </html>
