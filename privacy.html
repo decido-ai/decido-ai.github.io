@@ -101,7 +101,7 @@
 <header class="nav"><div class="wrap">
   <a class="brand" href="/"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="4" y="6" width="32" height="30" rx="10"/><circle class="e" cx="15" cy="19" r="4.5"/><circle class="e" cx="26" cy="19" r="4.5"/><circle class="p" cx="16" cy="20" r="2"/><circle class="p" cx="27" cy="20" r="2"/></svg>Decido</a>
   <nav class="menu">
-    <a href="/#results">Results</a><a href="/#models">Models</a><a href="/research">Research</a>
+    <a href="/#results">Results</a><a href="/#models">Models</a><a href="/research">Research</a><a href="https://getdecido.ai/playground">Playground</a><a href="/api">API</a>
     <a class="btn sm" href="https://pypi.org/project/decido-ai/">pip install decido-ai</a>
   </nav>
 </div></header>
@@ -120,8 +120,15 @@
     <li><b>Abuse protection:</b> Cloudflare Turnstile checks that requests come from a person. After the check passes, our
     server sets one short-lived, strictly necessary session cookie (<code>__Host-dps</code>, 30 minutes) on getdecido.ai.
     We set no advertising or analytics cookies; Turnstile runs in a Cloudflare frame under Cloudflare's own privacy policy.</li>
-    <li><b>Rate limits:</b> to enforce fair-use limits we keep counters keyed by your IP address (for IPv6, its /64 network)
-    and by the random session id for about <b>2 days</b>, then delete them.</li>
+    <li><b>Rate limits:</b> to enforce fair-use limits we keep counters keyed by your IP address (for IPv6, its /64 network),
+    by the random session id, and — for new API keys — by your wider network (IPv4 /24 or IPv6 /48) for about <b>2 days</b>,
+    then delete them.</li>
+    <li><b>API keys:</b> a key is shown once and we store only its SHA-256 hash, never the key itself. With it we keep a short
+    display prefix (e.g. <code>dk_abcdefgh</code>), your optional label, the network it was created from (IP address or IPv6
+    /64) and when it was created and last used — for the life of the key, to prevent abuse. Revoked or unused keys are deleted
+    90 days after last use.
+    API requests are handled like playground requests: inputs are not stored; request metadata (including the key prefix) is kept
+    up to 30 days.</li>
     <li><b>Processors:</b> Cloudflare (website, edge, Turnstile) and Google Cloud (model servers, us-central1). Data may be
     processed in the United States.</li>
     <li>Please do not paste personal, confidential or regulated data into the public playground. For sensitive data, run
@@ -138,7 +145,7 @@
 
 <footer><div class="wrap">
   <span>© 2026 Decido</span>
-  <span><a href="/research">Research</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="https://huggingface.co/collections/decido-ai/decido-1-6aed66fd09af05c057795ca8">Hugging Face</a><a href="mailto:founders@getdecido.ai">Contact</a></span>
+  <span><a href="/research">Research</a><a href="https://getdecido.ai/playground">Playground</a><a href="/api">API</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="https://huggingface.co/collections/decido-ai/decido-1-6aed66fd09af05c057795ca8">Hugging Face</a><a href="mailto:founders@getdecido.ai">Contact</a></span>
 </div></footer>
 </body>
 </html>

@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>API — Decido</title>
+<meta name="description" content="The free Decido API: POST /v1/systemone with a Jev 1.13-compatible request, get a probability for every answer. Free key, 50 requests/day.">
+<link rel="canonical" href="https://getdecido.ai/api">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect x='4' y='6' width='32' height='30' rx='10' fill='%232a78d6' stroke='%231c1b19' stroke-width='3'/%3E%3Ccircle cx='15' cy='19' r='4.5' fill='white'/%3E%3Ccircle cx='26' cy='19' r='4.5' fill='white'/%3E%3Ccircle cx='16' cy='20' r='2'/%3E%3Ccircle cx='27' cy='20' r='2'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --bg: #fffcf3; --card: #ffffff; --panel: #fff7e0; --ink: #1c1b19; --muted: #5a5853; --faint: #6f6c66; --line: #e9e3d3;
+    --accent: #2a78d6; --accent-ink: #1d5fb3; --soft: #b9d1f0; --shadow: #1c1b19; --warn: #b5402a;
+    --yellow: #ffe27a; --blue: #d6e6ff; --pink: #ffd7e1; --mint: #cff2df;
+    --round: ui-rounded, "SF Pro Rounded", "Nunito", "Varela Round", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #17161a; --card: #1f1e23; --panel: #25231f; --ink: #f1efe8; --muted: #b0ada5; --faint: #9a978f; --line: #34322e;
+            --accent: #5592e3; --accent-ink: #8dbbf2; --soft: #2f4a70; --shadow: #000000; --warn: #f08a72;
+            --yellow: #6b5a17; --blue: #22344f; --pink: #4d2a35; --mint: #1f4433; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.55 var(--sans); -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+  header.nav { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(8px); border-bottom: 2px solid var(--ink); }
+  header.nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+  .brand { display: flex; align-items: center; gap: 10px; font: 800 19px var(--round); letter-spacing: .02em; text-decoration: none; }
+  .brand svg { width: 30px; height: 30px; }
+  .brand rect { fill: var(--accent); stroke: var(--ink); stroke-width: 3; } .brand .e { fill: #fff; stroke: var(--ink); stroke-width: 2; } .brand .p { fill: #1c1b19; }
+  .menu { display: flex; align-items: center; gap: 24px; font: 600 15px var(--round); }
+  .menu a { text-decoration: none; color: var(--muted); } .menu a:hover { color: var(--ink); }
+  @media (max-width: 760px) { .menu a:not(.btn) { display: none; } }
+  .btn { display: inline-block; cursor: pointer; text-decoration: none; font: 700 15px var(--round); padding: 10px 20px; border-radius: 12px; background: var(--yellow); color: var(--ink); border: 2px solid var(--ink); box-shadow: 3px 3px 0 var(--shadow); transition: transform .12s, box-shadow .12s; }
+  .btn:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--shadow); }
+  .btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--shadow); }
+  .btn:disabled { opacity: .55; cursor: not-allowed; transform: none; box-shadow: 3px 3px 0 var(--shadow); }
+  .btn.line { background: var(--card); } .btn.sm { padding: 6px 12px; font-size: 13.5px; box-shadow: 2px 2px 0 var(--shadow); }
+  h1 { font: 800 clamp(38px, 6vw, 56px)/1.05 var(--round); letter-spacing: -.02em; margin: 40px 0 6px; }
+  .lede { color: var(--muted); font-size: 18px; margin: 0 0 22px; max-width: 760px; }
+  .banner { display: none; background: var(--pink); border: 2px solid var(--ink); border-radius: 12px; padding: 10px 14px; margin: 0 0 18px; font-weight: 600; }
+  .banner code { font: 600 14px var(--mono); }
+  .grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+  @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+  .card { background: var(--card); border: 2px solid var(--ink); border-radius: 18px; padding: 20px 22px; box-shadow: 5px 5px 0 var(--shadow); }
+  .card h2 { font: 800 18px var(--round); margin: 0 0 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+  label.f { display: block; font: 700 13px var(--round); color: var(--muted); margin: 14px 0 6px; letter-spacing: .02em; }
+  textarea, input[type=text], select { width: 100%; font: 15px var(--sans); color: var(--ink); background: var(--bg); border: 2px solid var(--line); border-radius: 10px; padding: 9px 11px; }
+  textarea:focus, input:focus, select:focus { outline: none; border-color: var(--accent); }
+  textarea#doc { min-height: 150px; resize: vertical; font: 14px/1.5 var(--mono); }
+  .count { font: 12px var(--mono); color: var(--faint); text-align: right; margin-top: 4px; }
+  .count.over { color: var(--warn); font-weight: 700; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { cursor: pointer; font: 600 13.5px var(--round); padding: 5px 12px; border-radius: 999px; border: 2px solid var(--ink); background: var(--blue); color: var(--ink); }
+  .chip.on { background: var(--yellow); }
+  .q { border: 2px solid var(--line); border-radius: 12px; padding: 10px 12px; margin: 10px 0; background: var(--bg); }
+  .q .row { display: grid; grid-template-columns: 120px 150px 1fr auto; gap: 8px; align-items: center; }
+  @media (max-width: 560px) { .q .row { grid-template-columns: 1fr 1fr; } }
+  .q .opts { margin-top: 8px; }
+  .x { cursor: pointer; border: none; background: none; color: var(--faint); font: 700 20px var(--round); padding: 0 4px; }
+  .x:hover { color: var(--warn); }
+  .actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 16px; }
+  .hint { font-size: 13.5px; color: var(--faint); }
+  #ts { min-height: 0; }
+  .res .empty { color: var(--faint); }
+  .ans { padding: 12px 0; border-bottom: 2px dashed var(--line); }
+  .ans:last-child { border-bottom: none; }
+  .ans .head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+  .ans .qid { font: 700 13px var(--mono); color: var(--muted); }
+  .ans .qt { font-size: 14px; color: var(--muted); margin: 2px 0 6px; }
+  .ans .top { font: 800 17px var(--round); color: var(--accent-ink); }
+  .badge { font: 700 11.5px var(--mono); letter-spacing: .04em; text-transform: uppercase; padding: 2px 8px; border-radius: 999px; border: 2px solid var(--ink); }
+  .badge.act { background: var(--mint); } .badge.ask { background: var(--pink); }
+  .bar { display: grid; grid-template-columns: minmax(70px, 34%) 1fr 46px; gap: 8px; align-items: center; margin: 4px 0; font-size: 14px; }
+  .bar .lab { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .bar .tr { background: var(--line); border-radius: 6px; height: 14px; overflow: hidden; }
+  .bar .fl { background: var(--soft); height: 100%; border-radius: 6px; }
+  .bar.best .fl { background: var(--accent); }
+  .bar .pc { text-align: right; font: 600 13px var(--mono); }
+  .meta { font: 12.5px var(--mono); color: var(--faint); margin-top: 12px; }
+  .thr { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--muted); margin: 0 0 6px; flex-wrap: wrap; }
+  .thr input { width: 140px; accent-color: var(--accent); }
+  .err { color: var(--warn); font-weight: 600; margin-top: 10px; display: none; }
+  .code { margin-top: 24px; }
+  .tabs { display: flex; gap: 8px; margin-bottom: 10px; }
+  pre { margin: 0; background: var(--panel); border: 2px solid var(--line); border-radius: 12px; padding: 14px 16px; overflow-x: auto; font: 13.5px/1.55 var(--mono); white-space: pre; }
+  .local { margin-top: 24px; background: var(--panel); }
+  .local ul { margin: 6px 0 0; padding-left: 20px; } .local li { margin: 3px 0; }
+  footer { margin-top: 56px; border-top: 2px solid var(--ink); padding: 22px 0 40px; font-size: 14px; color: var(--muted); }
+  footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+  footer a { margin-left: 16px; text-decoration: none; } footer a:hover { color: var(--ink); }
+</style>
+<style>
+  main.doc { max-width: 760px; } main.doc h2 { font: 800 22px var(--round); margin: 30px 0 8px; } main.doc p, main.doc li { color: var(--ink); }
+  main.doc .upd { font: 13px var(--mono); color: var(--faint); }
+</style>
+<style>
+  main.doc { max-width: 860px; }
+  main.doc pre { margin: 8px 0 14px; background: var(--panel); border: 2px solid var(--line); border-radius: 12px; padding: 12px 14px; overflow-x: auto; font: 13px/1.5 var(--mono); }
+  main.doc table { border-collapse: collapse; width: 100%; margin: 8px 0 14px; font-size: 15px; }
+  main.doc th, main.doc td { text-align: left; vertical-align: top; border-bottom: 1px solid var(--line); padding: 6px 8px; }
+  main.doc th { font: 700 13px var(--round); color: var(--muted); }
+  main.doc code { font: 13.5px var(--mono); }
+  .cta { display: inline-block; margin: 6px 0 4px; }
+</style>
+</head>
+<body>
+<header class="nav"><div class="wrap">
+  <a class="brand" href="/"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="4" y="6" width="32" height="30" rx="10"/><circle class="e" cx="15" cy="19" r="4.5"/><circle class="e" cx="26" cy="19" r="4.5"/><circle class="p" cx="16" cy="20" r="2"/><circle class="p" cx="27" cy="20" r="2"/></svg>Decido</a>
+  <nav class="menu">
+    <a href="/#results">Results</a><a href="/#models">Models</a><a href="/research">Research</a><a href="https://getdecido.ai/playground">Playground</a><a href="/api">API</a>
+    <a class="btn sm" href="https://pypi.org/project/decido-ai/">pip install decido-ai</a>
+  </nav>
+</div></header>
+
+<main class="wrap doc">
+  <h1>Decido API</h1>
+  <p class="upd">Free tier · Decido-1-Fast · last updated 7 November 2026</p>
+  <p>Send a document and typed questions, get a probability for every answer. The request and response use the same format as
+  <code>decido serve</code> and the Jev 1.13 API, so the same code runs against this free hosted API, against your own server,
+  or locally with <code>pip install decido-ai</code>.</p>
+  <p><a class="btn cta" href="https://getdecido.ai/playground#api">Get a free API key</a></p>
+
+  <h2>Endpoint</h2>
+  <pre>POST https://getdecido.ai/v1/systemone
+Authorization: Bearer dk_…
+Content-Type: application/json</pre>
+  <p><code>GET https://getdecido.ai/v1/models</code> lists the hosted models (no key needed).</p>
+
+  <h2>Authentication</h2>
+  <ul>
+    <li>Send your key as <code>Authorization: Bearer dk_…</code> — the header the Jev / TypeSafe SDKs send.</li>
+    <li>Get a key on the <a href="https://getdecido.ai/playground#api">playground</a> after a quick human check: one key per network per day, no
+    sign-up, no email. The key is shown once; we store only its SHA-256 hash, so a lost key cannot be recovered — create a new one the next day.</li>
+    <li>Revoked or unused keys are deleted 90 days after last use. Keys used for abuse may be revoked.</li>
+    <li>Call the API from your server only. There are no CORS headers on purpose: a key in browser code is public.</li>
+  </ul>
+
+  <h2>Request</h2>
+  <table>
+    <tr><th>field</th><th>type</th><th>notes</th></tr>
+    <tr><td><code>state</code></td><td>string or object</td><td>the document: text, or a JSON record</td></tr>
+    <tr><td><code>questions</code></td><td>object: id → question</td><td>1–5 questions; you choose the ids</td></tr>
+    <tr><td><code>model</code></td><td>string, optional</td><td><code>decido-1-fast</code> (default). Jev model names such as <code>jev-latest</code> are served by Decido-1-Fast.</td></tr>
+  </table>
+  <table>
+    <tr><th>question <code>type</code></th><th><code>instructions</code></th><th><code>criteria</code></th></tr>
+    <tr><td><code>noul</code> (yes/no)</td><td>the question (a string)</td><td>— (yes/no descriptions are ignored by the free API)</td></tr>
+    <tr><td><code>choice</code> (pick one)</td><td>the question (a string)</td><td>object: option → description string, or <code>null</code> for none (2–10 options)</td></tr>
+    <tr><td><code>score</code> (ordered scale)</td><td>the question (a string)</td><td>list of 2–10 levels (strings), lowest first</td></tr>
+  </table>
+  <p>The free API takes plain-text instructions; structured (object) instructions return 422 — they work with <code>decido serve</code>.</p>
+  <pre>curl -s https://getdecido.ai/v1/systemone \
+  -H "Authorization: Bearer $DECIDO_API_KEY" -H "Content-Type: application/json" -d @- &lt;&lt;'EOF'
+{
+  "state": "Customer: I was charged twice for order 4821. Please refund one of the charges.",
+  "questions": {
+    "refund": {"type": "noul", "instructions": "Is the customer asking for a refund?"},
+    "team": {"type": "choice", "instructions": "Which team should handle it?",
+             "criteria": {"billing": "Charges, refunds, invoices", "shipping": "Deliveries", "tech": "Bugs and outages"}},
+    "urgency": {"type": "score", "instructions": "How urgent is it?", "criteria": ["low", "normal", "urgent"]}
+  }
+}
+EOF</pre>
+
+  <h2>Response</h2>
+  <pre>{
+  "model": "decido-1-fast",
+  "answers": {
+    "refund":  {"type": "noul", "noul": 0.97},
+    "team":    {"type": "choice", "choice": "billing", "probabilities": {"billing": 0.92, "shipping": 0.03, "tech": 0.05}, "confidence": 0.9},
+    "urgency": {"type": "score", "score": 0.94, "legend": {"0": "low", "1": "normal", "2": "urgent"},
+                "probabilities": {"0": 0.3, "1": 0.47, "2": 0.24}, "confidence": 0.2}
+  },
+  "usage": {"input_tokens": 212, "output_tokens": 0}
+}</pre>
+  <p><code>noul</code> is P(yes). <code>choice</code> is the most likely option, with a probability for every option.
+  <code>score</code> is the expected level (0 = first level), with a probability per level. Example values; yours will differ.</p>
+
+  <h2>Limits (free tier)</h2>
+  <table>
+    <tr><th>per key</th><td>50 requests per UTC day · 10 per minute · 1 at a time · 150 compute-seconds per day</td></tr>
+    <tr><th>per request</th><td>up to 5 questions · up to 10 options per question · up to 80 characters per option (name + description) ·
+    document up to 6,000 characters · about 2,500 characters of English in total (hard limit: 1,000 tokens for the document plus all
+    questions; 3,000 bytes of text) · body up to 32 KB · no images</td></tr>
+    <tr><th>bodies</th><td>uncompressed, or <code>Content-Encoding: gzip</code> (a single gzip stream); at most 32 KB before and after decompression. zstd bodies aren't accepted yet (415)</td></tr>
+    <tr><th>shared capacity</th><td>the free API shares a daily capacity with the online demo; when it is used up you get 503 until 00:00 UTC</td></tr>
+  </table>
+  <p>Successful responses, and 429 responses for the daily quota or the per-minute rate, carry <code>X-RateLimit-Limit</code>,
+  <code>X-RateLimit-Remaining</code> (requests left today) and <code>X-RateLimit-Reset</code> (Unix time of the next reset).
+  429 and 503 responses carry <code>Retry-After</code> (seconds).</p>
+
+  <h2>Errors</h2>
+  <p>Errors are JSON: <code>{"detail": "…"}</code>.</p>
+  <table>
+    <tr><th>status</th><th>meaning</th></tr>
+    <tr><td>400</td><td>body is not valid JSON, or a malformed gzip body</td></tr>
+    <tr><td>401</td><td>missing or invalid API key</td></tr>
+    <tr><td>413</td><td>too big: more than 5 questions or 10 options, an option over 80 characters, over the text or token limit
+    (“API limit 1,000 tokens”), or a body over 32 KB (also after decompression)</td></tr>
+    <tr><td>415</td><td>not <code>application/json</code>, an unsupported or doubled <code>Content-Encoding</code> (including zstd, for now), or multi-member gzip</td></tr>
+    <tr><td>422</td><td>validation error: missing field, unknown question type, fewer than 2 options, non-string instructions, unknown model, images</td></tr>
+    <tr><td>429</td><td>daily quota used up, more than 10 requests per minute, a second request while one is running, or too many invalid API keys (or rejected requests) from your network in a minute</td></tr>
+    <tr><td>502</td><td>the model is unavailable (retry later)</td></tr>
+    <tr><td>503</td><td>busy, today's free capacity is used up, or the free API is paused</td></tr>
+    <tr><td>504</td><td>the model did not answer in time</td></tr>
+  </table>
+
+  <h2>Jev / TypeSafe SDK</h2>
+  <p>Point the client at Decido and use your Decido key. Small requests work as they are; the SDK zstd-compresses larger bodies (about 1 KB and up), which the free API doesn't accept yet — for those, send plain JSON or gzip (see curl/Python above), or run <code>decido serve</code> locally. Model names such as
+  <code>jev-latest</code> run on Decido-1-Fast.</p>
+  <pre>export TYPESAFE_API_KEY="$DECIDO_API_KEY"
+
+from typesafe_sdk import TypeSafeClient, Noul
+with TypeSafeClient(base_url="https://getdecido.ai") as client:
+    r = client.system_one(state="Customer: I was charged twice for order 4821.",
+                          questions={"refund": Noul(instructions="Is the customer asking for a refund?")})
+    print(r.answers["refund"].noul)</pre>
+
+  <h2>Privacy</h2>
+  <p>Documents, questions and answers are processed in memory and not stored or used for training. Request metadata (time,
+  status, size, key prefix, country) is kept for up to 30 days. For each key we keep its SHA-256 hash, a short display prefix,
+  your label, the network (IP address or IPv6 /64) it was created from, and when it was created and last used, for the life of
+  the key. Details: <a href="/privacy">privacy</a>, <a href="/terms">terms</a>.</p>
+
+  <h2>Production use</h2>
+  <p>The free tier has no SLA and small limits. For production volume, bigger models or sensitive data, run Decido yourself —
+  same request format, no limits, nothing leaves your machine:</p>
+  <pre>pip install decido-ai
+decido serve decido-ai/decido-1-26b-a4b --port 8080      # or decido-1-fast-1.7b, decido-1-max-26b-a4b, …
+curl -s localhost:8080/v1/systemone -H 'content-type: application/json' -d @request.json</pre>
+</main>
+
+<footer><div class="wrap">
+  <span>© 2026 Decido</span>
+  <span><a href="/research">Research</a><a href="https://getdecido.ai/playground">Playground</a><a href="/api">API</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="https://huggingface.co/collections/decido-ai/decido-1-6aed66fd09af05c057795ca8">Hugging Face</a><a href="mailto:founders@getdecido.ai">Contact</a></span>
+</div></footer>
+</body>
+</html>
