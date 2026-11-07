@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Research — Decido: calibrated decision models for AI agents</title>
-<meta name="description" content="Decido: open, calibrated decision models for AI agents. 85.4 on the six-benchmark suite on a laptop CPU and 88.7 with reasoning (Jev 1.13: 83.9). Method, results, reliability and limitations.">
+<meta name="description" content="Decido: open, calibrated decision models for AI agents. 85.4 on the six-benchmark suite on a laptop CPU and 89.2 with reasoning (Jev 1.13: 83.9). Method, results, reliability and limitations.">
 <link rel="canonical" href="https://getdecido.ai/research">
 <meta property="og:title" content="Decido — calibrated decision models for AI agents">
-<meta property="og:description" content="85.4 on a laptop CPU, 88.7 with reasoning (open models), vs 83.9 for Jev 1.13. Deterministic, calibrated, runs on your own hardware.">
+<meta property="og:description" content="85.4 on a laptop CPU, 89.2 with reasoning (open models), vs 83.9 for Jev 1.13. Deterministic, calibrated, runs on your own hardware.">
 <meta property="og:url" content="https://getdecido.ai/research">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23141414'/%3E%3Ccircle cx='16' cy='16' r='6' fill='%232a78d6'/%3E%3C/svg%3E">
 <style>
@@ -65,6 +65,7 @@
   .cap b { font: 700 12px var(--mono); color: var(--ink); letter-spacing: .04em; margin-right: 4px; }
 
   .fig { width: 100%; height: auto; display: block; margin-top: 8px; font-family: var(--serif); }
+  @media (max-width: 600px) { .fig .tick { font-size: 15px; } .fig .name { font-size: 16px; } .fig .val { font-size: 15px; } }
   .fig .grid { stroke: var(--rule); stroke-width: 1; }
   .fig .ref { stroke: var(--faint); stroke-width: 1; stroke-dasharray: 3 3; }
   .fig .tick { font: 11px var(--mono); fill: var(--faint); }
@@ -99,13 +100,13 @@
   <div class="byline">Gaurav Agarwal · November 2026</div>
   <div class="stats">
     <div class="stat"><div class="v">85.4</div><div class="t">six-benchmark mean on a laptop CPU (Jev 1.13: 83.9)</div></div>
-    <div class="stat"><div class="v">88.7</div><div class="t">Decido-1-Think (open model), ≥ Jev on all six benchmarks</div></div>
+    <div class="stat"><div class="v">89.2</div><div class="t">Decido-1-Max (open model), ahead of Jev on all six benchmarks</div></div>
     <div class="stat"><div class="v">0%</div><div class="t">answers that change on a repeat call, on CPU (Jev: 4.3%)</div></div>
     <div class="stat"><div class="v">~0.1 s</div><div class="t">one yes/no check on a short message, Decido-1-Fast, laptop CPU</div></div>
   </div>
   <div class="abstract">
     <b class="h">ABSTRACT</b>
-    <p>Most of an AI agent's model calls don't write anything; they decide. Is this action safe? Which team should handle this? Does a person need to see it? Today each of these is a full LLM call. Decido is a family of models built for these judgment calls: given a document and typed questions (yes/no, pick one, or a score), it returns a calibrated probability for every option, read directly from the model instead of generated as text. Decido-1, a 26B mixture-of-experts model (4B active parameters), runs CPU-only on a laptop, gives bit-identical answers on every call, and scores 85.4 on the six-benchmark suite used to evaluate TypeSafe's Jev 1.13 (83.9). Decido-1-Think, the same model with reasoning, scores 88.7 and is ahead of Jev on all six benchmarks; Decido Max, a GPU research system (not released), scores 89.6. All models are trained on public data, with no outputs from Jev or any closed model, and audited for benchmark leakage.</p>
+    <p>Most of an AI agent's model calls don't write anything; they decide. Is this action safe? Which team should handle this? Does a person need to see it? Today each of these is a full LLM call. Decido is a family of models built for these judgment calls: given a document and typed questions (yes/no, pick one, or a score), it returns a calibrated probability for every option, read directly from the model instead of generated as text. Decido-1, a 26B mixture-of-experts model (4B active parameters), runs CPU-only on a laptop, gives bit-identical answers on every call, and scores 85.4 on the six-benchmark suite used to evaluate TypeSafe's Jev 1.13 (83.9). With reasoning, Decido-1-Think scores 88.7 and Decido-1-Max, which distils our 3-model research system (89.57, not released) into one set of weights, scores 89.2; both are ahead of Jev on all six benchmarks. All models are trained on public data, with no outputs from Jev or any closed model, and audited for benchmark leakage.</p>
   </div>
 </header>
 
@@ -113,18 +114,18 @@
   <h2><span class="n">1</span>Results</h2>
   <p>The suite averages six benchmark groups that cover yes/no, multiple-choice and score questions: JevBench, Kev, OpenJev, Nimble, VitaminC and MASSIVE.</p>
   <div class="tw"><table>
-    <thead><tr><th>Benchmark</th><th>Jev 1.13<small>PUBLISHED</small></th><th class="us">Decido-1<small>CPU · 8-BIT</small></th><th class="us">Decido-1-Think<small>GPU · OPEN</small></th><th class="us">Decido-1-Fast<small>CPU · 8-BIT</small></th><th class="us">Decido-1-Ultra<small>CPU · 8-BIT</small></th><th class="us">Decido Max<small>GPU · RESEARCH</small></th></tr></thead>
+    <thead><tr><th>Benchmark</th><th>Jev 1.13<small>PUBLISHED</small></th><th class="us">Decido-1-Max<small>GPU · OPEN</small></th><th class="us">Decido-1-Think<small>GPU · OPEN</small></th><th class="us">Decido-1<small>CPU · 8-BIT</small></th><th class="us">Decido-1-Fast<small>CPU · 8-BIT</small></th><th class="us">Decido-1-Ultra<small>CPU · 8-BIT</small></th></tr></thead>
     <tbody>
-      <tr><td>JevBench</td><td>87.2</td><td class="us">87.6</td><td class="us">94.3</td><td class="us">72.3</td><td class="us">57.7</td><td class="us b">99.3</td></tr>
-      <tr><td>Kev</td><td>85.5</td><td class="us">84.4</td><td class="us">85.6</td><td class="us">72.0</td><td class="us">60.1</td><td class="us b">86.4</td></tr>
-      <tr><td>OpenJev</td><td>73.0</td><td class="us">78.4</td><td class="us">83.6</td><td class="us">62.7</td><td class="us">47.7</td><td class="us b">84.3</td></tr>
-      <tr><td>Nimble</td><td>91.8</td><td class="us">87.2</td><td class="us b">92.6</td><td class="us">58.9</td><td class="us">42.6</td><td class="us b">92.6</td></tr>
-      <tr><td>VitaminC</td><td>78.5</td><td class="us">86.1</td><td class="us b">87.0</td><td class="us">84.5</td><td class="us">80.6</td><td class="us">85.8</td></tr>
-      <tr><td>MASSIVE</td><td>87.1</td><td class="us">88.6</td><td class="us b">89.1</td><td class="us">87.7</td><td class="us">84.3</td><td class="us b">89.1</td></tr>
-      <tr class="mean"><td>Six-benchmark mean</td><td>83.9</td><td class="us">85.4</td><td class="us">88.7</td><td class="us">73.0</td><td class="us">62.2</td><td class="us">89.6</td></tr>
+      <tr><td>JevBench</td><td>87.2</td><td class="us b">96.1</td><td class="us">94.3</td><td class="us">87.6</td><td class="us">72.3</td><td class="us">57.7</td></tr>
+      <tr><td>Kev</td><td>85.5</td><td class="us b">86.1</td><td class="us">85.6</td><td class="us">84.4</td><td class="us">72.0</td><td class="us">60.1</td></tr>
+      <tr><td>OpenJev (18 of 19 tasks)</td><td>73.0</td><td class="us b">84.4</td><td class="us">83.6</td><td class="us">78.4</td><td class="us">62.7</td><td class="us">47.7</td></tr>
+      <tr><td>Nimble</td><td>91.8</td><td class="us b">94.0</td><td class="us">92.6</td><td class="us">87.2</td><td class="us">58.9</td><td class="us">42.6</td></tr>
+      <tr><td>VitaminC</td><td>78.5</td><td class="us">85.6</td><td class="us b">87.0</td><td class="us">86.1</td><td class="us">84.5</td><td class="us">80.6</td></tr>
+      <tr><td>MASSIVE</td><td>87.1</td><td class="us b">89.1</td><td class="us b">89.1</td><td class="us">88.6</td><td class="us">87.7</td><td class="us">84.3</td></tr>
+      <tr class="mean"><td>Six-benchmark mean</td><td>83.9</td><td class="us">89.2</td><td class="us">88.7</td><td class="us">85.4</td><td class="us">73.0</td><td class="us">62.2</td></tr>
     </tbody>
   </table></div>
-  <p class="cap"><b>TABLE 1</b> Accuracy (%). Bold: best per row. Decido-1, Decido-1-Fast and Decido-1-Ultra: the released 8-bit files, five groups measured CPU-only and OpenJev on the same files via llama.cpp on GPU. Decido Max (research system, not released): 95% CI of the mean 88.7–90.5. Decido-1-Think (released): 95% CI 87.7–89.7; its numbers are its outputs inside the Decido Max run, scored on their own. Jev 1.13: figures as published; we have not run Jev on our harness.</p>
+  <p class="cap"><b>TABLE 1</b> Accuracy (%). Bold: best per row. Decido-1, Decido-1-Fast and Decido-1-Ultra: the released 8-bit files, five groups measured CPU-only on a server CPU and OpenJev on the same files via llama.cpp CUDA. Decido-1-Max and Decido-1-Think: bf16 on GPU; 95% CI of the mean 88.3–90.2 and 87.7–89.7 (Decido-1-Think's numbers are its outputs inside the research-system run, scored on their own). The 3-model research system (89.57, not released; 95% CI 88.7–90.5) is not shown; Decido-1-Max is distilled from it and statistically indistinguishable (−0.34 points, 95% CI −0.97 to +0.29). Jev 1.13: figures as published; we have not run Jev on our harness.</p>
 
 <svg class="fig" viewBox="0 0 640 344" role="img" aria-labelledby="fig1cap">
 <line class="grid" x1="210.0" x2="210.0" y1="6" y2="314"/><text class="tick" x="210.0" y="332" text-anchor="middle">50</text>
@@ -134,7 +135,7 @@
 <line class="grid" x1="522.0" x2="522.0" y1="6" y2="314"/><text class="tick" x="522.0" y="332" text-anchor="middle">90</text>
 <line class="grid" x1="600.0" x2="600.0" y1="6" y2="314"/><text class="tick" x="600.0" y="332" text-anchor="middle">100</text>
 <line class="ref" x1="474.0" x2="474.0" y1="6" y2="314"/>
-<g class="ours"><title>Decido Max (GPU, research): 89.57 — Our measurement · GPU research system, not released</title><rect class="hit" x="0" y="6.0" width="640" height="28"/><text class="name" x="196" y="25.0" text-anchor="end">Decido Max (GPU, research)</text><line class="stem" x1="210.0" x2="518.6" y1="20.0" y2="20.0"/><circle cx="518.6" cy="20.0" r="5.5"/><text class="val" x="529.6" y="24.0">89.6</text></g>
+<g class="ours"><title>Decido-1-Max (GPU): 89.23 — Our measurement · bf16, GPU (also runs on a laptop, slow)</title><rect class="hit" x="0" y="6.0" width="640" height="28"/><text class="name" x="196" y="25.0" text-anchor="end">Decido-1-Max (GPU)</text><line class="stem" x1="210.0" x2="516.0" y1="20.0" y2="20.0"/><circle cx="516.0" cy="20.0" r="5.5"/><text class="val" x="527.0" y="24.0">89.2</text></g>
 <g class="ours"><title>Decido-1-Think (GPU): 88.71 — Our measurement · bf16, GPU (also runs on a laptop CPU, slow)</title><rect class="hit" x="0" y="34.0" width="640" height="28"/><text class="name" x="196" y="53.0" text-anchor="end">Decido-1-Think (GPU)</text><line class="stem" x1="210.0" x2="511.9" y1="48.0" y2="48.0"/><circle cx="511.9" cy="48.0" r="5.5"/><text class="val" x="522.9" y="52.0">88.7</text></g>
 <g class="ours"><title>Decido-1 (CPU): 85.38 — Our measurement · 8-bit, CPU</title><rect class="hit" x="0" y="62.0" width="640" height="28"/><text class="name" x="196" y="81.0" text-anchor="end">Decido-1 (CPU)</text><line class="stem" x1="210.0" x2="486.0" y1="76.0" y2="76.0"/><circle cx="486.0" cy="76.0" r="5.5"/><text class="val" x="497.0" y="80.0">85.4</text></g>
 <g class="other"><title>JEV-27B: 84.07 — Self-reported · distilled from Jev outputs</title><rect class="hit" x="0" y="90.0" width="640" height="28"/><text class="name" x="196" y="109.0" text-anchor="end">JEV-27B</text><line class="stem" x1="210.0" x2="475.7" y1="104.0" y2="104.0"/><circle cx="475.7" cy="104.0" r="5.5"/><text class="val" x="486.7" y="108.0">84.1</text></g>
@@ -146,19 +147,19 @@
 <g class="ours"><title>Decido-1-Ultra (CPU): 62.16 — Our measurement · 8-bit, CPU</title><rect class="hit" x="0" y="258.0" width="640" height="28"/><text class="name" x="196" y="277.0" text-anchor="end">Decido-1-Ultra (CPU)</text><line class="stem" x1="210.0" x2="304.8" y1="272.0" y2="272.0"/><circle cx="304.8" cy="272.0" r="5.5"/><text class="val" x="315.8" y="276.0">62.2</text></g>
 <g class="other"><title>Laya: 58.24 — Self-reported</title><rect class="hit" x="0" y="286.0" width="640" height="28"/><text class="name" x="196" y="305.0" text-anchor="end">Laya</text><line class="stem" x1="210.0" x2="274.3" y1="300.0" y2="300.0"/><circle cx="274.3" cy="300.0" r="5.5"/><text class="val" x="285.3" y="304.0">58.2</text></g>
 </svg>
-  <p class="cap" id="fig1cap"><b>FIG. 1</b> Six-benchmark mean of public decision models. Blue: Decido (our measurements). Gray: published or self-reported figures (model cards and the Jev Decision Index, October 2026). Dashed line: Jev 1.13. JEV-27B is distilled from Jev's outputs. Hover a row for its source.</p>
+  <p class="cap" id="fig1cap"><b>FIG. 1</b> Six-benchmark mean of public decision models. Blue: Decido (our measurements). Gray: published or self-reported figures (model cards and the Jev Decision Index, October 2026). Dashed line: Jev 1.13. JEV-27B is distilled from Jev's outputs. Decido-1-XL (87.25, GPU-only, 4× A100) is listed on its model card and not shown in the charts or tables. Hover a row for its source.</p>
 
   <div class="tw" style="margin-top:26px"><table>
-    <thead><tr><th></th><th>Jev 1.13</th><th class="us">Decido-1</th><th class="us">Decido-1-Think</th><th class="us">Decido-1-Fast</th><th class="us">Decido-1-Ultra</th><th class="us">Decido Max</th></tr></thead>
+    <thead><tr><th></th><th>Jev 1.13</th><th class="us">Decido-1-Max</th><th class="us">Decido-1-Think</th><th class="us">Decido-1</th><th class="us">Decido-1-Fast</th><th class="us">Decido-1-Ultra</th></tr></thead>
     <tbody>
-      <tr><td>Runs on</td><td>vendor cloud</td><td class="us">laptop CPU</td><td class="us">GPU · laptop CPU (slow)</td><td class="us">laptop CPU</td><td class="us">laptop CPU</td><td class="us">1× A100 GPU</td></tr>
-      <tr><td>Time (1k-token document, 5 questions)</td><td>~0.3 s (published)</td><td class="us">4.1 s CPU · 1.1 s Mac GPU</td><td class="us">~19 s CPU · ~10 s Mac GPU per question</td><td class="us">0.64 s CPU · 0.30 s Mac GPU</td><td class="us">0.41 s CPU · 0.13 s Mac GPU</td><td class="us">~0.7 GPU-s per question</td></tr>
-      <tr><td>Answers that change on a repeat call</td><td>4.3%</td><td class="us">0% (bit-identical)</td><td class="us">greedy decoding</td><td class="us">0% (bit-identical)</td><td class="us">0% (bit-identical)</td><td class="us">top answer 0 of 50</td></tr>
-      <tr><td>Answers that flip when options are reordered</td><td>14.6%</td><td class="us">4.8%</td><td class="us">4.3%</td><td class="us">6.1%</td><td class="us">8.8%</td><td class="us">1.4–4.1%</td></tr>
-      <tr><td>Brier score ≤ Jev (5 checks)</td><td>—</td><td class="us">4 of 5</td><td class="us">4 of 5</td><td class="us">2 of 5</td><td class="us">1 of 5</td><td class="us">5 of 5</td></tr>
+      <tr><td>Runs on</td><td>vendor cloud</td><td class="us">laptop (slow) · GPU weights soon</td><td class="us">laptop (slow) · GPU</td><td class="us">laptop CPU</td><td class="us">laptop CPU</td><td class="us">laptop CPU</td></tr>
+      <tr><td>Time (1k-token document, 5 questions)</td><td>~0.3 s (published)</td><td class="us">~28 s CPU · ~11 s Mac GPU per question</td><td class="us">~19 s CPU · ~10 s Mac GPU per question</td><td class="us">4.1 s CPU · 1.1 s Mac GPU</td><td class="us">0.64 s CPU · 0.30 s Mac GPU</td><td class="us">0.41 s CPU · 0.13 s Mac GPU</td></tr>
+      <tr><td>Answers that change on a repeat call</td><td>4.3%</td><td class="us">0% on CPU and Mac GPU</td><td class="us">0% on CPU and Mac GPU</td><td class="us">0% (bit-identical)</td><td class="us">0% (bit-identical)</td><td class="us">0% (bit-identical)</td></tr>
+      <tr><td>Answers that flip when options are reordered</td><td>14.6%</td><td class="us">2.9%</td><td class="us">4.3%</td><td class="us">4.8%</td><td class="us">6.1%</td><td class="us">8.8%</td></tr>
+      <tr><td>Brier score ≤ Jev (5 checks)</td><td>—</td><td class="us">5 of 5</td><td class="us">4 of 5</td><td class="us">4 of 5</td><td class="us">2 of 5</td><td class="us">1 of 5</td></tr>
     </tbody>
   </table></div>
-  <p class="cap"><b>TABLE 2</b> Reliability and cost. Timings on an Apple M4 Pro, p50 (CPU: 10 threads; Mac GPU: Metal, the default on a Mac). Jev's latency, repeat-call and flip rates are its published figures; its flip and repeat-call rates were measured with 64 options, ours on each benchmark's own option counts. Decido Max's probabilities vary slightly between runs (GPU numerics); its top answer did not change.</p>
+  <p class="cap"><b>TABLE 2</b> Reliability and cost. Timings on an Apple M4 Pro, p50 (CPU: 10 threads; Mac GPU: Metal, the default on a Mac). Jev's latency, repeat-call and flip rates are its published figures; its flip and repeat-call rates were measured with 64 options, ours on each benchmark's own option counts. On a GPU server (vLLM), batch-level numerics can change a greedy reasoning path: Decido-1-Max's top answer changed on 8% of 50 repeated requests there; the CPU and Mac GPU runtimes are deterministic.</p>
 </section>
 
 <section id="example">
@@ -188,19 +189,20 @@ urgency    score   "How urgent is it?"          → medium     0.40   low 0.36 �
     <li><b>Calibration.</b> Temperatures per question type, fitted on held-out tasks (tasks not seen in training), which transfer better than temperatures fitted on seen tasks.</li>
     <li><b>Deterministic runtime.</b> An 8-bit GGUF file on llama.cpp with a fixed-size chunked prefill, so outputs are bit-identical regardless of thread timing or previous requests.</li>
     <li><b>Decido-1-Fast.</b> Qwen3-1.7B fully fine-tuned on one million questions labelled 0.5 gold + 0.5 Decido-1.</li>
-    <li><b>Decido-1-Think (released).</b> Decido-1 with reasoning (greedy, up to 1,024 tokens), trained with hybrid STaR (below). 88.7 on GPU; on a laptop CPU it agrees with the GPU run on 59 of 60 sampled questions at ~19 s per question.</li>
+    <li><b>Decido-1-Think (released).</b> Decido-1 with reasoning (greedy, up to 1,024 tokens), trained with hybrid STaR: on its own rationales, including wrong ones, with gold-anchored answers. 88.7 on GPU; on a laptop CPU it agrees with the GPU run on 59 of 60 sampled questions at ~19 s per question.</li>
     <li><b>Decido-1-Ultra (released).</b> Qwen3-0.6B, trained like Decido-1-Fast: 62.2, 0.41 s for five questions on a laptop CPU.</li>
-    <li><b>Decido Max (research system, not released).</b> A per-question gated mixture of three components: Decido-1; the same model with reasoning, trained on its own rationales (including wrong ones) with gold-anchored answers, which we call hybrid STaR; and Qwen3.8-27B with reasoning, zero-shot. The final configuration was fixed by a pre-registered rule on development data before any benchmark run.</li>
-    <li><b>Data hygiene.</b> Public datasets only; no Jev or closed-model outputs; no test splits; every training set gated for exact, n-gram and structural overlap with the benchmarks.</li>
+    <li><b>Research system (3 models, not released).</b> A per-question gated mixture of Decido-1, Decido-1-Think and Qwen3.8-27B with reasoning, zero-shot: 89.57 on GPU. The configuration was fixed by a pre-registered rule on development data before any benchmark run.</li>
+    <li><b>Decido-1-Max (released).</b> The research system distilled into one model: starting from Decido-1-Think, the answer step was trained on its own greedy reasoning for 100k questions with 0.5 gold-anchored + 0.5 research-system targets; the checkpoint was chosen by a pre-registered dev rule. 89.2 on GPU, statistically indistinguishable from the research system (−0.34 points, 95% CI −0.97 to +0.29). On a Mac it chose the same answer as the GPU run on 101 of 101 sampled questions (~11 s per question on the Mac GPU).</li>
+    <li><b>Data hygiene.</b> Public datasets only; no Jev or closed-model outputs; no test splits; every training set gated for exact, n-gram and structural overlap with the benchmarks. Exceptions are disclosed on the model cards (Decido-1-XL's data includes 8 gate-passing rows derived from eval splits).</li>
   </ul>
 </section>
 
 <section id="limitations">
   <h2><span class="n">4</span>Limitations</h2>
   <ul>
-    <li>Decido-1 is trained on the public train splits of the benchmarks' task families. Without them it scores 82.0, below Jev. Decido Max's zero-shot Qwen component alone, with no task-specific training, scores 85.8.</li>
-    <li>Jev's numbers are its published figures; we have not run Jev on our harness. Our 1.5-point margin on CPU is close to Jev's reported run-to-run spread (up to 1.6).</li>
-    <li>Decido Max is GPU-only, slower and not bit-identical. Its OpenJev score covers 18 of 19 tasks (one task's candidate pool is unpublished). On JevBench (99.3) the zero-shot Qwen component alone scores the same; exposure of the public items during Qwen's pretraining can't be ruled out.</li>
+    <li>Decido-1 is trained on the public train splits of the benchmarks' task families. Without them it scores 82.0, below Jev. Every Decido model shares this dependence: Decido-1-Think and Decido-1-Max build on Decido-1, Decido-1-Fast and Decido-1-Ultra are distilled from it, and Decido-1-XL was trained with in-domain rows (no ablation was run for it); the research system's zero-shot Qwen component alone, with no task-specific training, scores 85.8.</li>
+    <li>Jev's numbers are its published figures; we have not run Jev on our harness. All Decido OpenJev scores cover 18 of its 19 tasks (one task's candidate pool is unpublished); Jev's 72.96 is a 19-task mean. Our 1.5-point margin on CPU is close to Jev's reported run-to-run spread (up to 1.6).</li>
+    <li>Decido-1-Max and Decido-1-Think write out their reasoning before answering, so they are slow on a laptop (~10–28 s per question) and not bit-identical across batches on a GPU server. On JevBench the research system's zero-shot Qwen component alone scores 99.3, and Decido-1-Max (96.1) is partly trained on the research system's answers; exposure of the public items during Qwen's pretraining can't be ruled out.</li>
     <li>Calibration is measured on benchmark tasks. It is not yet measured on agent traces such as tool calls or shell commands; validate thresholds on your own data before automating.</li>
   </ul>
 </section>
@@ -208,7 +210,7 @@ urgency    score   "How urgent is it?"          → medium     0.40   low 0.36 �
 <section id="contact">
   <h2><span class="n">5</span>Work with us</h2>
   <p>We're working with a small number of design partners building AI agents. We train Decido on your own past decisions, show you the accuracy before anything ships, and you run it on your own servers.</p>
-  <p>The models and the runtime are open (Apache-2.0): <code>pip install decido-ai</code>.</p>
+  <p>The models and the runtime are open (Apache-2.0; Decido-1-XL: MIT): <code>pip install decido-ai</code>.</p>
   <p><a class="cta" href="mailto:founders@getdecido.ai">founders@getdecido.ai</a><a class="cta alt" href="https://huggingface.co/collections/decido-ai/decido-1-6aed66fd09af05c057795ca8">Models on Hugging Face ↗</a></p>
 </section>
 </main>

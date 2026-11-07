@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Decido — open, calibrated decision models for AI agents</title>
-<meta name="description" content="Decido answers an AI agent's yes/no, choice and score questions with a calibrated probability for every option. Five open models, from 0.4 s on a laptop CPU to 88.7 on the six-benchmark suite (Jev 1.13: 83.9). pip install decido-ai.">
+<meta name="description" content="Decido answers an AI agent's yes/no, choice and score questions with a calibrated probability for every option. Six open models, from 0.4 s on a laptop CPU to 89.2 on the six-benchmark suite (Jev 1.13: 83.9). pip install decido-ai.">
 <link rel="canonical" href="https://getdecido.ai/">
 <meta property="og:title" content="Decido — open, calibrated decision models for AI agents">
-<meta property="og:description" content="Open models: 85.4 on a laptop CPU and 88.7 with reasoning, vs 83.9 for Jev 1.13. Deterministic, private, calibrated. pip install decido-ai.">
+<meta property="og:description" content="Open models: 85.4 on a laptop CPU and 89.2 with reasoning (Decido-1-Max), vs 83.9 for Jev 1.13. Deterministic, private, calibrated. pip install decido-ai.">
 <meta property="og:url" content="https://getdecido.ai/">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect x='4' y='6' width='32' height='30' rx='10' fill='%232a78d6' stroke='%231c1b19' stroke-width='3'/%3E%3Ccircle cx='15' cy='19' r='4.5' fill='white'/%3E%3Ccircle cx='26' cy='19' r='4.5' fill='white'/%3E%3Ccircle cx='16' cy='20' r='2'/%3E%3Ccircle cx='27' cy='20' r='2'/%3E%3C/svg%3E">
 <style>
@@ -63,6 +63,7 @@
   figure { margin: 0; }
   .figcard { background: var(--card); border: 2px solid var(--ink); border-radius: 20px; padding: 32px 38px 24px; box-shadow: 6px 6px 0 var(--shadow); }
   .figcard.hero-fig { margin: 50px auto 0; max-width: 940px; }
+  @media (max-width: 600px) { .figcard { padding: 18px 16px; overflow-x: auto; } .figcard .chart { min-width: 440px; } .figcard.hero-fig .chart { min-width: 620px; } .chart .tk { font-size: 13px; } .chart .sb { font-size: 13.5px; } }
   figcaption { font-size: 14px; color: var(--muted); margin-top: 16px; line-height: 1.5; }
   figcaption b { font: 700 12px var(--mono); letter-spacing: .05em; color: var(--ink); margin-right: 6px; }
   .chart { width: 100%; height: auto; display: block; overflow: visible; font-family: var(--sans); }
@@ -142,7 +143,7 @@
   @media (max-width: 900px) { .models { grid-template-columns: 1fr; } }
   .model { background: var(--card); border: 2px solid var(--ink); border-radius: 20px; padding: 26px; display: flex; flex-direction: column; box-shadow: 5px 5px 0 var(--shadow); }
   .model .k { align-self: flex-start; font: 700 11.5px var(--mono); letter-spacing: .06em; text-transform: uppercase; border: 2px solid var(--ink); border-radius: 999px; padding: 3px 10px; }
-  .model:nth-child(1) .k { background: var(--mint); } .model:nth-child(2) .k { background: var(--yellow); } .model:nth-child(3) .k { background: var(--blue); } .model:nth-child(4) .k { background: var(--pink); } .model:nth-child(5) .k { background: var(--panel); }
+  .model:nth-child(1) .k { background: var(--mint); } .model:nth-child(2) .k { background: var(--yellow); } .model:nth-child(3) .k { background: var(--blue); } .model:nth-child(4) .k { background: var(--pink); } .model:nth-child(5) .k { background: var(--accent); color: #fff; } .model:nth-child(6) .k { background: var(--panel); }
   .model.soon { opacity: .75; border-style: dashed; }
   .install { display: inline-block; margin-top: 26px; font: 600 15px var(--mono); background: var(--card); border: 2px solid var(--ink); border-radius: 12px; padding: 9px 16px; box-shadow: 3px 3px 0 var(--shadow); user-select: all; }
   .research-note { margin-top: 26px; font-size: 15px; color: var(--muted); }
@@ -209,8 +210,8 @@
 </div>
 
 <figure class="figcard hero-fig">
-<svg class="chart" viewBox="0 0 880 316" role="img" aria-labelledby="f1t"><line class="g" x1="190.0" x2="190.0" y1="8" y2="288"/><text class="tk" x="190.0" y="308" text-anchor="middle">0</text><line class="g" x1="315.0" x2="315.0" y1="8" y2="288"/><text class="tk" x="315.0" y="308" text-anchor="middle">25</text><line class="g" x1="440.0" x2="440.0" y1="8" y2="288"/><text class="tk" x="440.0" y="308" text-anchor="middle">50</text><line class="g" x1="565.0" x2="565.0" y1="8" y2="288"/><text class="tk" x="565.0" y="308" text-anchor="middle">75</text><line class="g" x1="690.0" x2="690.0" y1="8" y2="288"/><text class="tk" x="690.0" y="308" text-anchor="middle">100</text><g class="us"><title>Decido-1-Think (GPU · laptop CPU): 88.71</title><text class="nm" x="0" y="35.0">Decido-1-Think</text><text class="sb" x="0" y="52.0">GPU · laptop CPU</text><path class="b" d="M190.0,24.0h438.5a5,5 0 0 1 5,5v14a5,5 0 0 1 -5,5h-438.5z"/><text class="vl" x="645.5" y="41.0">88.7</text></g><g class="us"><title>Decido-1 (laptop CPU): 85.38</title><text class="nm" x="0" y="91.0">Decido-1</text><text class="sb" x="0" y="108.0">laptop CPU</text><path class="b" d="M190.0,80.0h421.9a5,5 0 0 1 5,5v14a5,5 0 0 1 -5,5h-421.9z"/><text class="vl" x="628.9" y="97.0">85.4</text></g><g class="ref"><title>Jev 1.13 (cloud API · published): 83.85</title><text class="nm" x="0" y="147.0">Jev 1.13</text><text class="sb" x="0" y="164.0">cloud API · published</text><path class="b" d="M190.0,136.0h414.2a5,5 0 0 1 5,5v14a5,5 0 0 1 -5,5h-414.2z"/><text class="vl" x="621.2" y="153.0">83.9</text></g><g class="us"><title>Decido-1-Fast (laptop CPU): 73.01</title><text class="nm" x="0" y="203.0">Decido-1-Fast</text><text class="sb" x="0" y="220.0">laptop CPU</text><path class="b" d="M190.0,192.0h360.1a5,5 0 0 1 5,5v14a5,5 0 0 1 -5,5h-360.1z"/><text class="vl" x="567.0" y="209.0">73.0</text></g><g class="us"><title>Decido-1-Ultra (laptop CPU): 62.16</title><text class="nm" x="0" y="259.0">Decido-1-Ultra</text><text class="sb" x="0" y="276.0">laptop CPU</text><path class="b" d="M190.0,248.0h305.8a5,5 0 0 1 5,5v14a5,5 0 0 1 -5,5h-305.8z"/><text class="vl" x="512.8" y="265.0">62.2</text></g><g class="note"><text x="726" y="78">on a laptop.</text><text x="726" y="100">no GPU!</text><path class="arr" d="M720,86 C704,84 690,86 676,92"/><path class="ah" d="M676,92 l9,-6 M676,92 l8,6"/></g></svg>
-  <figcaption id="f1t"><b>FIG. 1</b> Six-benchmark mean (JevBench, Kev, OpenJev, Nimble, VitaminC, MASSIVE), the suite used to evaluate Jev 1.13. Decido-1, Fast and Ultra measured CPU-only on a laptop; Decido-1-Think measured on GPU (it also runs on a laptop CPU, ~19 s per question).</figcaption>
+<svg class="chart" viewBox="0 0 880 388" role="img" aria-labelledby="f1t"><line class="g" x1="190.0" x2="190.0" y1="8" y2="360"/><text class="tk" x="190.0" y="380" text-anchor="middle">0</text><line class="g" x1="315.0" x2="315.0" y1="8" y2="360"/><text class="tk" x="315.0" y="380" text-anchor="middle">25</text><line class="g" x1="440.0" x2="440.0" y1="8" y2="360"/><text class="tk" x="440.0" y="380" text-anchor="middle">50</text><line class="g" x1="565.0" x2="565.0" y1="8" y2="360"/><text class="tk" x="565.0" y="380" text-anchor="middle">75</text><line class="g" x1="690.0" x2="690.0" y1="8" y2="360"/><text class="tk" x="690.0" y="380" text-anchor="middle">100</text><g class="us"><title>Decido-1-Max (laptop (slow) · GPU weights soon): 89.23</title><text class="nm" x="0" y="35.0">Decido-1-Max</text><text class="sb" x="0" y="52.0">laptop (slow) · GPU weights soon</text><path class="b" d="M190.0,24.0h441.2a5,5 0 0 1 5,5v14a5,5 0 0 1 -5,5h-441.2z"/><text class="vl" x="648.2" y="41.0">89.2</text></g><g class="us"><title>Decido-1-Think (laptop (slow) · GPU): 88.71</title><text class="nm" x="0" y="91.0">Decido-1-Think</text><text class="sb" x="0" y="108.0">laptop (slow) · GPU</text><path class="b" d="M190.0,80.0h438.5a5,5 0 0 1 5,5v14a5,5 0 0 1 -5,5h-438.5z"/><text class="vl" x="645.5" y="97.0">88.7</text></g><g class="us"><title>Decido-1 (laptop CPU): 85.38</title><text class="nm" x="0" y="147.0">Decido-1</text><text class="sb" x="0" y="164.0">laptop CPU</text><path class="b" d="M190.0,136.0h421.9a5,5 0 0 1 5,5v14a5,5 0 0 1 -5,5h-421.9z"/><text class="vl" x="628.9" y="153.0">85.4</text></g><g class="ref"><title>Jev 1.13 (cloud API · published): 83.85</title><text class="nm" x="0" y="203.0">Jev 1.13</text><text class="sb" x="0" y="220.0">cloud API · published</text><path class="b" d="M190.0,192.0h414.2a5,5 0 0 1 5,5v14a5,5 0 0 1 -5,5h-414.2z"/><text class="vl" x="621.2" y="209.0">83.9</text></g><g class="us"><title>Decido-1-Fast (laptop CPU): 73.01</title><text class="nm" x="0" y="259.0">Decido-1-Fast</text><text class="sb" x="0" y="276.0">laptop CPU</text><path class="b" d="M190.0,248.0h360.1a5,5 0 0 1 5,5v14a5,5 0 0 1 -5,5h-360.1z"/><text class="vl" x="567.0" y="265.0">73.0</text></g><g class="us"><title>Decido-1-Ultra (laptop CPU): 62.16</title><text class="nm" x="0" y="315.0">Decido-1-Ultra</text><text class="sb" x="0" y="332.0">laptop CPU</text><path class="b" d="M190.0,304.0h305.8a5,5 0 0 1 5,5v14a5,5 0 0 1 -5,5h-305.8z"/><text class="vl" x="512.8" y="321.0">62.2</text></g><g class="note"><text x="726" y="134">on a laptop.</text><text x="726" y="156">no GPU!</text><path class="arr" d="M720,142 C704,140 690,142 676,148"/><path class="ah" d="M676,148 l9,-6 M676,148 l8,6"/></g></svg>
+  <figcaption id="f1t"><b>FIG. 1</b> Six-benchmark mean (JevBench, Kev, OpenJev, Nimble, VitaminC, MASSIVE), the suite used to evaluate Jev 1.13. Decido-1, Fast and Ultra: the released 8-bit files, five groups measured CPU-only on a server CPU and OpenJev on the same files via llama.cpp CUDA. Decido-1-Max and Decido-1-Think measured on GPU (both also run on a laptop, ~10–11 s per question on a Mac GPU). Decido OpenJev scores cover 18 of its 19 tasks (one candidate pool is unpublished); Jev's is a 19-task mean. Decido-1-XL (87.3, GPU-only, 4× A100) is listed on its model card and not shown here.</figcaption>
 </figure>
 
 <div class="highlights" id="results">
@@ -224,13 +225,13 @@
     <div>
       <div class="kicker">Accuracy</div>
       <h2>Ahead of the leading decision API, <span class="hl">without a GPU</span>.</h2>
-      <p>Decido-1 is a mixture-of-experts model with 4B active parameters, quantized to 8 bits. It scores higher than Jev 1.13 on four of the six benchmarks and on the mean. Decido-1-Think, which reasons before it answers, reaches 88.7 and is ahead on all six.</p>
-      <p>Every model is trained on public data, with no outputs from Jev or any closed model, and every training set is audited for overlap with the benchmarks.</p>
+      <p>Decido-1 is a mixture-of-experts model with 4B active parameters, quantized to 8 bits. It scores higher than Jev 1.13 on four of the six benchmarks and on the mean. Decido-1-Max, which reasons before it answers, reaches <b>89.2</b> and is ahead on all six, in one set of open weights.</p>
+      <p>Every model is trained on public data, with no outputs from Jev or any closed model, and every training set is audited for overlap with the benchmarks (exceptions, such as 8 gate-passing rows in Decido-1-XL's data derived from eval splits, are disclosed on the model cards).</p>
       <a class="more" href="research.html#results">Per-benchmark results →</a>
     </div>
     <figure class="figcard">
 <svg class="chart" viewBox="0 0 560 294" role="img" aria-labelledby="f2t"><g class="lg"><circle class="us" cx="96" cy="10" r="6"/><text x="108" y="14">Decido-1 (laptop CPU)</text><circle class="ref" cx="292" cy="10" r="6"/><text x="304" y="14">Jev 1.13 (published)</text></g><line class="g" x1="96.0" x2="96.0" y1="30" y2="268"/><text class="tk" x="96.0" y="286" text-anchor="middle">70</text><line class="g" x1="184.8" x2="184.8" y1="30" y2="268"/><text class="tk" x="184.8" y="286" text-anchor="middle">75</text><line class="g" x1="273.6" x2="273.6" y1="30" y2="268"/><text class="tk" x="273.6" y="286" text-anchor="middle">80</text><line class="g" x1="362.4" x2="362.4" y1="30" y2="268"/><text class="tk" x="362.4" y="286" text-anchor="middle">85</text><line class="g" x1="451.2" x2="451.2" y1="30" y2="268"/><text class="tk" x="451.2" y="286" text-anchor="middle">90</text><line class="g" x1="540.0" x2="540.0" y1="30" y2="268"/><text class="tk" x="540.0" y="286" text-anchor="middle">95</text><g><title>JevBench: Decido-1 87.61 · Jev 1.13 87.18</title><rect class="hit" x="0" y="30.0" width="560" height="34"/><text class="nm" x="0" y="52.0">JevBench</text><line class="cn" x1="401.1" x2="408.8" y1="47.0" y2="47.0"/><circle class="ref" cx="401.1" cy="47.0" r="7"/><circle class="us" cx="408.8" cy="47.0" r="7"/></g><g><title>Kev: Decido-1 84.35 · Jev 1.13 85.52</title><rect class="hit" x="0" y="64.0" width="560" height="34"/><text class="nm" x="0" y="86.0">Kev</text><line class="cn" x1="350.9" x2="371.6" y1="81.0" y2="81.0"/><circle class="ref" cx="371.6" cy="81.0" r="7"/><circle class="us" cx="350.9" cy="81.0" r="7"/></g><g><title>OpenJev: Decido-1 78.37 · Jev 1.13 72.96</title><rect class="hit" x="0" y="98.0" width="560" height="34"/><text class="nm" x="0" y="120.0">OpenJev</text><line class="cn" x1="148.6" x2="244.7" y1="115.0" y2="115.0"/><circle class="ref" cx="148.6" cy="115.0" r="7"/><circle class="us" cx="244.7" cy="115.0" r="7"/></g><g><title>Nimble: Decido-1 87.23 · Jev 1.13 91.84</title><rect class="hit" x="0" y="132.0" width="560" height="34"/><text class="nm" x="0" y="154.0">Nimble</text><line class="cn" x1="402.0" x2="483.9" y1="149.0" y2="149.0"/><circle class="ref" cx="483.9" cy="149.0" r="7"/><circle class="us" cx="402.0" cy="149.0" r="7"/></g><g><title>VitaminC: Decido-1 86.14 · Jev 1.13 78.46</title><rect class="hit" x="0" y="166.0" width="560" height="34"/><text class="nm" x="0" y="188.0">VitaminC</text><line class="cn" x1="246.2" x2="382.6" y1="183.0" y2="183.0"/><circle class="ref" cx="246.2" cy="183.0" r="7"/><circle class="us" cx="382.6" cy="183.0" r="7"/></g><g><title>MASSIVE: Decido-1 88.57 · Jev 1.13 87.14</title><rect class="hit" x="0" y="200.0" width="560" height="34"/><text class="nm" x="0" y="222.0">MASSIVE</text><line class="cn" x1="400.4" x2="425.8" y1="217.0" y2="217.0"/><circle class="ref" cx="400.4" cy="217.0" r="7"/><circle class="us" cx="425.8" cy="217.0" r="7"/></g><line class="g" x1="0" x2="540" y1="234.0" y2="234.0"/><g><title>Mean: Decido-1 85.38 · Jev 1.13 83.85</title><rect class="hit" x="0" y="234.0" width="560" height="34"/><text class="nm bd" x="0" y="256.0">Mean</text><line class="cn" x1="342.0" x2="369.1" y1="251.0" y2="251.0"/><circle class="ref" cx="342.0" cy="251.0" r="7"/><circle class="us" cx="369.1" cy="251.0" r="7"/></g></svg>
-      <figcaption id="f2t"><b>FIG. 2</b> Accuracy (%) per benchmark. Jev 1.13 figures are as published; we have not run Jev on our harness.</figcaption>
+      <figcaption id="f2t"><b>FIG. 2</b> Accuracy (%) per benchmark. Jev 1.13 figures are as published; we have not run Jev on our harness. Decido is trained on the public train splits of these benchmarks' task families; without them Decido-1 scores 82.0, below Jev.</figcaption>
     </figure>
   </div>
 </section>
@@ -240,7 +241,7 @@
     <div>
       <div class="kicker">Speed</div>
       <h2>A decision in <span class="hl">a tenth of a second</span>, on a laptop.</h2>
-      <p>Decido reads the answer straight from the model's probabilities: one pass over the text, a single token per option, nothing generated and nothing to parse. That makes it fast enough to check every step of an agent loop.</p>
+      <p>Decido-1, Fast and Ultra read the answer straight from the model's probabilities: one pass over the text, a single token per option, nothing generated and nothing to parse. That makes them fast enough to check every step of an agent loop. Decido-1-Max and Decido-1-Think reason first, for the hardest calls.</p>
       <div class="big">0 bytes<small>sent to anyone's cloud. Decido runs on your laptop, server or air-gapped machine, with no per-call fees.</small></div>
     </div>
     <figure class="figcard">
@@ -252,10 +253,11 @@
           <tr class="us"><td>Decido-1-Fast · 5 questions<small>1,000-token document, p50</small></td><td class="v">0.64 s</td><td class="v">0.30 s</td></tr>
           <tr class="us"><td>Decido-1 · 5 questions<small>1,000-token document, p50</small></td><td class="v">4.1 s</td><td class="v">1.1 s</td></tr>
           <tr class="us"><td>Decido-1-Think · per question<small>reasons first; over benchmark questions</small></td><td class="v">~19 s</td><td class="v">~10 s</td></tr>
+          <tr class="us"><td>Decido-1-Max · per question<small>reasons first; over benchmark questions</small></td><td class="v">~28 s</td><td class="v">~11 s</td></tr>
           <tr><td>Jev 1.13 · cloud API<small>published latency</small></td><td class="v" colspan="2">~0.3 s</td></tr>
         </tbody>
       </table>
-      <figcaption><b>TABLE 1</b> Wall-clock time. On a Mac, Decido uses the GPU (Metal) by default; results match the CPU on 98.5–99.5% of questions and are identical on every call. The document is processed once per request; each extra question adds only its own tokens.</figcaption>
+      <figcaption><b>TABLE 1</b> Wall-clock time. On a Mac, Decido uses the GPU (Metal) by default and results are identical on every call. Decido-1, Fast and Ultra on Metal match the CPU on 98.5–99.5% of questions; Decido-1-Max and Decido-1-Think on Metal chose the same answer as the GPU run on 101 of 101 and 20 of 20 sampled questions. The document is processed once per request; each extra question adds only its own tokens.</figcaption>
     </figure>
   </div>
 </section>
@@ -302,15 +304,17 @@ r = m.decide(ticket, {
 <span class="c"># r["refund"] -> {"yes": 0.98, "no": 0.02}    r["team"] -> {"billing": 0.95, "technical": 0.02, "sales": 0.03}</span>
 
 if r[<span class="s">"refund"</span>][<span class="s">"yes"</span>] &gt;= 0.95:
-    issue_refund()                                   <span class="c"># sure: act</span>
+    issue_refund()                                   <span class="c"># sure: act (your own functions)</span>
 else:
     send_to_human()                                  <span class="c"># unsure: ask a person</span></pre>
-<pre class="p2">decido models                                         <span class="c"># the five models, scores and latency</span>
+<pre class="p2">decido models                                         <span class="c"># the six models, scores and latency</span>
 decido run decido-ai/decido-1-fast-1.7b <span class="s">"Hi, I was charged twice for my March invoice."</span> \
     -q refund=<span class="s">"Is the customer asking for a refund?"</span> \
     -q team=<span class="s">"Which team?|billing,technical,sales"</span> \
     -q urgency=<span class="s">"How urgent?|scale:low,medium,high"</span></pre>
-<pre class="p3">decido serve decido-ai/decido-1-fast-1.7b --port 8080    <span class="c"># local API, Jev 1.13 wire format</span>
+<pre class="p3">decido serve decido-ai/decido-1-fast-1.7b --port 8080    <span class="c"># local API, Jev 1.13 wire format; keeps running</span>
+
+<span class="c"># in another terminal:</span>
 
 curl localhost:8080/v1/systemone -H <span class="s">"content-type: application/json"</span> -d <span class="s">'{
   "state": "Hi, I was charged twice for my March invoice. Can you refund the duplicate?",
@@ -326,12 +330,12 @@ curl localhost:8080/v1/systemone -H <span class="s">"content-type: application/j
 # Existing Jev SDK clients work unchanged: TYPESAFE_BASE_URL=http://127.0.0.1:8080</span></pre>
     </div>
   </div>
-  <div class="avail">Open source (Apache-2.0): <a href="https://pypi.org/project/decido-ai/">decido-ai on PyPI</a> · <a href="https://huggingface.co/collections/decido-ai/decido-1-6aed66fd09af05c057795ca8">models on Hugging Face</a>. One <code>pip install</code> on Mac (Apple Silicon) and Linux: nothing to compile. On a GPU: <code>pip install "decido-ai[gpu]"</code> and <code>device="cuda"</code>.</div>
+  <div class="avail">Open source (Apache-2.0; Decido-1-XL: MIT): <a href="https://pypi.org/project/decido-ai/">decido-ai on PyPI</a> · <a href="https://huggingface.co/collections/decido-ai/decido-1-6aed66fd09af05c057795ca8">models on Hugging Face</a>. One <code>pip install</code> on Mac (Apple Silicon) and Linux x86_64: nothing to compile. On a GPU: <code>pip install "decido-ai[gpu]"</code> and <code>device="cuda"</code> (Decido-1-Max: CPU and Mac GPU for now; GPU weights soon).</div>
 </section>
 
 <section id="models">
   <div class="kicker">Models</div>
-  <h2>Five open models, one interface.</h2>
+  <h2>Six open models, one interface.</h2>
   <div class="models">
     <div class="model">
       <div class="k">Fastest</div><h3>Decido-1-Ultra</h3><div class="d">0.6B parameters. The smallest and fastest, for very high volume.</div>
@@ -349,9 +353,14 @@ curl localhost:8080/v1/systemone -H <span class="s">"content-type: application/j
       <div class="foot"><a href="https://huggingface.co/decido-ai/decido-1-26b-a4b">Open weights ↗</a></div>
     </div>
     <div class="model">
-      <div class="k">Most accurate</div><h3>Decido-1-Think</h3><div class="d">Decido-1 that reasons before answering. Ahead of Jev 1.13 on all six benchmarks.</div>
-      <dl><dt>Benchmark mean</dt><dd>88.7</dd><dt>Per question</dt><dd>~19 s CPU · ~10 s Mac GPU</dd><dt>Hardware</dt><dd>laptop · ~30 GB RAM · GPU</dd><dt>Deterministic</dt><dd>greedy decoding</dd></dl>
+      <div class="k">Reasons first</div><h3>Decido-1-Think</h3><div class="d">Decido-1 that reasons before answering. Ahead of Jev 1.13 on all six benchmarks.</div>
+      <dl><dt>Benchmark mean</dt><dd>88.7</dd><dt>Per question</dt><dd>~19 s CPU · ~10 s Mac GPU</dd><dt>Hardware</dt><dd>laptop · ~30 GB RAM · GPU</dd><dt>Deterministic</dt><dd>0% on CPU and Mac GPU</dd></dl>
       <div class="foot"><a href="https://huggingface.co/decido-ai/decido-1-think-26b-a4b">Open weights ↗</a></div>
+    </div>
+    <div class="model">
+      <div class="k">Most accurate</div><h3>Decido-1-Max</h3><div class="d">Our 3-model research system distilled into one model that reasons before answering. Ahead of Jev 1.13 on all six benchmarks.</div>
+      <dl><dt>Benchmark mean</dt><dd>89.2</dd><dt>Per question</dt><dd>~28 s CPU · ~11 s Mac GPU</dd><dt>Hardware</dt><dd>laptop · ~30 GB RAM (GPU weights soon)</dd><dt>Calibration</dt><dd>Brier ≤ Jev on 5/5</dd></dl>
+      <div class="foot"><a href="https://huggingface.co/decido-ai/decido-1-max-26b-a4b">Open weights ↗</a></div>
     </div>
     <div class="model">
       <div class="k">Largest</div><h3>Decido-1-XL</h3><div class="d">The Decido recipe on DeepSeek-V4-Flash, for GPU servers.</div>
@@ -359,7 +368,7 @@ curl localhost:8080/v1/systemone -H <span class="s">"content-type: application/j
       <div class="foot"><a href="https://huggingface.co/decido-ai/decido-1-xl">Open weights ↗</a></div>
     </div>
   </div>
-  <p class="research-note">Research: <b>Decido Max</b>, a gated mixture of Decido-1, Decido-1-Think and an open 27B reasoning model, reaches 89.6 on GPU. It is a research system, not a released model — see the <a href="research.html">technical report</a>.</p>
+  <p class="research-note">Research: Decido-1-Max is distilled from the 3-model research system (89.57, not released), a gated mixture of Decido-1, Decido-1-Think and an open 27B reasoning model, and is statistically indistinguishable from it (−0.34 points, 95% CI −0.97 to +0.29) — see the <a href="research.html">technical report</a>.</p>
 </section>
 
 <section id="research">
