@@ -293,7 +293,7 @@
 from decido import Decido
 
 ticket = <span class="s">"Hi, I was charged twice for my March invoice. Can you refund the duplicate?"</span>
-m = Decido(<span class="s">"decido-ai/decido-1-fast-1.7b"</span>)        <span class="c"># downloads once, then runs on your CPU</span>
+m = Decido(<span class="s">"decido-ai/decido-1-fast-1.7b"</span>)        <span class="c"># downloads once, then runs locally</span>
 r = m.decide(ticket, {
     <span class="s">"refund"</span>:  <span class="s">"Is the customer asking for a refund?"</span>,
     <span class="s">"team"</span>:    {<span class="s">"q"</span>: <span class="s">"Which team?"</span>, <span class="s">"options"</span>: [<span class="s">"billing"</span>, <span class="s">"technical"</span>, <span class="s">"sales"</span>]},
@@ -326,7 +326,7 @@ curl localhost:8080/v1/systemone -H <span class="s">"content-type: application/j
 # Existing Jev SDK clients work unchanged: TYPESAFE_BASE_URL=http://127.0.0.1:8080</span></pre>
     </div>
   </div>
-  <div class="avail">Open source (Apache-2.0): <a href="https://pypi.org/project/decido-ai/">decido-ai on PyPI</a> · <a href="https://huggingface.co/collections/decido-ai/decido-1-6aed66fd09af05c057795ca8">models on Hugging Face</a>. Apple Silicon Macs need no compiler; on Linux run <code>decido build-runtime</code> once. On a GPU: <code>pip install "decido-ai[gpu]"</code> and <code>device="cuda"</code>.</div>
+  <div class="avail">Open source (Apache-2.0): <a href="https://pypi.org/project/decido-ai/">decido-ai on PyPI</a> · <a href="https://huggingface.co/collections/decido-ai/decido-1-6aed66fd09af05c057795ca8">models on Hugging Face</a>. One <code>pip install</code> on Mac (Apple Silicon) and Linux: nothing to compile. On a GPU: <code>pip install "decido-ai[gpu]"</code> and <code>device="cuda"</code>.</div>
 </section>
 
 <section id="models">
