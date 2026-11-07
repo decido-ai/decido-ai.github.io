@@ -22,6 +22,8 @@
             --yellow: #6b5a17; --blue: #22344f; --pink: #4d2a35; --mint: #1f4433; }
   }
   * { box-sizing: border-box; }
+  html { scroll-padding-top: 80px; }               /* anchors land below the sticky top bar */
+  @media (max-width: 760px) { html { scroll-padding-top: 100px; } }
   body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.55 var(--sans); -webkit-font-smoothing: antialiased; }
   a { color: inherit; }
   .wrap { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
@@ -32,12 +34,10 @@
   .brand rect { fill: var(--accent); stroke: var(--ink); stroke-width: 3; } .brand .e { fill: #fff; stroke: var(--ink); stroke-width: 2; } .brand .p { fill: #1c1b19; }
   .menu { display: flex; align-items: center; gap: 24px; font: 600 15px var(--round); }
   .menu a { text-decoration: none; color: var(--muted); } .menu a:hover { color: var(--ink); }
-  @media (max-width: 760px) {                      /* phones: links wrap to a scrollable row under the logo */
-    header.nav .wrap { flex-wrap: wrap; height: auto; padding-top: 10px; padding-bottom: 8px; row-gap: 6px; }
-    .menu { order: 3; width: 100%; gap: 18px; overflow-x: auto; white-space: nowrap; scrollbar-width: none; font-size: 14px; padding-bottom: 2px; }
-    .menu::-webkit-scrollbar { display: none; }
-    .menu a[href$="/playground"], .menu a[href$="/api"] { order: -1; color: var(--ink); }
-    .menu .btn { padding: 6px 12px; }
+  .menu a[aria-current=page] { color: var(--ink); }
+  @media (max-width: 760px) {                      /* phones: the four links get their own full-width row under the logo */
+    header.nav .wrap { flex-wrap: wrap; height: auto; padding-top: 10px; padding-bottom: 8px; row-gap: 4px; }
+    .menu { order: 3; width: 100%; justify-content: space-between; gap: 10px; font-size: 15px; padding-bottom: 2px; }
   }
   .btn { display: inline-block; cursor: pointer; text-decoration: none; font: 700 15px var(--round); padding: 10px 20px; border-radius: 12px; background: var(--yellow); color: var(--ink); border: 2px solid var(--ink); box-shadow: 3px 3px 0 var(--shadow); transition: transform .12s, box-shadow .12s; }
   .btn:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--shadow); }
@@ -97,6 +97,7 @@
   footer { margin-top: 56px; border-top: 2px solid var(--ink); padding: 22px 0 40px; font-size: 14px; color: var(--muted); }
   footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
   footer a { margin-left: 16px; text-decoration: none; } footer a:hover { color: var(--ink); }
+  footer .fl { display: flex; flex-wrap: wrap; gap: 6px 18px; } footer .fl a { margin-left: 0; }
 </style>
 <style>
   main.doc { max-width: 760px; } main.doc h2 { font: 800 22px var(--round); margin: 30px 0 8px; } main.doc p, main.doc li { color: var(--ink); }
@@ -106,10 +107,7 @@
 <body>
 <header class="nav"><div class="wrap">
   <a class="brand" href="/"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="4" y="6" width="32" height="30" rx="10"/><circle class="e" cx="15" cy="19" r="4.5"/><circle class="e" cx="26" cy="19" r="4.5"/><circle class="p" cx="16" cy="20" r="2"/><circle class="p" cx="27" cy="20" r="2"/></svg>Decido</a>
-  <nav class="menu">
-    <a href="/#results">Results</a><a href="/#models">Models</a><a href="/research">Research</a><a href="https://getdecido.ai/playground">Playground</a><a href="/api">API</a>
-    <a class="btn sm" href="https://pypi.org/project/decido-ai/">pip install decido-ai</a>
-  </nav>
+  <nav class="menu" aria-label="Main"><a href="/#models">Models</a><a href="https://getdecido.ai/playground">Playground</a><a href="https://getdecido.ai/api">API</a><a href="/research">Research</a></nav>
 </div></header>
 
 <main class="wrap doc">
@@ -127,7 +125,7 @@
   </ul>
   <h2>Free API</h2>
   <ul>
-    <li>Fair use: one key per person or project, used within its limits (see <a href="/api">API docs</a>). Do not share, resell
+    <li>Fair use: one key per person or project, used within its limits (see <a href="https://getdecido.ai/api">API docs</a>). Do not share, resell
     or rotate keys to get around the limits.</li>
     <li>No SLA: the free API may be slow, paused, rate-limited or changed at any time, and limits may change.</li>
     <li>Keys may be revoked without notice, for example for abuse or for traffic that looks automated against the limits.</li>
@@ -151,7 +149,7 @@
 
 <footer><div class="wrap">
   <span>© 2026 Decido</span>
-  <span><a href="/research">Research</a><a href="https://getdecido.ai/playground">Playground</a><a href="/api">API</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="https://huggingface.co/collections/decido-ai/decido-1-6aed66fd09af05c057795ca8">Hugging Face</a><a href="mailto:founders@getdecido.ai">Contact</a></span>
+  <span class="fl"><a href="/research">Research</a><a href="https://getdecido.ai/playground">Playground</a><a href="https://getdecido.ai/api">API</a><a href="https://huggingface.co/collections/decido-ai/decido-1-6aed66fd09af05c057795ca8">Hugging Face</a><a href="https://pypi.org/project/decido-ai/">PyPI</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="mailto:founders@getdecido.ai">Contact</a></span>
 </div></footer>
 </body>
 </html>

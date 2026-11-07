@@ -18,7 +18,6 @@
   body { margin: 0; background: var(--paper); color: var(--ink); font: 18px/1.55 var(--serif); -webkit-font-smoothing: antialiased;
          display: flex; flex-direction: column; }
   main { flex: 1; display: flex; flex-direction: column; justify-content: center; max-width: 760px; width: 100%; margin: 0 auto; padding: 48px 28px; }
-  .brand { font: 700 14px var(--mono); letter-spacing: .12em; }
   h1 { font-size: clamp(40px, 7vw, 68px); line-height: 1.04; letter-spacing: -.02em; margin: 28px 0 0; }
   h1 .accent { color: var(--accent); }
   p { color: var(--muted); font-size: clamp(19px, 2.3vw, 22px); margin: 20px 0 0; max-width: 620px; }
@@ -26,12 +25,30 @@
   a.btn { font: 600 14px var(--mono); padding: 12px 18px; border-radius: 8px; border: 1px solid var(--ink); color: var(--ink); text-decoration: none; }
   a.btn.primary { background: var(--ink); color: var(--paper); }
   a.btn:hover { opacity: .85; }
-  footer { border-top: 1px solid var(--rule); padding: 22px 28px; font: 12px var(--mono); color: var(--muted); text-align: center; }
+  footer { border-top: 1px solid var(--rule); padding: 22px 0; font: 12px var(--mono); color: var(--muted); }
+  footer .wrap { max-width: 1080px; margin: 0 auto; padding: 0 28px; }
+  /* top bar: same as the other pages */
+  header.nav { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--paper) 92%, transparent); backdrop-filter: blur(8px); border-bottom: 2px solid var(--ink); }
+  header.nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 64px; max-width: 1080px; padding: 0 28px; margin: 0 auto; }
+  .brand { display: flex; align-items: center; gap: 10px; font: 800 19px ui-rounded, "SF Pro Rounded", "Nunito", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: .02em; text-decoration: none; color: var(--ink); }
+  .brand svg { width: 30px; height: 30px; }
+  .brand rect { fill: var(--accent); stroke: var(--ink); stroke-width: 3; } .brand .e { fill: #fff; stroke: var(--ink); stroke-width: 2; } .brand .p { fill: #1c1b19; }
+  .menu { display: flex; align-items: center; gap: 24px; font: 600 15px ui-rounded, "SF Pro Rounded", "Nunito", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+  .menu a { text-decoration: none; color: var(--muted); } .menu a:hover, .menu a[aria-current=page] { color: var(--ink); }
+  @media (max-width: 760px) {
+    header.nav .wrap { flex-wrap: wrap; height: auto; padding: 10px 24px 8px; row-gap: 4px; }
+    .menu { order: 3; width: 100%; justify-content: space-between; gap: 10px; font-size: 15px; padding-bottom: 2px; }
+  }
+  footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+  footer .fl { display: flex; flex-wrap: wrap; gap: 6px 16px; } footer .fl a { color: var(--muted); text-decoration: none; } footer .fl a:hover { color: var(--ink); }
 </style>
 </head>
 <body>
+<header class="nav"><div class="wrap">
+  <a class="brand" href="/"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="4" y="6" width="32" height="30" rx="10"/><circle class="e" cx="15" cy="19" r="4.5"/><circle class="e" cx="26" cy="19" r="4.5"/><circle class="p" cx="16" cy="20" r="2"/><circle class="p" cx="27" cy="20" r="2"/></svg>Decido</a>
+  <nav class="menu" aria-label="Main"><a href="/#models">Models</a><a href="https://getdecido.ai/playground">Playground</a><a href="https://getdecido.ai/api">API</a><a href="/research">Research</a></nav>
+</div></header>
 <main>
-  <div class="brand">DECIDO</div>
   <h1>Page not found</h1>
   <p>This page doesn't exist.</p>
   <div class="links">
@@ -39,6 +56,9 @@
     <a class="btn" href="/">Home</a>
   </div>
 </main>
-<footer>© 2026 Decido</footer>
+<footer><div class="wrap">
+  <span>© 2026 Decido</span>
+  <span class="fl"><a href="/research">Research</a><a href="https://getdecido.ai/playground">Playground</a><a href="https://getdecido.ai/api">API</a><a href="https://huggingface.co/collections/decido-ai/decido-1-6aed66fd09af05c057795ca8">Hugging Face</a><a href="https://pypi.org/project/decido-ai/">PyPI</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="mailto:founders@getdecido.ai">Contact</a></span>
+</div></footer>
 </body>
 </html>

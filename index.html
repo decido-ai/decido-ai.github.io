@@ -26,7 +26,8 @@
             --yellow: #6b5a17; --blue: #22344f; --pink: #4d2a35; --mint: #1f4433; }
   }
   * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
+  html { scroll-behavior: smooth; scroll-padding-top: 80px; }      /* anchors land below the sticky top bar */
+  @media (max-width: 760px) { html { scroll-padding-top: 100px; } }
   body { margin: 0; background: var(--bg); color: var(--ink); font: 17px/1.6 var(--sans); -webkit-font-smoothing: antialiased; }
   a { color: inherit; }
   .wrap { max-width: 1080px; margin: 0 auto; padding: 0 28px; }
@@ -40,12 +41,10 @@
   .menu { display: flex; align-items: center; gap: 26px; font: 600 15px var(--round); }
   .menu a { text-decoration: none; color: var(--muted); }
   .menu a:hover { color: var(--ink); }
-  @media (max-width: 760px) {                      /* phones: links wrap to a scrollable row under the logo */
-    header.nav .wrap { flex-wrap: wrap; height: auto; padding-top: 10px; padding-bottom: 8px; row-gap: 6px; }
-    .menu { order: 3; width: 100%; gap: 18px; overflow-x: auto; white-space: nowrap; scrollbar-width: none; font-size: 14px; padding-bottom: 2px; }
-    .menu::-webkit-scrollbar { display: none; }
-    .menu a[href$="/playground"], .menu a[href$="/api"] { order: -1; color: var(--ink); }
-    .menu .btn { padding: 6px 12px; }
+  .menu a[aria-current=page] { color: var(--ink); }
+  @media (max-width: 760px) {                      /* phones: the four links get their own full-width row under the logo */
+    header.nav .wrap { flex-wrap: wrap; height: auto; padding-top: 10px; padding-bottom: 8px; row-gap: 4px; }
+    .menu { order: 3; width: 100%; justify-content: space-between; gap: 10px; font-size: 15px; padding-bottom: 2px; }
   }
   .btn { display: inline-block; text-decoration: none; font: 700 15px var(--round); padding: 11px 20px; border-radius: 12px; background: var(--yellow); color: var(--ink) !important; border: 2px solid var(--ink); box-shadow: 3px 3px 0 var(--shadow); transition: transform .12s, box-shadow .12s; }
   .btn:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--shadow); }
@@ -62,7 +61,13 @@
   .squiggle { display: block; width: 230px; height: 18px; margin: 4px auto 0; }
   .squiggle path { fill: none; stroke: var(--accent); stroke-width: 5; stroke-linecap: round; }
   .hero p { font-size: 20px; color: var(--muted); margin: 22px auto 0; max-width: 640px; line-height: 1.5; }
-  .hero .ctas { display: flex; justify-content: center; gap: 14px; margin-top: 32px; flex-wrap: wrap; }
+  .hero .ctas { display: flex; justify-content: center; align-items: center; gap: 16px; margin-top: 30px; flex-wrap: wrap; }
+  .hero .ctas .btn { font-size: 17px; padding: 13px 24px; }
+  .hero .ctas .install { margin-top: 0; }
+  .hero p.story { font: 700 19px/1.5 var(--round); color: var(--ink); margin-top: 18px; }
+  .hero p.story b { font-weight: 800; color: var(--accent-ink); }
+  .hero p.story > span { display: block; } .hero p.story .nw { white-space: nowrap; }
+  @media (max-width: 600px) { .hero p.story { font-size: 17px; } .hero p.story > span + span { margin-top: 6px; } }
   .date { margin-top: 20px; font: 15px var(--hand); color: var(--faint); }
 
   /* figures */
@@ -72,6 +77,7 @@
   @media (max-width: 600px) { .figcard { padding: 18px 16px; overflow-x: auto; } .figcard .chart { min-width: 440px; } .figcard.hero-fig .chart { min-width: 620px; } .chart .tk { font-size: 13px; } .chart .sb { font-size: 13.5px; } }
   figcaption { font-size: 14px; color: var(--muted); margin-top: 16px; line-height: 1.5; }
   figcaption b { font: 700 12px var(--mono); letter-spacing: .05em; color: var(--ink); margin-right: 6px; }
+  figcaption .more-in { color: var(--accent-ink); font-weight: 600; text-decoration: none; white-space: nowrap; }
   .chart { width: 100%; height: auto; display: block; overflow: visible; font-family: var(--sans); }
   .chart .g { stroke: var(--line); stroke-width: 1.5; stroke-dasharray: 4 4; }
   .chart .tk { font: 11px var(--mono); fill: var(--faint); }
@@ -109,6 +115,7 @@
   .split.rev > :first-child { order: 2; }
   @media (max-width: 900px) { .split, .split.rev { grid-template-columns: 1fr; gap: 30px; } .split.rev > :first-child { order: 0; } }
   .split p { color: var(--muted); margin: 18px 0 0; }
+  .split p a { color: var(--accent-ink); }
   .split .big { font: 800 58px/1 var(--round); letter-spacing: -.03em; margin-top: 28px; }
   .split .big small { display: block; font: 14.5px/1.45 var(--sans); color: var(--muted); letter-spacing: 0; margin-top: 10px; }
   .more { display: inline-block; margin-top: 22px; font: 700 15px var(--round); color: var(--accent-ink); text-decoration: none; }
@@ -187,16 +194,14 @@
   .m-sign { fill: var(--yellow); } .m-bulb { fill: var(--yellow); } .m-shadow { fill: var(--ink); opacity: .12; }
   .m-text { font: 800 13px var(--round); fill: var(--ink); } .m-spark { fill: var(--accent); stroke: none; }
   .m-none { fill: none; }
+  footer .fl { display: flex; flex-wrap: wrap; gap: 6px 18px; } footer .fl a { margin-left: 0; }
 </style>
 </head>
 <body>
 
 <header class="nav"><div class="wrap">
   <a class="brand" href="/"><svg viewBox="0 0 40 40" aria-hidden="true"><rect class="m-body m-ink" x="4" y="6" width="32" height="30" rx="10"/><circle class="m-eye m-ink" cx="15" cy="19" r="4.5" style="stroke-width:2"/><circle class="m-eye m-ink" cx="26" cy="19" r="4.5" style="stroke-width:2"/><circle class="m-pupil" cx="16" cy="20" r="2"/><circle class="m-pupil" cx="27" cy="20" r="2"/><path class="m-none m-ink" d="M16 28 Q20.5 31 25 28" style="stroke-width:2"/></svg>Decido</a>
-  <nav class="menu">
-    <a href="#results">Results</a><a href="#how">How it works</a><a href="#models">Models</a><a href="/research">Research</a><a href="https://getdecido.ai/playground">Playground</a><a href="https://getdecido.ai/api">API</a>
-    <a class="btn sm" href="#contact">Get early access</a>
-  </nav>
+  <nav class="menu" aria-label="Main"><a href="/#models">Models</a><a href="https://getdecido.ai/playground">Playground</a><a href="https://getdecido.ai/api">API</a><a href="/research">Research</a></nav>
 </div></header>
 
 <main class="wrap">
@@ -207,23 +212,23 @@
   <h1>Decido</h1>
   <svg class="squiggle" viewBox="0 0 230 18" aria-hidden="true"><path d="M4 10 Q 18 2 32 10 T 60 10 T 88 10 T 116 10 T 144 10 T 172 10 T 200 10 T 226 10"/></svg>
   <p>Open, calibrated decision models for AI agents. Ask yes/no, choice or score questions about any text and get <span class="hl">a probability for every option</span>, on your own hardware.</p>
-  <div class="install">pip install decido-ai</div>
+  <p class="story"><span><b>89.2</b> — Decido-1-Max, ahead of Jev 1.13 <span class="nw">(83.9)</span> on all six benchmarks</span><span><b>85.4</b> on a laptop CPU, no GPU <span class="nw">(Decido-1)</span></span></p>
   <div class="ctas">
-    <a class="btn" href="#how">Get started</a>
-    <a class="btn line" href="https://huggingface.co/collections/decido-ai/decido-1-6aed66fd09af05c057795ca8">Models on Hugging Face ↗</a>
+    <a class="btn" href="https://getdecido.ai/playground">Try it live →</a>
+    <code class="install" title="Select to copy">pip install decido-ai</code>
   </div>
   <div class="date">launched November 2026</div>
 </div>
 
 <figure class="figcard hero-fig">
-<svg class="chart" viewBox="0 0 880 388" role="img" aria-labelledby="f1t"><line class="g" x1="190.0" x2="190.0" y1="8" y2="360"/><text class="tk" x="190.0" y="380" text-anchor="middle">0</text><line class="g" x1="315.0" x2="315.0" y1="8" y2="360"/><text class="tk" x="315.0" y="380" text-anchor="middle">25</text><line class="g" x1="440.0" x2="440.0" y1="8" y2="360"/><text class="tk" x="440.0" y="380" text-anchor="middle">50</text><line class="g" x1="565.0" x2="565.0" y1="8" y2="360"/><text class="tk" x="565.0" y="380" text-anchor="middle">75</text><line class="g" x1="690.0" x2="690.0" y1="8" y2="360"/><text class="tk" x="690.0" y="380" text-anchor="middle">100</text><g class="us"><title>Decido-1-Max (laptop (slow) · GPU path coming): 89.23</title><text class="nm" x="0" y="35.0">Decido-1-Max</text><text class="sb" x="0" y="52.0">laptop (slow) · GPU path coming</text><path class="b" d="M190.0,24.0h441.2a5,5 0 0 1 5,5v14a5,5 0 0 1 -5,5h-441.2z"/><text class="vl" x="648.2" y="41.0">89.2</text></g><g class="us"><title>Decido-1-Think (laptop (slow) · GPU): 88.71</title><text class="nm" x="0" y="91.0">Decido-1-Think</text><text class="sb" x="0" y="108.0">laptop (slow) · GPU</text><path class="b" d="M190.0,80.0h438.5a5,5 0 0 1 5,5v14a5,5 0 0 1 -5,5h-438.5z"/><text class="vl" x="645.5" y="97.0">88.7</text></g><g class="us"><title>Decido-1 (laptop CPU): 85.38</title><text class="nm" x="0" y="147.0">Decido-1</text><text class="sb" x="0" y="164.0">laptop CPU</text><path class="b" d="M190.0,136.0h421.9a5,5 0 0 1 5,5v14a5,5 0 0 1 -5,5h-421.9z"/><text class="vl" x="628.9" y="153.0">85.4</text></g><g class="ref"><title>Jev 1.13 (cloud API · published): 83.85</title><text class="nm" x="0" y="203.0">Jev 1.13</text><text class="sb" x="0" y="220.0">cloud API · published</text><path class="b" d="M190.0,192.0h414.2a5,5 0 0 1 5,5v14a5,5 0 0 1 -5,5h-414.2z"/><text class="vl" x="621.2" y="209.0">83.9</text></g><g class="us"><title>Decido-1-Fast (laptop CPU): 73.01</title><text class="nm" x="0" y="259.0">Decido-1-Fast</text><text class="sb" x="0" y="276.0">laptop CPU</text><path class="b" d="M190.0,248.0h360.1a5,5 0 0 1 5,5v14a5,5 0 0 1 -5,5h-360.1z"/><text class="vl" x="567.0" y="265.0">73.0</text></g><g class="us"><title>Decido-1-Ultra (laptop CPU): 62.16</title><text class="nm" x="0" y="315.0">Decido-1-Ultra</text><text class="sb" x="0" y="332.0">laptop CPU</text><path class="b" d="M190.0,304.0h305.8a5,5 0 0 1 5,5v14a5,5 0 0 1 -5,5h-305.8z"/><text class="vl" x="512.8" y="321.0">62.2</text></g><g class="note"><text x="726" y="134">on a laptop.</text><text x="726" y="156">no GPU!</text><path class="arr" d="M720,142 C704,140 690,142 676,148"/><path class="ah" d="M676,148 l9,-6 M676,148 l8,6"/></g></svg>
-  <figcaption id="f1t"><b>FIG. 1</b> Six-benchmark mean (JevBench, Kev, OpenJev, Nimble, VitaminC, MASSIVE), the suite used to evaluate Jev 1.13. Decido-1, Fast and Ultra: the released 8-bit files, five groups measured CPU-only on a server CPU and OpenJev on the same files via llama.cpp CUDA. Decido-1-Max and Decido-1-Think measured on GPU (both also run on a laptop, ~10–11 s per question on a Mac GPU). Decido OpenJev scores cover 18 of its 19 tasks (one candidate pool is unpublished); Jev's is a 19-task mean. Decido-1-XL (87.3, GPU-only, 4× A100) is listed on its model card and not shown here.</figcaption>
+<svg class="chart" viewBox="0 0 880 388" role="img" aria-labelledby="f1t"><line class="g" x1="190.0" x2="190.0" y1="8" y2="360"/><text class="tk" x="190.0" y="380" text-anchor="middle">0</text><line class="g" x1="315.0" x2="315.0" y1="8" y2="360"/><text class="tk" x="315.0" y="380" text-anchor="middle">25</text><line class="g" x1="440.0" x2="440.0" y1="8" y2="360"/><text class="tk" x="440.0" y="380" text-anchor="middle">50</text><line class="g" x1="565.0" x2="565.0" y1="8" y2="360"/><text class="tk" x="565.0" y="380" text-anchor="middle">75</text><line class="g" x1="690.0" x2="690.0" y1="8" y2="360"/><text class="tk" x="690.0" y="380" text-anchor="middle">100</text><g class="us"><title>Decido-1-Max (GPU score · runs on a laptop): 89.23</title><text class="nm" x="0" y="35.0">Decido-1-Max</text><text class="sb" x="0" y="52.0">GPU score · runs on a laptop</text><path class="b" d="M190.0,24.0h441.2a5,5 0 0 1 5,5v14a5,5 0 0 1 -5,5h-441.2z"/><text class="vl" x="648.2" y="41.0">89.2</text></g><g class="us"><title>Decido-1-Think (GPU score · runs on a laptop): 88.71</title><text class="nm" x="0" y="91.0">Decido-1-Think</text><text class="sb" x="0" y="108.0">GPU score · runs on a laptop</text><path class="b" d="M190.0,80.0h438.5a5,5 0 0 1 5,5v14a5,5 0 0 1 -5,5h-438.5z"/><text class="vl" x="645.5" y="97.0">88.7</text></g><g class="us"><title>Decido-1 (laptop CPU): 85.38</title><text class="nm" x="0" y="147.0">Decido-1</text><text class="sb" x="0" y="164.0">laptop CPU</text><path class="b" d="M190.0,136.0h421.9a5,5 0 0 1 5,5v14a5,5 0 0 1 -5,5h-421.9z"/><text class="vl" x="628.9" y="153.0">85.4</text></g><g class="ref"><title>Jev 1.13 (cloud API · published): 83.85</title><text class="nm" x="0" y="203.0">Jev 1.13</text><text class="sb" x="0" y="220.0">cloud API · published</text><path class="b" d="M190.0,192.0h414.2a5,5 0 0 1 5,5v14a5,5 0 0 1 -5,5h-414.2z"/><text class="vl" x="621.2" y="209.0">83.9</text></g><g class="us"><title>Decido-1-Fast (laptop CPU): 73.01</title><text class="nm" x="0" y="259.0">Decido-1-Fast</text><text class="sb" x="0" y="276.0">laptop CPU</text><path class="b" d="M190.0,248.0h360.1a5,5 0 0 1 5,5v14a5,5 0 0 1 -5,5h-360.1z"/><text class="vl" x="567.0" y="265.0">73.0</text></g><g class="us"><title>Decido-1-Ultra (laptop CPU): 62.16</title><text class="nm" x="0" y="315.0">Decido-1-Ultra</text><text class="sb" x="0" y="332.0">laptop CPU</text><path class="b" d="M190.0,304.0h305.8a5,5 0 0 1 5,5v14a5,5 0 0 1 -5,5h-305.8z"/><text class="vl" x="512.8" y="321.0">62.2</text></g><g class="note"><text x="726" y="134">on a laptop.</text><text x="726" y="156">no GPU!</text><path class="arr" d="M720,142 C704,140 690,142 676,148"/><path class="ah" d="M676,148 l9,-6 M676,148 l8,6"/></g></svg>
+  <figcaption id="f1t"><b>FIG. 1</b> Mean accuracy on the six benchmarks used to evaluate Jev 1.13; higher is better (Decido-1-Max and Think measured on GPU; Decido-1, Fast and Ultra on CPU). <a class="more-in" href="/research#results">Details →</a></figcaption>
 </figure>
 
 <div class="highlights" id="results">
-  <a href="#accuracy"><div class="k">Accurate</div><div class="v">85.4</div><div class="t">on a laptop CPU, vs 83.9 for the leading decision API</div></a>
-  <a href="#speed"><div class="k">Fast</div><div class="v">~0.1 s</div><div class="t">per yes/no check with Decido-1-Fast, CPU only</div></a>
-  <a href="#reliability"><div class="k">Deterministic</div><div class="v">0%</div><div class="t">answers that change on a repeat call on CPU (Jev 1.13: 4.3%)</div></a>
+  <a href="#accuracy"><div class="k">Decido-1-Max</div><div class="v">89.2</div><div class="t">ahead of Jev 1.13 (83.9) on all six benchmarks</div></a>
+  <a href="#accuracy"><div class="k">No GPU</div><div class="v">85.4</div><div class="t">Decido-1 on a laptop CPU</div></a>
+  <a href="#reliability"><div class="k">Deterministic</div><div class="v">0%</div><div class="t">repeat-call changes on CPU (Jev 1.13: 4.3%)</div></a>
 </div>
 
 <section id="accuracy">
@@ -232,7 +237,7 @@
       <div class="kicker">Accuracy</div>
       <h2>Ahead of the leading decision API, <span class="hl">without a GPU</span>.</h2>
       <p>Decido-1 is a mixture-of-experts model with 4B active parameters, quantized to 8 bits. It scores higher than Jev 1.13 on four of the six benchmarks and on the mean. Decido-1-Max, which reasons before it answers, reaches <b>89.2</b> and is ahead on all six, in one set of open weights.</p>
-      <p>Every model is trained on public data, with no outputs from Jev or any closed model, and every training set is audited for overlap with the benchmarks (exceptions, such as 8 gate-passing rows in Decido-1-XL's data derived from eval splits, are disclosed on the model cards).</p>
+      <p>Trained on public data; no Jev or closed-model outputs; audited for benchmark overlap — <a href="/research#method">details</a>.</p>
       <a class="more" href="/research#results">Per-benchmark results →</a>
     </div>
     <figure class="figcard">
@@ -333,7 +338,8 @@ curl localhost:8080/v1/systemone -H <span class="s">"content-type: application/j
 <span class="c"># -> {"answers": {"refund": {"type": "noul", "noul": 0.98},
 #                 "team": {"type": "choice", "choice": "billing", "confidence": 0.92,
 #                          "probabilities": {"billing": 0.95, "technical": 0.02, "sales": 0.03}}}, ...}
-# Existing Jev SDK clients work unchanged: TYPESAFE_BASE_URL=http://127.0.0.1:8080</span></pre>
+# Existing Jev SDK clients work unchanged: TypeSafeClient(base_url="http://127.0.0.1:8080")
+# (the SDK zstd-compresses large requests; for decido serve to accept them: pip install "decido-ai[server]")</span></pre>
     </div>
   </div>
   <div class="avail">Open source (Apache-2.0; Decido-1-XL: MIT): <a href="https://pypi.org/project/decido-ai/">decido-ai on PyPI</a> · <a href="https://huggingface.co/collections/decido-ai/decido-1-6aed66fd09af05c057795ca8">models on Hugging Face</a>. One <code>pip install</code> on Mac (Apple Silicon) and Linux x86_64: nothing to compile. On a GPU: <code>pip install "decido-ai[gpu]"</code> and <code>device="cuda"</code> (Decido-1-Max: CPU and Mac GPU for now; GPU weights soon).</div>
@@ -364,7 +370,7 @@ curl localhost:8080/v1/systemone -H <span class="s">"content-type: application/j
       <div class="foot"><a href="https://huggingface.co/decido-ai/decido-1-think-26b-a4b">Open weights ↗</a></div>
     </div>
     <div class="model">
-      <div class="k">Most accurate</div><h3>Decido-1-Max</h3><div class="d">Our 3-model research system distilled into one model that reasons before answering. Ahead of Jev 1.13 on all six benchmarks.</div>
+      <div class="k">Our most accurate</div><h3>Decido-1-Max</h3><div class="d">Our 3-model research system distilled into one model that reasons before answering. Ahead of Jev 1.13 on all six benchmarks.</div>
       <dl><dt>Benchmark mean</dt><dd>89.2</dd><dt>Per question</dt><dd>~28 s CPU · ~11 s Mac GPU</dd><dt>Hardware</dt><dd>laptop · ~30 GB RAM (GPU path coming)</dd><dt>Calibration</dt><dd>Brier ≤ Jev on 5/5</dd></dl>
       <div class="foot"><a href="https://huggingface.co/decido-ai/decido-1-max-26b-a4b">Open weights ↗</a></div>
     </div>
@@ -382,8 +388,8 @@ curl localhost:8080/v1/systemone -H <span class="s">"content-type: application/j
   <h2>How we built it, and where it falls short.</h2>
   <div class="papers">
     <a class="paper" href="/research"><span class="when">Nov 2026</span><div><h3>Decido: calibrated decision models for AI agents</h3><p>Technical report: benchmarks, method, reliability and cost.</p></div><span class="go">→</span></a>
-    <a class="paper" href="research.html#method"><span class="when">Method</span><div><h3>Readout, calibration and deterministic CPU inference</h3><p>Single-token labels, temperatures fitted on held-out tasks, and bit-identical outputs on llama.cpp.</p></div><span class="go">→</span></a>
-    <a class="paper" href="research.html#limitations"><span class="when">Limitations</span><div><h3>What the numbers do and don't show</h3><p>In-domain training, published-vs-measured comparisons, and calibration outside benchmarks.</p></div><span class="go">→</span></a>
+    <a class="paper" href="/research#method"><span class="when">Method</span><div><h3>Readout, calibration and deterministic CPU inference</h3><p>Single-token labels, temperatures fitted on held-out tasks, and bit-identical outputs on llama.cpp.</p></div><span class="go">→</span></a>
+    <a class="paper" href="/research#limitations"><span class="when">Limitations</span><div><h3>What the numbers do and don't show</h3><p>In-domain training, published-vs-measured comparisons, and calibration outside benchmarks.</p></div><span class="go">→</span></a>
   </div>
 </section>
 
@@ -399,7 +405,7 @@ curl localhost:8080/v1/systemone -H <span class="s">"content-type: application/j
 
 <footer><div class="wrap">
   <span>© 2026 Decido</span>
-  <span><a href="/research">Research</a><a href="https://huggingface.co/collections/decido-ai/decido-1-6aed66fd09af05c057795ca8">Hugging Face</a><a href="https://pypi.org/project/decido-ai/">PyPI</a><a href="https://getdecido.ai/playground">Playground</a><a href="https://getdecido.ai/api">API</a><a href="mailto:founders@getdecido.ai">Contact</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a></span>
+  <span class="fl"><a href="/research">Research</a><a href="https://getdecido.ai/playground">Playground</a><a href="https://getdecido.ai/api">API</a><a href="https://huggingface.co/collections/decido-ai/decido-1-6aed66fd09af05c057795ca8">Hugging Face</a><a href="https://pypi.org/project/decido-ai/">PyPI</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="mailto:founders@getdecido.ai">Contact</a></span>
 </div></footer>
 </body>
 </html>
