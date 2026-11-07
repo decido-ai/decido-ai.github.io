@@ -185,7 +185,7 @@ EOF</pre>
     <tr><th>per request</th><td>up to 5 questions · up to 10 options per question · up to 80 characters per option (name + description) ·
     document up to 6,000 characters · about 2,500 characters of English in total (hard limit: 1,000 tokens for the document plus all
     questions; 3,000 bytes of text) · body up to 32 KB · no images</td></tr>
-    <tr><th>bodies</th><td>uncompressed, or <code>Content-Encoding: gzip</code> (a single gzip stream); at most 32 KB before and after decompression. zstd bodies aren't accepted yet (415)</td></tr>
+    <tr><th>bodies</th><td>uncompressed, <code>Content-Encoding: gzip</code> (a single gzip stream) or <code>zstd</code>; at most 32 KB as sent. zstd bodies are passed to the model server unchanged and checked there: at most 64 KB decompressed, the same 1,000-token limit and the server's own validation (question types, 2–255 options, 2–10 levels); the edge limits above (questions, options, characters) apply to plain and gzip bodies</td></tr>
     <tr><th>shared capacity</th><td>the free API shares a daily capacity with the online demo; when it is used up you get 503 until 00:00 UTC</td></tr>
   </table>
   <p>Successful responses, and 429 responses for the daily quota or the per-minute rate, carry <code>X-RateLimit-Limit</code>,
@@ -196,12 +196,12 @@ EOF</pre>
   <p>Errors are JSON: <code>{"detail": "…"}</code>.</p>
   <table>
     <tr><th>status</th><th>meaning</th></tr>
-    <tr><td>400</td><td>body is not valid JSON, or a malformed gzip body</td></tr>
+    <tr><td>400</td><td>body is not valid JSON, or a malformed gzip / zstd body</td></tr>
     <tr><td>401</td><td>missing or invalid API key</td></tr>
     <tr><td>413</td><td>too big: more than 5 questions or 10 options, an option over 80 characters, over the text or token limit
-    (“API limit 1,000 tokens”), or a body over 32 KB (also after decompression)</td></tr>
-    <tr><td>415</td><td>not <code>application/json</code>, an unsupported or doubled <code>Content-Encoding</code> (including zstd, for now), or multi-member gzip</td></tr>
-    <tr><td>422</td><td>validation error: missing field, unknown question type, fewer than 2 options, non-string instructions, unknown model, images</td></tr>
+    (“API limit 1,000 tokens”), or a body over 32 KB (gzip: also after decompression; zstd: over 64 KB decompressed)</td></tr>
+    <tr><td>415</td><td>not <code>application/json</code>, an unsupported or doubled <code>Content-Encoding</code>, or multi-member gzip</td></tr>
+    <tr><td>422</td><td>validation error: missing field, unknown question type, fewer than 2 options, non-string instructions, unknown model, images (model, instruction-type and edge size checks apply to plain/gzip bodies; zstd bodies get the server's checks)</td></tr>
     <tr><td>429</td><td>daily quota used up, more than 10 requests per minute, a second request while one is running, or too many invalid API keys (or rejected requests) from your network in a minute</td></tr>
     <tr><td>502</td><td>the model is unavailable (retry later)</td></tr>
     <tr><td>503</td><td>busy, today's free capacity is used up, or the free API is paused</td></tr>
@@ -209,7 +209,7 @@ EOF</pre>
   </table>
 
   <h2>Jev / TypeSafe SDK</h2>
-  <p>Point the client at Decido and use your Decido key. Small requests work as they are; the SDK zstd-compresses larger bodies (about 1 KB and up), which the free API doesn't accept yet — for those, send plain JSON or gzip (see curl/Python above), or run <code>decido serve</code> locally. Model names such as
+  <p>Point the client at Decido and use your Decido key; the SDK's zstd-compressed bodies (it compresses requests of about 1 KB and up) are accepted. Model names such as
   <code>jev-latest</code> run on Decido-1-Fast.</p>
   <pre>export TYPESAFE_API_KEY="$DECIDO_API_KEY"
 
