@@ -40,7 +40,13 @@
   .menu { display: flex; align-items: center; gap: 26px; font: 600 15px var(--round); }
   .menu a { text-decoration: none; color: var(--muted); }
   .menu a:hover { color: var(--ink); }
-  @media (max-width: 760px) { .menu a:not(.btn) { display: none; } }
+  @media (max-width: 760px) {                      /* phones: links wrap to a scrollable row under the logo */
+    header.nav .wrap { flex-wrap: wrap; height: auto; padding-top: 10px; padding-bottom: 8px; row-gap: 6px; }
+    .menu { order: 3; width: 100%; gap: 18px; overflow-x: auto; white-space: nowrap; scrollbar-width: none; font-size: 14px; padding-bottom: 2px; }
+    .menu::-webkit-scrollbar { display: none; }
+    .menu a[href$="/playground"], .menu a[href$="/api"] { order: -1; color: var(--ink); }
+    .menu .btn { padding: 6px 12px; }
+  }
   .btn { display: inline-block; text-decoration: none; font: 700 15px var(--round); padding: 11px 20px; border-radius: 12px; background: var(--yellow); color: var(--ink) !important; border: 2px solid var(--ink); box-shadow: 3px 3px 0 var(--shadow); transition: transform .12s, box-shadow .12s; }
   .btn:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--shadow); }
   .btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--shadow); }
