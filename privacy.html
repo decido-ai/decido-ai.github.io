@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy — Decido</title>
+<meta name="description" content="How Decido handles data: playground inputs are never stored; request metadata is kept for 30 days.">
+<link rel="canonical" href="https://getdecido.ai/privacy">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect x='4' y='6' width='32' height='30' rx='10' fill='%232a78d6' stroke='%231c1b19' stroke-width='3'/%3E%3Ccircle cx='15' cy='19' r='4.5' fill='white'/%3E%3Ccircle cx='26' cy='19' r='4.5' fill='white'/%3E%3Ccircle cx='16' cy='20' r='2'/%3E%3Ccircle cx='27' cy='20' r='2'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --bg: #fffcf3; --card: #ffffff; --panel: #fff7e0; --ink: #1c1b19; --muted: #5a5853; --faint: #6f6c66; --line: #e9e3d3;
+    --accent: #2a78d6; --accent-ink: #1d5fb3; --soft: #b9d1f0; --shadow: #1c1b19; --warn: #b5402a;
+    --yellow: #ffe27a; --blue: #d6e6ff; --pink: #ffd7e1; --mint: #cff2df;
+    --round: ui-rounded, "SF Pro Rounded", "Nunito", "Varela Round", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #17161a; --card: #1f1e23; --panel: #25231f; --ink: #f1efe8; --muted: #b0ada5; --faint: #9a978f; --line: #34322e;
+            --accent: #5592e3; --accent-ink: #8dbbf2; --soft: #2f4a70; --shadow: #000000; --warn: #f08a72;
+            --yellow: #6b5a17; --blue: #22344f; --pink: #4d2a35; --mint: #1f4433; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.55 var(--sans); -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+  header.nav { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(8px); border-bottom: 2px solid var(--ink); }
+  header.nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+  .brand { display: flex; align-items: center; gap: 10px; font: 800 19px var(--round); letter-spacing: .02em; text-decoration: none; }
+  .brand svg { width: 30px; height: 30px; }
+  .brand rect { fill: var(--accent); stroke: var(--ink); stroke-width: 3; } .brand .e { fill: #fff; stroke: var(--ink); stroke-width: 2; } .brand .p { fill: #1c1b19; }
+  .menu { display: flex; align-items: center; gap: 24px; font: 600 15px var(--round); }
+  .menu a { text-decoration: none; color: var(--muted); } .menu a:hover { color: var(--ink); }
+  @media (max-width: 760px) { .menu a:not(.btn) { display: none; } }
+  .btn { display: inline-block; cursor: pointer; text-decoration: none; font: 700 15px var(--round); padding: 10px 20px; border-radius: 12px; background: var(--yellow); color: var(--ink); border: 2px solid var(--ink); box-shadow: 3px 3px 0 var(--shadow); transition: transform .12s, box-shadow .12s; }
+  .btn:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--shadow); }
+  .btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--shadow); }
+  .btn:disabled { opacity: .55; cursor: not-allowed; transform: none; box-shadow: 3px 3px 0 var(--shadow); }
+  .btn.line { background: var(--card); } .btn.sm { padding: 6px 12px; font-size: 13.5px; box-shadow: 2px 2px 0 var(--shadow); }
+  h1 { font: 800 clamp(38px, 6vw, 56px)/1.05 var(--round); letter-spacing: -.02em; margin: 40px 0 6px; }
+  .lede { color: var(--muted); font-size: 18px; margin: 0 0 22px; max-width: 760px; }
+  .banner { display: none; background: var(--pink); border: 2px solid var(--ink); border-radius: 12px; padding: 10px 14px; margin: 0 0 18px; font-weight: 600; }
+  .banner code { font: 600 14px var(--mono); }
+  .grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+  @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+  .card { background: var(--card); border: 2px solid var(--ink); border-radius: 18px; padding: 20px 22px; box-shadow: 5px 5px 0 var(--shadow); }
+  .card h2 { font: 800 18px var(--round); margin: 0 0 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+  label.f { display: block; font: 700 13px var(--round); color: var(--muted); margin: 14px 0 6px; letter-spacing: .02em; }
+  textarea, input[type=text], select { width: 100%; font: 15px var(--sans); color: var(--ink); background: var(--bg); border: 2px solid var(--line); border-radius: 10px; padding: 9px 11px; }
+  textarea:focus, input:focus, select:focus { outline: none; border-color: var(--accent); }
+  textarea#doc { min-height: 150px; resize: vertical; font: 14px/1.5 var(--mono); }
+  .count { font: 12px var(--mono); color: var(--faint); text-align: right; margin-top: 4px; }
+  .count.over { color: var(--warn); font-weight: 700; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { cursor: pointer; font: 600 13.5px var(--round); padding: 5px 12px; border-radius: 999px; border: 2px solid var(--ink); background: var(--blue); color: var(--ink); }
+  .chip.on { background: var(--yellow); }
+  .q { border: 2px solid var(--line); border-radius: 12px; padding: 10px 12px; margin: 10px 0; background: var(--bg); }
+  .q .row { display: grid; grid-template-columns: 120px 150px 1fr auto; gap: 8px; align-items: center; }
+  @media (max-width: 560px) { .q .row { grid-template-columns: 1fr 1fr; } }
+  .q .opts { margin-top: 8px; }
+  .x { cursor: pointer; border: none; background: none; color: var(--faint); font: 700 20px var(--round); padding: 0 4px; }
+  .x:hover { color: var(--warn); }
+  .actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 16px; }
+  .hint { font-size: 13.5px; color: var(--faint); }
+  #ts { min-height: 0; }
+  .res .empty { color: var(--faint); }
+  .ans { padding: 12px 0; border-bottom: 2px dashed var(--line); }
+  .ans:last-child { border-bottom: none; }
+  .ans .head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+  .ans .qid { font: 700 13px var(--mono); color: var(--muted); }
+  .ans .qt { font-size: 14px; color: var(--muted); margin: 2px 0 6px; }
+  .ans .top { font: 800 17px var(--round); color: var(--accent-ink); }
+  .badge { font: 700 11.5px var(--mono); letter-spacing: .04em; text-transform: uppercase; padding: 2px 8px; border-radius: 999px; border: 2px solid var(--ink); }
+  .badge.act { background: var(--mint); } .badge.ask { background: var(--pink); }
+  .bar { display: grid; grid-template-columns: minmax(70px, 34%) 1fr 46px; gap: 8px; align-items: center; margin: 4px 0; font-size: 14px; }
+  .bar .lab { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .bar .tr { background: var(--line); border-radius: 6px; height: 14px; overflow: hidden; }
+  .bar .fl { background: var(--soft); height: 100%; border-radius: 6px; }
+  .bar.best .fl { background: var(--accent); }
+  .bar .pc { text-align: right; font: 600 13px var(--mono); }
+  .meta { font: 12.5px var(--mono); color: var(--faint); margin-top: 12px; }
+  .thr { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--muted); margin: 0 0 6px; flex-wrap: wrap; }
+  .thr input { width: 140px; accent-color: var(--accent); }
+  .err { color: var(--warn); font-weight: 600; margin-top: 10px; display: none; }
+  .code { margin-top: 24px; }
+  .tabs { display: flex; gap: 8px; margin-bottom: 10px; }
+  pre { margin: 0; background: var(--panel); border: 2px solid var(--line); border-radius: 12px; padding: 14px 16px; overflow-x: auto; font: 13.5px/1.55 var(--mono); white-space: pre; }
+  .local { margin-top: 24px; background: var(--panel); }
+  .local ul { margin: 6px 0 0; padding-left: 20px; } .local li { margin: 3px 0; }
+  footer { margin-top: 56px; border-top: 2px solid var(--ink); padding: 22px 0 40px; font-size: 14px; color: var(--muted); }
+  footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+  footer a { margin-left: 16px; text-decoration: none; } footer a:hover { color: var(--ink); }
+</style>
+<style>
+  main.doc { max-width: 760px; } main.doc h2 { font: 800 22px var(--round); margin: 30px 0 8px; } main.doc p, main.doc li { color: var(--ink); }
+  main.doc .upd { font: 13px var(--mono); color: var(--faint); }
+</style>
+</head>
+<body>
+<header class="nav"><div class="wrap">
+  <a class="brand" href="/"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="4" y="6" width="32" height="30" rx="10"/><circle class="e" cx="15" cy="19" r="4.5"/><circle class="e" cx="26" cy="19" r="4.5"/><circle class="p" cx="16" cy="20" r="2"/><circle class="p" cx="27" cy="20" r="2"/></svg>Decido</a>
+  <nav class="menu">
+    <a href="/#results">Results</a><a href="/#models">Models</a><a href="/research">Research</a>
+    <a class="btn sm" href="https://pypi.org/project/decido-ai/">pip install decido-ai</a>
+  </nav>
+</div></header>
+
+<main class="wrap doc">
+  <h1>Privacy</h1>
+  <p class="upd">Last updated 7 November 2026</p>
+  <p>Short version: <b>what you type into the playground is not stored.</b> The open models you download from Hugging Face run on
+  your own machine and send us nothing.</p>
+  <h2>Playground and hosted API</h2>
+  <ul>
+    <li><b>Your inputs</b> (the document, questions and answers) are processed in memory to compute the answer and then discarded.
+    We do not store them, log them, or use them to train models.</li>
+    <li><b>Request metadata</b> is kept for up to <b>30 days</b> to run and protect the service: time, status, latency, model,
+    request sizes and number of questions, country, and network data our providers record (such as IP address).</li>
+    <li><b>Abuse protection:</b> Cloudflare Turnstile checks that requests come from a person. After the check passes, our
+    server sets one short-lived, strictly necessary session cookie (<code>__Host-dps</code>, 30 minutes) on getdecido.ai.
+    We set no advertising or analytics cookies; Turnstile runs in a Cloudflare frame under Cloudflare's own privacy policy.</li>
+    <li><b>Rate limits:</b> to enforce fair-use limits we keep counters keyed by your IP address (for IPv6, its /64 network)
+    and by the random session id for about <b>2 days</b>, then delete them.</li>
+    <li><b>Processors:</b> Cloudflare (website, edge, Turnstile) and Google Cloud (model servers, us-central1). Data may be
+    processed in the United States.</li>
+    <li>Please do not paste personal, confidential or regulated data into the public playground. For sensitive data, run
+    Decido locally (<code>pip install decido-ai</code>) — nothing leaves your machine.</li>
+  </ul>
+  <h2>Local use</h2>
+  <p>The <code>decido-ai</code> package downloads model files from Hugging Face (subject to Hugging Face's privacy policy) and
+  then runs offline. It contains no telemetry.</p>
+  <h2>Email</h2>
+  <p>If you write to us, we keep the correspondence to reply and follow up. Ask us any time to delete it.</p>
+  <h2>Contact</h2>
+  <p><a href="mailto:founders@getdecido.ai">founders@getdecido.ai</a> — questions, access or deletion requests.</p>
+</main>
+
+<footer><div class="wrap">
+  <span>© 2026 Decido</span>
+  <span><a href="/research">Research</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="https://huggingface.co/collections/decido-ai/decido-1-6aed66fd09af05c057795ca8">Hugging Face</a><a href="mailto:founders@getdecido.ai">Contact</a></span>
+</div></footer>
+</body>
+</html>
