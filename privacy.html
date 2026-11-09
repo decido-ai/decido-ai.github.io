@@ -112,7 +112,7 @@
 
 <main class="wrap doc">
   <h1>Privacy</h1>
-  <p class="upd">Last updated 7 November 2026</p>
+  <p class="upd">Last updated 9 November 2026</p>
   <p>Short version: <b>what you type into the playground is not stored.</b> The open models you download from Hugging Face run on
   your own machine and send us nothing.</p>
   <h2>Playground and hosted API</h2>
@@ -127,13 +127,24 @@
     <li><b>Rate limits:</b> to enforce fair-use limits we keep counters keyed by your IP address (for IPv6, its /64 network),
     by the random session id, and — for new API keys — by your wider network (IPv4 /24 or IPv6 /48) for about <b>2 days</b>,
     then delete them.</li>
+    <li><b>Accounts (for API keys):</b> you sign in with Google. We keep which provider you used, its user id for
+    you, your verified email address, and when the account was created
+    and last used — to give each person one account and one key, to enforce the limits, and to contact you about the service if
+    needed. We ask the provider only for your email address (scopes <code>openid email</code>), do not
+    keep its access tokens, and do not receive your password. Google learns that you signed in to Decido, under its
+    own privacy policy. Signing in sets a strictly necessary session cookie (<code>__Host-dsess</code>, 30 days) and, during
+    sign-in only, a 10-minute cookie (<code>__Host-doauth</code>). You can delete your account at any time on the
+    <a href="https://getdecido.ai/playground#api">playground</a>: the account, its keys and sessions are deleted right away (rate-limit
+    counters expire within about 2 days). Accounts unused for 12 months are deleted automatically. Legal basis: providing the
+    service you asked for, and our legitimate interest in preventing abuse.</li>
     <li><b>API keys:</b> a key is shown once and we store only its SHA-256 hash, never the key itself. With it we keep a short
-    display prefix (e.g. <code>dk_abcdefgh</code>), your optional label, the network it was created from (IP address or IPv6
-    /64) and when it was created and last used — for the life of the key, to prevent abuse. Revoked or unused keys are deleted
-    90 days after last use.
+    display prefix (e.g. <code>dk_abcdefgh</code>), your optional label, the account it belongs to, and when it was created and
+    last used. Replaced or revoked keys stop working at once; keys unused for 90 days are deleted. Keys created before sign-in
+    existed also kept the IP address they were created from (IPv6: its /64 network); they stop working on 23 November 2026 and are deleted 30 days later.
     API requests are handled like playground requests: inputs are not stored; request metadata (including the key prefix) is kept
     up to 30 days.</li>
-    <li><b>Processors:</b> Cloudflare (website, edge, Turnstile) and Google Cloud (model servers, us-central1). Data may be
+    <li><b>Processors:</b> Cloudflare (website, edge, Turnstile, account data) and Google Cloud (model servers, us-central1); Google
+    also for sign-in. Data may be
     processed in the United States.</li>
     <li>Please do not paste personal, confidential or regulated data into the public playground. For sensitive data, run
     Decido locally (<code>pip install decido-ai</code>) — nothing leaves your machine.</li>

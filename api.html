@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>API — Decido</title>
-<meta name="description" content="The free Decido API: POST /v1/systemone with a Jev 1.13-compatible request, get a probability for every answer. Free key, 50 requests/day.">
+<meta name="description" content="The free Decido API: POST /v1/systemone with a Jev 1.13-compatible request, get a probability for every answer. Free evaluation key (sign in with Google), 25 requests/day.">
 <link rel="canonical" href="https://getdecido.ai/api">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect x='4' y='6' width='32' height='30' rx='10' fill='%232a78d6' stroke='%231c1b19' stroke-width='3'/%3E%3Ccircle cx='15' cy='19' r='4.5' fill='white'/%3E%3Ccircle cx='26' cy='19' r='4.5' fill='white'/%3E%3Ccircle cx='16' cy='20' r='2'/%3E%3Ccircle cx='27' cy='20' r='2'/%3E%3C/svg%3E">
 <style>
@@ -137,8 +137,12 @@ Content-Type: application/json</pre>
   <h2>Authentication</h2>
   <ul>
     <li>Send your key as <code>Authorization: Bearer dk_…</code> — the header the Jev / TypeSafe SDKs send.</li>
-    <li>Get a key on the <a href="https://getdecido.ai/playground#api">playground</a> after a quick human check: one key per network per day, no
-    sign-up, no email. The key is shown once; we store only its SHA-256 hash, so a lost key cannot be recovered — create a new one the next day.</li>
+    <li>Get a key on the <a href="https://getdecido.ai/playground#api">playground</a>: sign in with Google (we ask only for your email
+    address from it), one account per person, one active key per account. The key is shown once; we store only its SHA-256 hash, so a lost key cannot be
+    recovered — create a new one (the old one stops working; up to 5 new keys a day).</li>
+    <li>The free API is for <b>evaluation</b>: no SLA, small daily limits. For real workloads run Decido yourself
+    (<code>pip install decido-ai &amp;&amp; decido serve</code>: same request format, no limits) or contact <a href="mailto:founders@getdecido.ai">founders@getdecido.ai</a>.</li>
+    <li>Keys created before sign-in existed (without an account) stop working on 23 November 2026.</li>
     <li>Revoked or unused keys are deleted 90 days after last use. Keys used for abuse may be revoked.</li>
     <li>Call the API from your server only. There are no CORS headers on purpose: a key in browser code is public.</li>
   </ul>
@@ -186,7 +190,7 @@ EOF</pre>
 
   <h2>Limits (free tier)</h2>
   <table>
-    <tr><th>per key</th><td>50 requests per UTC day · 10 per minute · 1 at a time · 150 compute-seconds per day</td></tr>
+    <tr><th>per account</th><td>25 requests per UTC day · 5 per minute · 1 at a time · 100 compute-seconds per day (shared by all your keys; a new key does not reset them)</td></tr>
     <tr><th>per request</th><td>up to 5 questions · up to 10 options per question · up to 80 characters per option (name + description) ·
     document up to 6,000 characters · about 2,500 characters of English in total (hard limit: 1,000 tokens for the document plus all
     questions; 3,000 bytes of text) · body up to 32 KB · no images</td></tr>
@@ -202,12 +206,12 @@ EOF</pre>
   <table>
     <tr><th>status</th><th>meaning</th></tr>
     <tr><td>400</td><td>body is not valid JSON, or a malformed gzip / zstd body</td></tr>
-    <tr><td>401</td><td>missing or invalid API key</td></tr>
+    <tr><td>401</td><td>missing, invalid, replaced or retired API key</td></tr>
     <tr><td>413</td><td>too big: more than 5 questions or 10 options, an option over 80 characters, over the text or token limit
     (“API limit 1,000 tokens”), or a body over 32 KB (gzip: also after decompression; zstd: over 64 KB decompressed)</td></tr>
     <tr><td>415</td><td>not <code>application/json</code>, an unsupported or doubled <code>Content-Encoding</code>, or multi-member gzip</td></tr>
     <tr><td>422</td><td>validation error: missing field, unknown question type, fewer than 2 options, non-string instructions, unknown model, images (model, instruction-type and edge size checks apply to plain/gzip bodies; zstd bodies get the server's checks)</td></tr>
-    <tr><td>429</td><td>daily quota used up, more than 10 requests per minute, a second request while one is running, or too many invalid API keys (or rejected requests) from your network in a minute</td></tr>
+    <tr><td>429</td><td>daily quota used up, more than 5 requests per minute, a second request while one is running, or too many invalid API keys (or rejected requests) from your network in a minute</td></tr>
     <tr><td>502</td><td>the model is unavailable (retry later)</td></tr>
     <tr><td>503</td><td>busy, today's free capacity is used up, or the free API is paused</td></tr>
     <tr><td>504</td><td>the model did not answer in time</td></tr>
@@ -226,9 +230,9 @@ with TypeSafeClient(base_url="https://getdecido.ai") as client:
 
   <h2>Privacy</h2>
   <p>Documents, questions and answers are processed in memory and not stored or used for training. Request metadata (time,
-  status, size, key prefix, country) is kept for up to 30 days. For each key we keep its SHA-256 hash, a short display prefix,
-  your label, the network (IP address or IPv6 /64) it was created from, and when it was created and last used, for the life of
-  the key. Details: <a href="/privacy">privacy</a>, <a href="/terms">terms</a>.</p>
+  status, size, key prefix, country) is kept for up to 30 days. For your account we keep the sign-in provider, its user id
+  and your email address; for each key its SHA-256 hash, a short display prefix, your label, and when it was created and last
+  used. Details: <a href="/privacy">privacy</a>, <a href="/terms">terms</a>.</p>
 
   <h2>Production use</h2>
   <p>The free tier has no SLA and small limits. For production volume, bigger models or sensitive data, run Decido yourself —
