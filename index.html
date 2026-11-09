@@ -338,11 +338,11 @@ curl localhost:8080/v1/systemone -H <span class="s">"content-type: application/j
 <span class="c"># -> {"answers": {"refund": {"type": "noul", "noul": 0.98},
 #                 "team": {"type": "choice", "choice": "billing", "confidence": 0.92,
 #                          "probabilities": {"billing": 0.95, "technical": 0.02, "sales": 0.03}}}, ...}
-# Existing Jev SDK clients work unchanged: TypeSafeClient(base_url="http://127.0.0.1:8080")
+# Existing Jev SDK clients work unchanged: TypeSafeClient(base_url="http://127.0.0.1:8080", api_key="local")
 # (the SDK zstd-compresses large requests; for decido serve to accept them: pip install "decido-ai[server]")</span></pre>
     </div>
   </div>
-  <div class="avail">Open source (Apache-2.0; Decido-1-XL: MIT): <a href="https://pypi.org/project/decido-ai/">decido-ai on PyPI</a> · <a href="https://huggingface.co/collections/decido-ai/decido-1-6aed66fd09af05c057795ca8">models on Hugging Face</a>. One <code>pip install</code> on Mac (Apple Silicon) and Linux x86_64: nothing to compile. On a GPU: <code>pip install "decido-ai[gpu]"</code> and <code>device="cuda"</code> (Decido-1-Max: CPU and Mac GPU for now; GPU weights soon).</div>
+  <div class="avail">Open source (Apache-2.0; Decido-1-XL: MIT): <a href="https://pypi.org/project/decido-ai/">decido-ai on PyPI</a> · <a href="https://huggingface.co/collections/decido-ai/decido-1-6aed66fd09af05c057795ca8">models on Hugging Face</a>. One <code>pip install</code> on Mac (Apple Silicon), Linux (x86_64, aarch64) and Windows 10+ (x86_64): nothing to compile. <a href="/quickstart">Quickstart →</a> On a GPU: <code>pip install "decido-ai[gpu]"</code> and <code>device="cuda"</code> (Decido-1-Max: CPU and Mac GPU for now; GPU weights soon).</div>
 </section>
 
 <section id="models">
@@ -405,7 +405,7 @@ curl localhost:8080/v1/systemone -H <span class="s">"content-type: application/j
 
 <footer><div class="wrap">
   <span>© 2026 Decido</span>
-  <span class="fl"><a href="/research">Research</a><a href="https://getdecido.ai/playground">Playground</a><a href="https://getdecido.ai/api">API</a><a href="https://huggingface.co/collections/decido-ai/decido-1-6aed66fd09af05c057795ca8">Hugging Face</a><a href="https://pypi.org/project/decido-ai/">PyPI</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="mailto:founders@getdecido.ai">Contact</a></span>
+  <span class="fl"><a href="/research">Research</a><a href="https://getdecido.ai/playground">Playground</a><a href="https://getdecido.ai/api">API</a><a href="/quickstart">Quickstart</a><a href="https://huggingface.co/collections/decido-ai/decido-1-6aed66fd09af05c057795ca8">Hugging Face</a><a href="https://pypi.org/project/decido-ai/">PyPI</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="mailto:founders@getdecido.ai">Contact</a></span>
 </div></footer>
 </body>
 </html>

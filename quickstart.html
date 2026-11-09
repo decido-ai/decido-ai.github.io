@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quickstart — Decido</title>
+<meta name="description" content="Decido in five minutes: install, first decision in Python and on the command line, your own Jev-compatible server, the free hosted API, and agents (MCP, LangChain, OpenAI tools).">
+<link rel="canonical" href="https://getdecido.ai/quickstart">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect x='4' y='6' width='32' height='30' rx='10' fill='%232a78d6' stroke='%231c1b19' stroke-width='3'/%3E%3Ccircle cx='15' cy='19' r='4.5' fill='white'/%3E%3Ccircle cx='26' cy='19' r='4.5' fill='white'/%3E%3Ccircle cx='16' cy='20' r='2'/%3E%3Ccircle cx='27' cy='20' r='2'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --bg: #fffcf3; --card: #ffffff; --panel: #fff7e0; --ink: #1c1b19; --muted: #5a5853; --faint: #6f6c66; --line: #e9e3d3;
+    --accent: #2a78d6; --accent-ink: #1d5fb3; --soft: #b9d1f0; --shadow: #1c1b19; --warn: #b5402a;
+    --yellow: #ffe27a; --blue: #d6e6ff; --pink: #ffd7e1; --mint: #cff2df;
+    --round: ui-rounded, "SF Pro Rounded", "Nunito", "Varela Round", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #17161a; --card: #1f1e23; --panel: #25231f; --ink: #f1efe8; --muted: #b0ada5; --faint: #9a978f; --line: #34322e;
+            --accent: #5592e3; --accent-ink: #8dbbf2; --soft: #2f4a70; --shadow: #000000; --warn: #f08a72;
+            --yellow: #6b5a17; --blue: #22344f; --pink: #4d2a35; --mint: #1f4433; }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-padding-top: 80px; }               /* anchors land below the sticky top bar */
+  @media (max-width: 760px) { html { scroll-padding-top: 100px; } }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.55 var(--sans); -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+  header.nav { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(8px); border-bottom: 2px solid var(--ink); }
+  header.nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+  .brand { display: flex; align-items: center; gap: 10px; font: 800 19px var(--round); letter-spacing: .02em; text-decoration: none; }
+  .brand svg { width: 30px; height: 30px; }
+  .brand rect { fill: var(--accent); stroke: var(--ink); stroke-width: 3; } .brand .e { fill: #fff; stroke: var(--ink); stroke-width: 2; } .brand .p { fill: #1c1b19; }
+  .menu { display: flex; align-items: center; gap: 24px; font: 600 15px var(--round); }
+  .menu a { text-decoration: none; color: var(--muted); } .menu a:hover { color: var(--ink); }
+  .menu a[aria-current=page] { color: var(--ink); }
+  @media (max-width: 760px) {                      /* phones: the four links get their own full-width row under the logo */
+    header.nav .wrap { flex-wrap: wrap; height: auto; padding-top: 10px; padding-bottom: 8px; row-gap: 4px; }
+    .menu { order: 3; width: 100%; justify-content: space-between; gap: 10px; font-size: 15px; padding-bottom: 2px; }
+  }
+  .btn { display: inline-block; text-decoration: none; font: 700 15px var(--round); padding: 10px 20px; border-radius: 12px; background: var(--yellow); color: var(--ink); border: 2px solid var(--ink); box-shadow: 3px 3px 0 var(--shadow); }
+  .btn.line { background: var(--card); }
+  main.doc { max-width: 1000px; padding-bottom: 10px; }
+  main.doc > p, main.doc li, main.doc h1 + p { max-width: 820px; }
+  h1 { font: 800 clamp(38px, 6vw, 56px)/1.05 var(--round); letter-spacing: -.02em; margin: 40px 0 6px; }
+  .upd { font: 13px var(--mono); color: var(--faint); margin: 0; }
+  .lede { color: var(--muted); font-size: 18px; margin: 14px 0 6px; }
+  .toc { font: 13.5px var(--mono); color: var(--faint); margin: 10px 0 0; } .toc a { color: var(--muted); }
+  .step { margin-top: 34px; }
+  h2 { font: 800 24px var(--round); margin: 0 0 8px; display: flex; align-items: center; gap: 10px; }
+  h2 .n { display: inline-grid; place-items: center; width: 30px; height: 30px; flex: none; border-radius: 50%; background: var(--mint); border: 2px solid var(--ink); font: 800 15px var(--round); }
+  h3 { font: 700 16px var(--round); margin: 18px 0 4px; }
+  p, li { color: var(--ink); } p { margin: 8px 0; }
+  .muted { color: var(--muted); font-size: 14.5px; }
+  pre { margin: 8px 0 12px; background: var(--panel); border: 2px solid var(--line); border-radius: 12px; padding: 12px 14px; overflow-x: auto; font: 12.5px/1.5 var(--mono); white-space: pre; }
+  code { font: 13.5px var(--mono); }
+  a { color: var(--accent-ink); } header.nav a, footer a { color: inherit; }
+  table { border-collapse: collapse; width: 100%; margin: 8px 0 12px; font-size: 15px; }
+  th, td { text-align: left; vertical-align: top; border-bottom: 1px solid var(--line); padding: 7px 8px; }
+  th { font: 700 13px var(--round); color: var(--muted); }
+  tbody th { font: 15px var(--sans); color: var(--ink); }
+  pre:focus-visible, .tw:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  td b { white-space: nowrap; }
+  .tw { overflow-x: auto; } .tw table { min-width: 560px; }
+  details.win { margin: -4px 0 12px; } details.win summary { cursor: pointer; font: 600 13.5px var(--round); color: var(--muted); }
+  details.win summary:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+  details.win pre { margin-top: 6px; } .win-note { margin: 0 0 4px; }
+  .note { background: var(--blue); border: 2px solid var(--ink); border-radius: 12px; padding: 10px 14px; margin: 12px 0; font-size: 15px; }
+  footer { margin-top: 56px; border-top: 2px solid var(--ink); padding: 22px 0 40px; font-size: 14px; color: var(--muted); }
+  footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+  footer a { text-decoration: none; } footer a:hover { color: var(--ink); }
+  footer .fl { display: flex; flex-wrap: wrap; gap: 6px 18px; }
+</style>
+</head>
+<body>
+<header class="nav"><div class="wrap">
+  <a class="brand" href="/"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="4" y="6" width="32" height="30" rx="10"/><circle class="e" cx="15" cy="19" r="4.5"/><circle class="e" cx="26" cy="19" r="4.5"/><circle class="p" cx="16" cy="20" r="2"/><circle class="p" cx="27" cy="20" r="2"/></svg>Decido</a>
+  <nav class="menu" aria-label="Main"><a href="/#models">Models</a><a href="https://getdecido.ai/playground">Playground</a><a href="https://getdecido.ai/api">API</a><a href="/research">Research</a></nav>
+</div></header>
+
+<main class="wrap doc">
+  <h1>Quickstart</h1>
+  <p class="upd">decido-ai 1.1 · about 5 minutes, plus a one-time 1.8 GB model download</p>
+  <p class="lede">From <code>pip install</code> to a calibrated decision, your own API server, and a tool your agent can call. Run the
+  blocks in order in one terminal and each works as written (macOS 13+ on Apple Silicon, Linux x86_64 or aarch64, Windows 10+ x86_64; Python 3.9+, MCP: 3.10+). Where Windows differs, a
+  <b>Windows (PowerShell)</b> line sits under the block.</p>
+  <nav class="toc" aria-label="Steps"><a href="#install">Install</a> · <a href="#first">First decision</a> · <a href="#serve">Your own server</a> · <a href="#hosted">Hosted API</a> · <a href="#agents">Agents</a> · <a href="#models">Which model</a> · <a href="#help">Troubleshooting</a></nav>
+
+  <section class="step" id="install">
+    <h2><span class="n">1</span>Install</h2>
+    <pre tabindex="0" data-lang="sh">python3 -m venv .venv &amp;&amp; source .venv/bin/activate &amp;&amp; pip install decido-ai</pre>
+    <details class="win"><summary>Windows (PowerShell)</summary><pre tabindex="0" data-lang="powershell" data-kind="windows">python -m venv .venv
+.venv\Scripts\activate
+pip install decido-ai</pre>
+    <p class="muted win-note">If PowerShell refuses to run the activate script: <code>Set-ExecutionPolicy -Scope CurrentUser RemoteSigned</code>, then activate again.</p></details>
+    <p class="muted">A virtual environment avoids "externally-managed-environment" errors and a missing <code>pip</code>; reopen it later
+    with <code>source .venv/bin/activate</code> (Windows: <code>.venv\Scripts\activate</code>). Prebuilt for macOS 13+ on Apple Silicon, Linux x86_64 and aarch64, and Windows 10+ x86_64, nothing to compile. On a Mac
+    it uses the GPU (Metal) automatically.</p>
+  </section>
+
+  <section class="step" id="first">
+    <h2><span class="n">2</span>Your first decision</h2>
+    <p>Give it a document and questions — yes/no, pick one, or an ordered scale — and get a probability for every answer:</p>
+    <pre tabindex="0" data-lang="python">from decido import Decido
+
+m = Decido("decido-ai/decido-1-fast-1.7b")      # downloads once (1.8 GB), then runs locally
+print(m.decide(
+    "Customer: I was charged twice for order 4821. Please refund one of the charges today.",
+    {
+        "refund":  "Is the customer asking for a refund?",                                   # yes / no
+        "team":    {"q": "Which team should handle this?", "options": ["billing", "shipping", "tech"]},
+        "urgency": {"q": "How urgent is it?", "scale": ["low", "normal", "urgent"]},
+    },
+))</pre>
+    <p class="muted">Prints something like <code>{'refund': {'yes': 0.99, 'no': 0.01}, 'team': {'billing': 0.94, …}, 'urgency': {…}}</code>.
+    The first call downloads the model once; after that it runs offline.</p>
+    <h3>Or from the command line</h3>
+    <pre tabindex="0" data-lang="sh">decido run decido-ai/decido-1-fast-1.7b "Customer: charged twice, refund please" \
+    -q refund="Is a refund requested?" -q team="Which team?|billing,shipping,tech" -q urgency="How urgent?|scale:low,normal,urgent"</pre>
+    <details class="win"><summary>Windows (PowerShell)</summary><pre tabindex="0" data-lang="powershell" data-kind="windows">decido run decido-ai/decido-1-fast-1.7b "Customer: charged twice, refund please" `
+    -q refund="Is a refund requested?" -q team="Which team?|billing,shipping,tech" -q urgency="How urgent?|scale:low,normal,urgent"</pre></details>
+  </section>
+
+  <section class="step" id="serve">
+    <h2><span class="n">3</span>Run your own API server</h2>
+    <p>A Jev 1.13-compatible HTTP API on your machine (binds to 127.0.0.1; keeps running):</p>
+    <pre tabindex="0" data-lang="sh" data-kind="server">decido serve decido-ai/decido-1-fast-1.7b --port 8080</pre>
+    <p>In another terminal:</p>
+    <pre tabindex="0" data-lang="sh">curl -s localhost:8080/v1/systemone -H "content-type: application/json" -d '{
+  "state": "Customer: I was charged twice for order 4821. Please refund one of the charges today.",
+  "questions": {
+    "refund": {"type": "noul", "instructions": "Is the customer asking for a refund?"},
+    "team": {"type": "choice", "instructions": "Which team should handle this?",
+             "criteria": {"billing": "", "shipping": "", "tech": ""}}
+  }
+}'</pre>
+    <details class="win"><summary>Windows (PowerShell)</summary><pre tabindex="0" data-lang="powershell" data-kind="windows">Invoke-RestMethod http://localhost:8080/v1/systemone -Method Post -ContentType "application/json" -Body '{
+  "state": "Customer: I was charged twice for order 4821. Please refund one of the charges today.",
+  "questions": {
+    "refund": {"type": "noul", "instructions": "Is the customer asking for a refund?"},
+    "team": {"type": "choice", "instructions": "Which team should handle this?",
+             "criteria": {"billing": "", "shipping": "", "tech": ""}}
+  }
+}' | ConvertTo-Json -Depth 6</pre></details>
+    <p class="muted">To require a key for your server, set <code>DECIDO_SERVER_KEY</code> before starting it; clients then send
+    <code>Authorization: Bearer &lt;that key&gt;</code>. Jev SDK users: <code>TypeSafeClient(base_url="http://127.0.0.1:8080", api_key="local")</code>
+    and <code>pip install "decido-ai[server]"</code>
+    (the SDK zstd-compresses larger requests).</p>
+  </section>
+
+  <section class="step" id="hosted">
+    <h2><span class="n">4</span>Or use the hosted API (no download)</h2>
+    <p>Get a free key on the <a href="https://getdecido.ai/playground#api">playground</a> (one click and a quick human check;
+    50 requests/day, Decido-1-Fast, demo size limits), then:</p>
+    <pre tabindex="0" data-lang="sh" data-kind="hosted">export DECIDO_API_KEY=dk_YOUR_KEY      # your getdecido.ai key: used only for the hosted API</pre>
+    <details class="win"><summary>Windows (PowerShell)</summary><pre tabindex="0" data-lang="powershell" data-kind="windows">$env:DECIDO_API_KEY="dk_YOUR_KEY"      # your getdecido.ai key: used only for the hosted API</pre></details>
+    <pre tabindex="0" data-lang="python" data-kind="hosted">from decido import Decido
+
+m = Decido("hosted:decido-1-fast")      # sends DECIDO_API_KEY to getdecido.ai; nothing to download
+print(m.decide("Customer: I was charged twice for order 4821. Please refund one of the charges today.",
+               {"refund": "Is the customer asking for a refund?"}))</pre>
+    <p class="muted">Same <code>decide()</code> / <code>predict()</code> as the local models. Errors raise <code>decido.HostedError</code>
+    (<code>.status</code>, <code>.retry_after</code>). Plain HTTP and curl: see the <a href="https://getdecido.ai/api">API docs</a>.</p>
+  </section>
+
+  <section class="step" id="agents">
+    <h2><span class="n">5</span>Give it to your agent</h2>
+    <h3>MCP: Claude Desktop, Cursor and other MCP clients (needs Python 3.10+)</h3>
+    <pre tabindex="0" data-lang="sh">pip install "decido-ai[mcp]"                   # needs Python 3.10+
+decido pull decido-ai/decido-1-fast-1.7b
+which decido</pre>
+    <details class="win"><summary>Windows (PowerShell)</summary><pre tabindex="0" data-lang="powershell" data-kind="windows">pip install "decido-ai[mcp]"                   # needs Python 3.10+
+decido pull decido-ai/decido-1-fast-1.7b
+where.exe decido</pre></details>
+    <p>Claude Desktop: Settings → Developer → Edit Config (<code>claude_desktop_config.json</code>). Cursor: <code>~/.cursor/mcp.json</code>.
+    Use the path printed by <code>which decido</code> (Windows: <code>where.exe decido</code>; write backslashes in JSON as <code>\\</code>, e.g. <code>"C:\\Users\\you\\.venv\\Scripts\\decido.exe"</code>):</p>
+    <pre tabindex="0" data-lang="json" data-kind="mcp-config">{
+  "mcpServers": {
+    "decido": {
+      "command": "/full/path/to/bin/decido",
+      "args": ["mcp", "--model", "decido-ai/decido-1-fast-1.7b"]
+    }
+  }
+}</pre>
+    <p class="muted">The agent gets one read-only tool, <code>decide(document, questions)</code>, over stdio (no network port).
+    Hosted instead of a local model:</p>
+    <pre tabindex="0" data-lang="json" data-kind="mcp-config hosted">{
+  "mcpServers": {
+    "decido": {
+      "command": "/full/path/to/bin/decido",
+      "args": ["mcp", "--hosted"],
+      "env": {"DECIDO_API_KEY": "dk_YOUR_KEY"}
+    }
+  }
+}</pre>
+    <h3>LangChain tool</h3>
+    <pre tabindex="0" data-lang="sh">pip install langchain-core</pre>
+    <pre tabindex="0" data-lang="python">from langchain_core.tools import tool
+from decido import Decido
+
+m = Decido("decido-ai/decido-1-fast-1.7b")
+
+@tool
+def probability_yes(document: str, question: str) -&gt; float:
+    """Probability (0-1) that the answer to a yes/no question about the document is yes."""
+    return m.decide(document, question)["answer"]["yes"]
+
+print(probability_yes.invoke({"document": "Customer: please refund my second charge.", "question": "Is this a refund request?"}))</pre>
+    <h3>Function calling (OpenAI-style tool schema)</h3>
+    <p>Pass <code>DECIDE_TOOL</code> in your LLM call's <code>tools</code>; when the model calls it, run it locally. This is the Chat
+    Completions shape; the Responses API takes the same fields flat — <code>{"type": "function", **DECIDE_TOOL["function"]}</code>.</p>
+    <pre tabindex="0" data-lang="python">from decido import Decido
+
+DECIDE_TOOL = {
+    "type": "function",
+    "function": {
+        "name": "decide",
+        "description": "Calibrated decision about a document: returns a probability for every possible answer.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "document": {"type": "string", "description": "The text to decide about."},
+                "questions": {
+                    "type": "object",
+                    "description": 'id -&gt; a yes/no question, or {"q": "...", "options": [...]}, or {"q": "...", "scale": [...]}',
+                    "additionalProperties": {"anyOf": [{"type": "string"}, {"type": "object"}]},
+                },
+            },
+            "required": ["document", "questions"],
+        },
+    },
+}
+m = Decido("decido-ai/decido-1-fast-1.7b")
+
+def run_tool_call(arguments: dict) -&gt; dict:        # call this when the LLM asks for the "decide" tool
+    return m.decide(arguments["document"], arguments["questions"])
+
+print(run_tool_call({"document": "Agent plan: delete the production database.", "questions": {"safe": "Is this action safe?"}}))</pre>
+  </section>
+
+  <section class="step" id="models">
+    <h2><span class="n">6</span>Which model?</h2>
+    <div class="tw" tabindex="0" role="region" aria-label="Model comparison"><table>
+      <thead><tr><th scope="col">model</th><th scope="col">pick it for</th><th scope="col">six-benchmark score</th><th scope="col">runs on</th><th scope="col">speed (M4 Pro, 5 questions, 1k-token document)</th></tr></thead>
+      <tbody>
+      <tr><th scope="row"><b>Decido-1-Ultra</b><br><code>decido-ai/decido-1-ultra-0.6b</code></th><td>very high volume</td><td>62.2</td><td>laptop, ~4 GB RAM</td><td>0.41 s CPU · 0.13 s Mac GPU</td></tr>
+      <tr><th scope="row"><b>Decido-1-Fast</b><br><code>decido-ai/decido-1-fast-1.7b</code></th><td>checks inside agent loops (used above; also hosted)</td><td>73.0</td><td>laptop, ~8 GB RAM</td><td>0.64 s CPU · 0.30 s Mac GPU</td></tr>
+      <tr><th scope="row"><b>Decido-1</b><br><code>decido-ai/decido-1-26b-a4b</code></th><td>accurate decisions on a laptop CPU</td><td>85.4 (Jev 1.13: 83.9)</td><td>laptop, ~30 GB RAM · GPU</td><td>4.1 s CPU · 1.1 s Mac GPU</td></tr>
+      <tr><th scope="row"><b>Decido-1-Max</b><br><code>decido-ai/decido-1-max-26b-a4b</code></th><td>the hardest calls; reasons first</td><td>89.2 (GPU score)</td><td>laptop, ~30 GB RAM (slow)</td><td>~28 s CPU · ~11 s Mac GPU per question</td></tr>
+      </tbody>
+    </table></div>
+    <p class="muted">Swap the model name in any example above. All six models, with per-benchmark results: <a href="/#models">models</a> · <a href="/research#results">research</a>.</p>
+  </section>
+
+  <section class="step" id="help">
+    <h2><span class="n">7</span>Troubleshooting</h2>
+    <pre tabindex="0" data-lang="sh">decido doctor</pre>
+    <ul>
+      <li><code>decido doctor</code> checks the runtime, the Mac GPU / NVIDIA GPU and versions — paste its output when you ask for help.</li>
+      <li>First call slow? That is the one-time download; <code>decido pull &lt;model&gt;</code> fetches it ahead of time.</li>
+      <li>Windows 10+ (x86_64): prebuilt like macOS and Linux; use the <b>Windows (PowerShell)</b> lines under the steps above.</li>
+      <li>Intel Mac and other platforms: the runtime is compiled on first use (a few minutes, once; needs a C++ compiler).</li>
+      <li>NVIDIA GPU: <code>pip install "decido-ai[gpu]"</code> (Python 3.10+), then <code>Decido(model, device="cuda")</code>.</li>
+    </ul>
+    <p>Still stuck? <a href="mailto:founders@getdecido.ai">founders@getdecido.ai</a></p>
+  </section>
+</main>
+
+<footer><div class="wrap">
+  <span>© 2026 Decido</span>
+  <span class="fl"><a href="/research">Research</a><a href="https://getdecido.ai/playground">Playground</a><a href="https://getdecido.ai/api">API</a><a href="/quickstart">Quickstart</a><a href="https://huggingface.co/collections/decido-ai/decido-1-6aed66fd09af05c057795ca8">Hugging Face</a><a href="https://pypi.org/project/decido-ai/">PyPI</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="mailto:founders@getdecido.ai">Contact</a></span>
+</div></footer>
+</body>
+</html>
