@@ -7,33 +7,33 @@
 <meta name="robots" content="noindex">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23141414'/%3E%3Ccircle cx='16' cy='16' r='6' fill='%232a78d6'/%3E%3C/svg%3E">
 <style>
-  :root { --paper: #fbfaf7; --ink: #141414; --muted: #5c5a55; --rule: #d8d4cb; --accent: #2a78d6; --accent-ink: #1d5fb3;
-          --serif: Charter, "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  :root { --paper: #fffcf3; --ink: #1c1b19; --muted: #5a5853; --rule: #e9e3d3; --accent: #2a78d6; --accent-ink: #1d5fb3;
+          --serif: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Helvetica, Arial, sans-serif;
           --mono: ui-monospace, Menlo, "SF Mono", Consolas, monospace; }
   @media (prefers-color-scheme: dark) {
     :root { --paper: #141413; --ink: #ecebe7; --muted: #a6a39b; --rule: #34332f; --accent: #5b9bea; --accent-ink: #7fb2f0; }
   }
   * { box-sizing: border-box; }
   html, body { height: 100%; }
-  body { margin: 0; background: var(--paper); color: var(--ink); font: 18px/1.55 var(--serif); -webkit-font-smoothing: antialiased;
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 17px/1.6 var(--serif); -webkit-font-smoothing: antialiased;
          display: flex; flex-direction: column; }
   main { flex: 1; display: flex; flex-direction: column; justify-content: center; max-width: 760px; width: 100%; margin: 0 auto; padding: 48px 28px; }
-  h1 { font-size: clamp(40px, 7vw, 68px); line-height: 1.04; letter-spacing: -.02em; margin: 28px 0 0; }
+  h1 { font-size: clamp(40px, 7vw, 68px); line-height: 1.04; letter-spacing: -.025em; font-weight: 600; margin: 28px 0 0; }
   h1 .accent { color: var(--accent); }
   p { color: var(--muted); font-size: clamp(19px, 2.3vw, 22px); margin: 20px 0 0; max-width: 620px; }
   .links { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 34px; }
-  a.btn { font: 600 14px var(--mono); padding: 12px 18px; border-radius: 8px; border: 1px solid var(--ink); color: var(--ink); text-decoration: none; }
-  a.btn.primary { background: var(--ink); color: var(--paper); }
+  a.btn { font: 600 15px var(--serif); padding: 12px 18px; border-radius: 8px; border: 1px solid var(--ink); color: var(--ink); text-decoration: none; }
+  a.btn.primary { background: #ffe27a; color: #1c1b19; box-shadow: 2px 2px 0 #1c1b19; }
   a.btn:hover { opacity: .85; }
   footer { border-top: 1px solid var(--rule); padding: 22px 0; font: 12px var(--mono); color: var(--muted); }
   footer .wrap { max-width: 1080px; margin: 0 auto; padding: 0 28px; }
   /* top bar: same as the other pages */
-  header.nav { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--paper) 92%, transparent); backdrop-filter: blur(8px); border-bottom: 2px solid var(--ink); }
+  header.nav { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--paper) 92%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--ink); }
   header.nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 64px; max-width: 1080px; padding: 0 28px; margin: 0 auto; }
-  .brand { display: flex; align-items: center; gap: 10px; font: 800 19px ui-rounded, "SF Pro Rounded", "Nunito", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: .02em; text-decoration: none; color: var(--ink); }
+  .brand { display: flex; align-items: center; gap: 10px; font: 700 19px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: .02em; text-decoration: none; color: var(--ink); }
   .brand svg { width: 30px; height: 30px; }
   .brand rect { fill: var(--accent); stroke: var(--ink); stroke-width: 3; } .brand .e { fill: #fff; stroke: var(--ink); stroke-width: 2; } .brand .p { fill: #1c1b19; }
-  .menu { display: flex; align-items: center; gap: 24px; font: 600 15px ui-rounded, "SF Pro Rounded", "Nunito", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+  .menu { display: flex; align-items: center; gap: 24px; font: 500 15px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
   .menu a { text-decoration: none; color: var(--muted); } .menu a:hover, .menu a[aria-current=page] { color: var(--ink); }
   @media (max-width: 760px) {
     header.nav .wrap { flex-wrap: wrap; height: auto; padding: 10px 24px 8px; row-gap: 4px; }
@@ -41,6 +41,13 @@
   }
   footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
   footer .fl { display: flex; flex-wrap: wrap; gap: 6px 16px; } footer .fl a { color: var(--muted); text-decoration: none; } footer .fl a:hover { color: var(--ink); }
+  b, strong { font-weight: 600; }
+  /* header edge: a chart axis (baseline + minor ticks every 12px, major every 48px) */
+  header.nav { border-bottom: 0; }
+  header.nav::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 8px; pointer-events: none;
+    background: linear-gradient(var(--ink), var(--ink)) bottom / 100% 1px no-repeat,
+                repeating-linear-gradient(90deg, var(--ink) 0 1px, transparent 1px 48px) bottom / 100% 8px no-repeat,
+                repeating-linear-gradient(90deg, color-mix(in srgb, var(--ink) 55%, transparent) 0 1px, transparent 1px 12px) bottom / 100% 4px no-repeat; }
 </style>
 </head>
 <body>
