@@ -105,6 +105,14 @@
     background: linear-gradient(var(--ink), var(--ink)) bottom / 100% 1px no-repeat,
                 repeating-linear-gradient(90deg, var(--ink) 0 1px, transparent 1px 48px) bottom / 100% 8px no-repeat,
                 repeating-linear-gradient(90deg, color-mix(in srgb, var(--ink) 55%, transparent) 0 1px, transparent 1px 12px) bottom / 100% 4px no-repeat; }
+  /* early-access bar above the header */
+  .eab { background: #ffe27a; border-bottom: 1px solid #1c1b19; text-align: center; font: 14px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Helvetica, Arial, sans-serif; }
+  .eab a { display: block; padding: 8px 16px; color: #1c1b19; text-decoration: none; }
+  .eab-tag { display: inline-block; font: 600 11px ui-monospace, Menlo, monospace; letter-spacing: .06em; text-transform: uppercase; background: #1c1b19; color: #fffcf3;
+             padding: 2px 8px; border-radius: 999px; margin-right: 8px; vertical-align: 1px; }
+  .eab-cta { font-weight: 600; text-decoration: underline; text-underline-offset: 3px; white-space: nowrap; }
+  .eab a:hover .eab-cta { text-decoration-thickness: 2px; }
+  @media (max-width: 600px) { .eab { font-size: 13px; } .eab-tag { display: none; } }
 </style>
 <style>
   main.doc { max-width: 760px; } main.doc h2 { font: 800 22px var(--round); margin: 30px 0 8px; } main.doc p, main.doc li { color: var(--ink); }
@@ -121,6 +129,7 @@
 </style>
 </head>
 <body>
+<div class="eab"><a href="mailto:founders@getdecido.ai?subject=Early%20access%3A%20Decido%20API%20%2F%20fine-tuning"><span class="eab-tag">Early access</span> A higher-volume API, and Decido fine-tuned on your own decisions. <span class="eab-cta">Request access →</span></a></div>
 <header class="nav"><div class="wrap">
   <a class="brand" href="/"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="4" y="6" width="32" height="30" rx="10"/><circle class="e" cx="15" cy="19" r="4.5"/><circle class="e" cx="26" cy="19" r="4.5"/><circle class="p" cx="16" cy="20" r="2"/><circle class="p" cx="27" cy="20" r="2"/></svg>Decido</a>
   <nav class="menu" aria-label="Main"><a href="/#models">Models</a><a href="https://getdecido.ai/playground">Playground</a><a href="https://getdecido.ai/api" aria-current="page">API</a><a href="/research">Research</a></nav>
