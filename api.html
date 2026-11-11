@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>API — Decido</title>
+<title>API | Decido</title>
 <meta name="description" content="The free Decido API: POST /v1/systemone with a Jev 1.13-compatible request, get a probability for every answer. Free evaluation key (sign in with Google), 25 requests/day.">
 <link rel="canonical" href="https://getdecido.ai/api">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect x='4' y='6' width='32' height='30' rx='10' fill='%232a78d6' stroke='%231c1b19' stroke-width='3'/%3E%3Ccircle cx='15' cy='19' r='4.5' fill='white'/%3E%3Ccircle cx='26' cy='19' r='4.5' fill='white'/%3E%3Ccircle cx='16' cy='20' r='2'/%3E%3Ccircle cx='27' cy='20' r='2'/%3E%3C/svg%3E">
@@ -136,10 +136,10 @@ Content-Type: application/json</pre>
 
   <h2>Authentication</h2>
   <ul>
-    <li>Send your key as <code>Authorization: Bearer dk_…</code> — the header the Jev / TypeSafe SDKs send.</li>
+    <li>Send your key as <code>Authorization: Bearer dk_…</code>. That is the header the Jev / TypeSafe SDKs send.</li>
     <li>Get a key on the <a href="https://getdecido.ai/playground#api">playground</a>: sign in with Google (we ask only for your email
     address from it), one account per person, one active key per account. The key is shown once; we store only its SHA-256 hash, so a lost key cannot be
-    recovered — create a new one (the old one stops working; up to 5 new keys a day).</li>
+    recovered, so create a new one (the old one stops working; up to 5 new keys a day).</li>
     <li>The free API is for <b>evaluation</b>: no SLA, small daily limits. For real workloads run Decido yourself
     (<code>pip install decido-ai &amp;&amp; decido serve</code>: same request format, no limits) or contact <a href="mailto:founders@getdecido.ai">founders@getdecido.ai</a>.</li>
     <li>Keys created before sign-in existed (without an account) stop working on 23 November 2026.</li>
@@ -156,11 +156,11 @@ Content-Type: application/json</pre>
   </table>
   <table>
     <tr><th>question <code>type</code></th><th><code>instructions</code></th><th><code>criteria</code></th></tr>
-    <tr><td><code>noul</code> (yes/no)</td><td>the question (a string)</td><td>— (yes/no descriptions are ignored by the free API)</td></tr>
+    <tr><td><code>noul</code> (yes/no)</td><td>the question (a string)</td><td>none (the free API ignores yes/no descriptions)</td></tr>
     <tr><td><code>choice</code> (pick one)</td><td>the question (a string)</td><td>object: option → description string, or <code>null</code> for none (2–10 options)</td></tr>
     <tr><td><code>score</code> (ordered scale)</td><td>the question (a string)</td><td>list of 2–10 levels (strings), lowest first</td></tr>
   </table>
-  <p>The free API takes plain-text instructions; structured (object) instructions return 422 — they work with <code>decido serve</code>.</p>
+  <p>The free API takes plain-text instructions; structured (object) instructions return 422. They work with <code>decido serve</code>.</p>
   <pre>curl -s https://getdecido.ai/v1/systemone \
   -H "Authorization: Bearer $DECIDO_API_KEY" -H "Content-Type: application/json" -d @- &lt;&lt;'EOF'
 {
@@ -235,8 +235,8 @@ with TypeSafeClient(base_url="https://getdecido.ai") as client:
   used. Details: <a href="/privacy">privacy</a>, <a href="/terms">terms</a>.</p>
 
   <h2>Production use</h2>
-  <p>The free tier has no SLA and small limits. For production volume, bigger models or sensitive data, run Decido yourself —
-  same request format, no limits, nothing leaves your machine:</p>
+  <p>The free tier has no SLA and small limits. For production volume, bigger models or sensitive data, run Decido yourself.
+  It takes the same requests, has no limits, and nothing leaves your machine:</p>
   <pre>pip install decido-ai
 decido serve decido-ai/decido-1-26b-a4b --port 8080      # or decido-1-fast-1.7b, decido-1-max-26b-a4b, …
 curl -s localhost:8080/v1/systemone -H 'content-type: application/json' -d @request.json</pre>

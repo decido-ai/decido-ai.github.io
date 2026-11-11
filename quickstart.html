@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Quickstart — Decido</title>
+<title>Quickstart | Decido</title>
 <meta name="description" content="Decido in five minutes: install, first decision in Python and on the command line, your own Jev-compatible server, the free hosted API, and agents (MCP, LangChain, OpenAI tools).">
 <link rel="canonical" href="https://getdecido.ai/quickstart">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect x='4' y='6' width='32' height='30' rx='10' fill='%232a78d6' stroke='%231c1b19' stroke-width='3'/%3E%3Ccircle cx='15' cy='19' r='4.5' fill='white'/%3E%3Ccircle cx='26' cy='19' r='4.5' fill='white'/%3E%3Ccircle cx='16' cy='20' r='2'/%3E%3Ccircle cx='27' cy='20' r='2'/%3E%3C/svg%3E">
@@ -101,7 +101,7 @@ pip install decido-ai</pre>
 
   <section class="step" id="first">
     <h2><span class="n">2</span>Your first decision</h2>
-    <p>Give it a document and questions — yes/no, pick one, or an ordered scale — and get a probability for every answer:</p>
+    <p>Give it a document and questions (yes/no, pick one, or an ordered scale) and get a probability for every answer:</p>
     <pre tabindex="0" data-lang="python">from decido import Decido
 
 m = Decido("decido-ai/decido-1-fast-1.7b")      # downloads once (1.8 GB), then runs locally
@@ -209,7 +209,7 @@ def probability_yes(document: str, question: str) -&gt; float:
 print(probability_yes.invoke({"document": "Customer: please refund my second charge.", "question": "Is this a refund request?"}))</pre>
     <h3>Function calling (OpenAI-style tool schema)</h3>
     <p>Pass <code>DECIDE_TOOL</code> in your LLM call's <code>tools</code>; when the model calls it, run it locally. This is the Chat
-    Completions shape; the Responses API takes the same fields flat — <code>{"type": "function", **DECIDE_TOOL["function"]}</code>.</p>
+    Completions shape; the Responses API takes the same fields flat: <code>{"type": "function", **DECIDE_TOOL["function"]}</code>.</p>
     <pre tabindex="0" data-lang="python">from decido import Decido
 
 DECIDE_TOOL = {
@@ -257,7 +257,7 @@ print(run_tool_call({"document": "Agent plan: delete the production database.", 
     <h2><span class="n">7</span>Troubleshooting</h2>
     <pre tabindex="0" data-lang="sh">decido doctor</pre>
     <ul>
-      <li><code>decido doctor</code> checks the runtime, the Mac GPU / NVIDIA GPU and versions — paste its output when you ask for help.</li>
+      <li><code>decido doctor</code> checks the runtime, the Mac GPU / NVIDIA GPU and versions. Paste its output when you ask for help.</li>
       <li>First call slow? That is the one-time download; <code>decido pull &lt;model&gt;</code> fetches it ahead of time.</li>
       <li>Windows 10+ (x86_64): prebuilt like macOS and Linux; use the <b>Windows (PowerShell)</b> lines under the steps above.</li>
       <li>Intel Mac and other platforms: the runtime is compiled on first use (a few minutes, once; needs a C++ compiler).</li>

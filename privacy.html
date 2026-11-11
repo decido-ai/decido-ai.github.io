@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Privacy — Decido</title>
+<title>Privacy | Decido</title>
 <meta name="description" content="How Decido handles data: playground inputs are never stored; request metadata is kept for 30 days.">
 <link rel="canonical" href="https://getdecido.ai/privacy">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect x='4' y='6' width='32' height='30' rx='10' fill='%232a78d6' stroke='%231c1b19' stroke-width='3'/%3E%3Ccircle cx='15' cy='19' r='4.5' fill='white'/%3E%3Ccircle cx='26' cy='19' r='4.5' fill='white'/%3E%3Ccircle cx='16' cy='20' r='2'/%3E%3Ccircle cx='27' cy='20' r='2'/%3E%3C/svg%3E">
@@ -125,15 +125,15 @@
     server sets one short-lived, strictly necessary session cookie (<code>__Host-dps</code>, 30 minutes) on getdecido.ai.
     We set no advertising or analytics cookies; Turnstile runs in a Cloudflare frame under Cloudflare's own privacy policy.</li>
     <li><b>Rate limits:</b> to enforce fair-use limits we keep counters keyed by your IP address (for IPv6, its /64 network),
-    by the random session id, and — for new API keys — by your wider network (IPv4 /24 or IPv6 /48) for about <b>2 days</b>,
+    by the random session id, and (for new API keys) by your wider network (IPv4 /24 or IPv6 /48) for about <b>2 days</b>,
     then delete them. While you wait in the playground's line, your place is held in memory with the same IP key for at most
     a minute after your page stops asking.</li>
-    <li><b>Usage statistics:</b> we keep daily totals only — e.g. how many answers, sign-ins, new keys and waiting-line visits
-    there were each day, and how many distinct visitors (a number, not who) — for up to 400 days. They contain no IP
+    <li><b>Usage statistics:</b> we keep daily totals only: how many answers, sign-ins, new keys and waiting-line visits
+    there were each day, and how many distinct visitors (a number, not who), for up to 400 days. They contain no IP
     addresses, emails, keys, account ids or inputs.</li>
     <li><b>Accounts (for API keys):</b> you sign in with Google. We keep which provider you used, its user id for
     you, your verified email address, and when the account was created
-    and last used — to give each person one account and one key, to enforce the limits, and to contact you about the service if
+    and last used. We use this to give each person one account and one key, to enforce the limits, and to contact you about the service if
     needed. We ask the provider only for your email address (scopes <code>openid email</code>), do not
     keep its access tokens, and do not receive your password. Google learns that you signed in to Decido, under its
     own privacy policy. Signing in sets a strictly necessary session cookie (<code>__Host-dsess</code>, 30 days) and, during
@@ -151,7 +151,7 @@
     also for sign-in. Data may be
     processed in the United States.</li>
     <li>Please do not paste personal, confidential or regulated data into the public playground. For sensitive data, run
-    Decido locally (<code>pip install decido-ai</code>) — nothing leaves your machine.</li>
+    Decido locally (<code>pip install decido-ai</code>); then nothing leaves your machine.</li>
   </ul>
   <h2>Local use</h2>
   <p>The <code>decido-ai</code> package downloads model files from Hugging Face (subject to Hugging Face's privacy policy) and
@@ -159,7 +159,7 @@
   <h2>Email</h2>
   <p>If you write to us, we keep the correspondence to reply and follow up. Ask us any time to delete it.</p>
   <h2>Contact</h2>
-  <p><a href="mailto:founders@getdecido.ai">founders@getdecido.ai</a> — questions, access or deletion requests.</p>
+  <p><a href="mailto:founders@getdecido.ai">founders@getdecido.ai</a> for questions, access or deletion requests.</p>
 </main>
 
 <footer><div class="wrap">

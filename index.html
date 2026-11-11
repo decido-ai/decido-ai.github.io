@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Decido — open, calibrated decision models for AI agents</title>
+<title>Decido: open, calibrated decision models for AI agents</title>
 <meta name="description" content="Decido answers an AI agent's yes/no, choice and score questions with a calibrated probability for every option. Six open models, from 0.4 s on a laptop CPU to 89.2 on the six-benchmark suite (Jev 1.13: 83.9). pip install decido-ai.">
 <link rel="canonical" href="https://getdecido.ai/">
-<meta property="og:title" content="Decido — open, calibrated decision models for AI agents">
+<meta property="og:title" content="Decido: open, calibrated decision models for AI agents">
 <meta property="og:description" content="Open models: 85.4 on a laptop CPU and 89.2 with reasoning (Decido-1-Max), vs 83.9 for Jev 1.13. Deterministic, private, calibrated. pip install decido-ai.">
 <meta property="og:url" content="https://getdecido.ai/">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect x='4' y='6' width='32' height='30' rx='10' fill='%232a78d6' stroke='%231c1b19' stroke-width='3'/%3E%3Ccircle cx='15' cy='19' r='4.5' fill='white'/%3E%3Ccircle cx='26' cy='19' r='4.5' fill='white'/%3E%3Ccircle cx='16' cy='20' r='2'/%3E%3Ccircle cx='27' cy='20' r='2'/%3E%3C/svg%3E">
@@ -212,7 +212,7 @@
   <h1>Decido</h1>
   <svg class="squiggle" viewBox="0 0 230 18" aria-hidden="true"><path d="M4 10 Q 18 2 32 10 T 60 10 T 88 10 T 116 10 T 144 10 T 172 10 T 200 10 T 226 10"/></svg>
   <p>Open, calibrated decision models for AI agents. Ask yes/no, choice or score questions about any text and get <span class="hl">a probability for every option</span>, on your own hardware.</p>
-  <p class="story"><span><b>89.2</b> — Decido-1-Max, ahead of Jev 1.13 <span class="nw">(83.9)</span> on all six benchmarks</span><span><b>85.4</b> on a laptop CPU, no GPU <span class="nw">(Decido-1)</span></span></p>
+  <p class="story"><span><b>89.2</b> for Decido-1-Max, ahead of Jev 1.13 <span class="nw">(83.9)</span> on all six benchmarks</span><span><b>85.4</b> on a laptop CPU, no GPU <span class="nw">(Decido-1)</span></span></p>
   <div class="ctas">
     <a class="btn" href="https://getdecido.ai/playground">Try it live →</a>
     <code class="install" title="Select to copy">pip install decido-ai</code>
@@ -237,7 +237,7 @@
       <div class="kicker">Accuracy</div>
       <h2>Ahead of the leading decision API, <span class="hl">without a GPU</span>.</h2>
       <p>Decido-1 is a mixture-of-experts model with 4B active parameters, quantized to 8 bits. It scores higher than Jev 1.13 on four of the six benchmarks and on the mean. Decido-1-Max, which reasons before it answers, reaches <b>89.2</b> and is ahead on all six, in one set of open weights.</p>
-      <p>Trained on public data; no Jev or closed-model outputs; audited for benchmark overlap — <a href="/research/decido-1#method">details</a>.</p>
+      <p>Trained on public data; no Jev or closed-model outputs; audited for benchmark overlap (<a href="/research/decido-1#method">details</a>).</p>
       <a class="more" href="/research/decido-1#results">Per-benchmark results →</a>
     </div>
     <figure class="figcard">
@@ -259,7 +259,7 @@
       <table>
         <thead><tr><th>Measured on an Apple M4 Pro</th><th>CPU</th><th>Mac GPU</th></tr></thead>
         <tbody>
-          <tr class="us"><td>Decido-1-Fast · one yes/no check<small>short message, 10 threads</small></td><td class="v">0.08–0.10 s</td><td class="v">—</td></tr>
+          <tr class="us"><td>Decido-1-Fast · one yes/no check<small>short message, 10 threads</small></td><td class="v">0.08–0.10 s</td><td class="v">n/a</td></tr>
           <tr class="us"><td>Decido-1-Ultra · 5 questions<small>1,000-token document, p50</small></td><td class="v">0.41 s</td><td class="v">0.13 s</td></tr>
           <tr class="us"><td>Decido-1-Fast · 5 questions<small>1,000-token document, p50</small></td><td class="v">0.64 s</td><td class="v">0.30 s</td></tr>
           <tr class="us"><td>Decido-1 · 5 questions<small>1,000-token document, p50</small></td><td class="v">4.1 s</td><td class="v">1.1 s</td></tr>
@@ -380,7 +380,7 @@ curl localhost:8080/v1/systemone -H <span class="s">"content-type: application/j
       <div class="foot"><a href="https://huggingface.co/decido-ai/decido-1-xl">Open weights ↗</a></div>
     </div>
   </div>
-  <p class="research-note">Research: Decido-1-Max is distilled from the 3-model research system (89.57, not released), a gated mixture of Decido-1, Decido-1-Think and an open 27B reasoning model, and is statistically indistinguishable from it (−0.34 points, 95% CI −0.97 to +0.29) — see the <a href="/research">technical report</a>.</p>
+  <p class="research-note">Research: Decido-1-Max is distilled from the 3-model research system (89.57, not released), a gated mixture of Decido-1, Decido-1-Think and an open 27B reasoning model, and is statistically indistinguishable from it (−0.34 points, 95% CI −0.97 to +0.29). See the <a href="/research">technical report</a>.</p>
 </section>
 
 <section id="research">
