@@ -126,7 +126,11 @@
     We set no advertising or analytics cookies; Turnstile runs in a Cloudflare frame under Cloudflare's own privacy policy.</li>
     <li><b>Rate limits:</b> to enforce fair-use limits we keep counters keyed by your IP address (for IPv6, its /64 network),
     by the random session id, and — for new API keys — by your wider network (IPv4 /24 or IPv6 /48) for about <b>2 days</b>,
-    then delete them.</li>
+    then delete them. While you wait in the playground's line, your place is held in memory with the same IP key for at most
+    a minute after your page stops asking.</li>
+    <li><b>Usage statistics:</b> we keep daily totals only — e.g. how many answers, sign-ins, new keys and waiting-line visits
+    there were each day, and how many distinct visitors (a number, not who) — for up to 400 days. They contain no IP
+    addresses, emails, keys, account ids or inputs.</li>
     <li><b>Accounts (for API keys):</b> you sign in with Google. We keep which provider you used, its user id for
     you, your verified email address, and when the account was created
     and last used — to give each person one account and one key, to enforce the limits, and to contact you about the service if
