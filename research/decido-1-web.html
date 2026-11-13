@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Decido-1 (web-trained): choosing the next action in a browser agent | Decido Research</title>
+<meta name="description" content="Decido-1 (web-trained) picks the next action for a browser agent. On 1,500 Mind2Web test steps it is right 78.6% of the time vs 59.9% for Jev 1.14, with the same agent and identical requests. On 100 live tasks the two are on par (74% vs 75%).">
+<link rel="canonical" href="https://getdecido.ai/research/decido-1-web">
+<meta property="og:title" content="Decido-1 (web-trained): choosing the next action in a browser agent">
+<meta property="og:description" content="78.6% vs 59.9% (Jev 1.14) on 1,500 Mind2Web test steps with the same browser agent and identical requests; on par on 100 live tasks (74% vs 75%).">
+<meta property="og:type" content="article">
+<meta property="og:image" content="https://getdecido.ai/research/media/decido-1-web-google-flights.jpg">
+<meta property="og:url" content="https://getdecido.ai/research/decido-1-web">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23141414'/%3E%3Ccircle cx='16' cy='16' r='6' fill='%232a78d6'/%3E%3C/svg%3E">
+<style>
+  :root { --paper: #fffcf3; --panel: #fff7e0; --ink: #1c1b19; --muted: #5a5853; --faint: #6f6c66; --rule: #e9e3d3;
+          --accent: #2a78d6; --mark: #2a78d6; --accent-ink: #1d5fb3; --accent-soft: #e3edfb; --gray: #8f8d86;
+          --serif: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Helvetica, Arial, sans-serif;
+          --mono: ui-monospace, Menlo, "SF Mono", Consolas, monospace; }
+  @media (prefers-color-scheme: dark) {
+    :root { --paper: #111111; --panel: #1a1a19; --ink: #ecebe7; --muted: #a6a39b; --faint: #8a877f; --rule: #34332f;
+            --accent: #5b9bea; --mark: #5592e3; --accent-ink: #7fb2f0; --accent-soft: #1b2a3d; --gray: #77746d; }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-padding-top: 80px; }               /* anchors land below the sticky top bar */
+  @media (max-width: 760px) { html { scroll-padding-top: 100px; } }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 17px/1.6 var(--serif); -webkit-font-smoothing: antialiased; }
+  a { color: var(--accent-ink); }
+  .wrap { max-width: 740px; margin: 0 auto; padding: 0 24px; }
+  /* top bar: same as the other pages */
+  header.nav { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--paper) 92%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--ink); }
+  header.nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 64px; max-width: 1080px; padding: 0 28px; margin: 0 auto; }
+  .brand { display: flex; align-items: center; gap: 10px; font: 700 19px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: .02em; text-decoration: none; color: var(--ink); }
+  .brand svg { width: 30px; height: 30px; }
+  .brand rect { fill: var(--accent); stroke: var(--ink); stroke-width: 3; } .brand .e { fill: #fff; stroke: var(--ink); stroke-width: 2; } .brand .p { fill: #1c1b19; }
+  .menu { display: flex; align-items: center; gap: 24px; font: 500 15px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+  .menu a { text-decoration: none; color: var(--muted); } .menu a:hover, .menu a[aria-current=page] { color: var(--ink); }
+  @media (max-width: 760px) {
+    header.nav .wrap { flex-wrap: wrap; height: auto; padding: 10px 24px 8px; row-gap: 4px; }
+    .menu { order: 3; width: 100%; justify-content: space-between; gap: 10px; font-size: 15px; padding-bottom: 2px; }
+  }
+  footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+  footer .fl { display: flex; flex-wrap: wrap; gap: 6px 16px; } footer .fl a { color: var(--muted); text-decoration: none; } footer .fl a:hover { color: var(--ink); }
+
+  main > header { padding: 56px 0 8px; }
+  .toc { font: 13px var(--mono); color: var(--faint); margin-top: 10px; } .toc a { color: var(--muted); }
+  h1 { font-size: clamp(32px, 5vw, 44px); line-height: 1.12; letter-spacing: -.025em; font-weight: 600; margin: 0; }
+  .byline { font: 13px var(--mono); color: var(--muted); margin-top: 14px; }
+  .crumb { font: 13px var(--mono); margin: 0 0 14px; } .crumb a { color: var(--muted); text-decoration: none; } .crumb a:hover { color: var(--ink); }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin: 34px 0 0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+  .stat { padding: 16px 14px 14px 0; }
+  .stat + .stat { padding-left: 14px; border-left: 1px solid var(--rule); }
+  .stat .v { font-size: 30px; font-weight: 600; line-height: 1.1; }
+  .stat .t { font-size: 14px; color: var(--muted); margin-top: 4px; line-height: 1.4; }
+  @media (max-width: 640px) { .stats { grid-template-columns: 1fr 1fr; } .stat:nth-child(3) { border-left: 0; padding-left: 0; } }
+
+  section { padding: 30px 0 6px; }
+  h2 { font-size: 24px; margin: 0 0 10px; letter-spacing: -.005em; }
+  h2 .n { font: 600 13px var(--mono); color: var(--accent-ink); margin-right: 10px; vertical-align: 3px; }
+  p { margin: 0 0 14px; }
+  .abstract { background: var(--panel); border-radius: 8px; padding: 20px 22px; margin-top: 30px; }
+  .abstract b.h { font: 600 12px var(--mono); letter-spacing: .08em; color: var(--muted); display: block; margin-bottom: 6px; }
+  .abstract p { margin: 0; }
+  ul { padding-left: 22px; margin: 0 0 14px; }
+  li { margin: 4px 0; }
+
+  table { border-collapse: collapse; width: 100%; font-size: 15.5px; margin: 6px 0 0; font-variant-numeric: tabular-nums; }
+  th, td { padding: 8px 10px; border-bottom: 1px solid var(--rule); text-align: right; vertical-align: top; }
+  th:first-child, td:first-child { text-align: left; }
+  thead th { border-top: 1.5px solid var(--ink); border-bottom: 1px solid var(--ink); font-weight: 600; line-height: 1.3; }
+  thead th small { display: block; font: 11px var(--mono); color: var(--faint); font-weight: 400; }
+  tbody tr:last-child td { border-bottom: 1.5px solid var(--ink); }
+  tr.mean td { font-weight: 600; }
+  td.b { font-weight: 600; }
+  .us { background: var(--accent-soft); }
+  .tw { overflow-x: auto; }
+  .tw table { min-width: 600px; }
+  .cap { font-size: 14.5px; color: var(--muted); margin: 10px 0 0; line-height: 1.5; }
+  .cap b { font: 600 12px var(--mono); color: var(--ink); letter-spacing: .04em; margin-right: 4px; }
+
+  .fig { width: 100%; height: auto; display: block; margin-top: 8px; font-family: var(--serif); }
+  @media (max-width: 600px) { .fig .tick { font-size: 15px; } .fig .name { font-size: 16px; } .fig .val { font-size: 15px; } }
+  .fig .grid { stroke: var(--rule); stroke-width: 1; }
+  .fig .ref { stroke: var(--faint); stroke-width: 1; stroke-dasharray: 3 3; }
+  .fig .tick { font: 11px var(--mono); fill: var(--faint); }
+  .fig .name { font-size: 14px; fill: var(--muted); }
+  .fig .val { font: 12px var(--mono); fill: var(--ink); }
+  .fig .stem { stroke-width: 2; }
+  .fig circle { stroke: var(--paper); stroke-width: 2; }
+  .fig .hit { fill: transparent; }
+  .fig .ours .stem { stroke: var(--mark); } .fig .ours circle { fill: var(--mark); } .fig .ours .name { fill: var(--ink); font-weight: 600; }
+  .fig .refrow .stem, .fig .other .stem { stroke: var(--gray); } .fig .refrow circle, .fig .other circle { fill: var(--gray); }
+  .fig .other .stem { opacity: .55; } .fig .refrow .name { fill: var(--ink); font-weight: 600; }
+  .fig .other .val { display: none; }
+  .fig g:hover .name { text-decoration: underline; }
+
+  pre { font: 13.5px/1.55 var(--mono); background: var(--panel); border-radius: 8px; padding: 14px 16px; overflow-x: auto; margin: 6px 0 0; }
+  pre .c { color: var(--faint); }
+  .cta { display: inline-block; font: 600 14px var(--serif); padding: 11px 18px; border-radius: 8px; background: #ffe27a; color: #1c1b19; border: 1px solid #1c1b19; text-decoration: none; margin: 4px 10px 4px 0; box-shadow: 2px 2px 0 #1c1b19; }
+  .cta.alt { background: transparent; color: var(--ink); border: 1px solid var(--ink); }
+  footer { border-top: 1px solid var(--rule); margin-top: 40px; padding: 20px 0 36px; font: 12px var(--mono); color: var(--faint); }
+  b, strong { font-weight: 600; }
+  /* header edge: a chart axis (baseline + minor ticks every 12px, major every 48px) */
+  header.nav { border-bottom: 0; }
+  header.nav::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 8px; pointer-events: none;
+    background: linear-gradient(var(--ink), var(--ink)) bottom / 100% 1px no-repeat,
+                repeating-linear-gradient(90deg, var(--ink) 0 1px, transparent 1px 48px) bottom / 100% 8px no-repeat,
+                repeating-linear-gradient(90deg, color-mix(in srgb, var(--ink) 55%, transparent) 0 1px, transparent 1px 12px) bottom / 100% 4px no-repeat; }
+  /* early-access bar above the header */
+  .eab { background: #ffe27a; border-bottom: 1px solid #1c1b19; text-align: center; font: 14px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Helvetica, Arial, sans-serif; }
+  .eab a { display: block; padding: 8px 16px; color: #1c1b19; text-decoration: none; }
+  .eab-tag { display: inline-block; font: 600 11px ui-monospace, Menlo, monospace; letter-spacing: .06em; text-transform: uppercase; background: #1c1b19; color: #fffcf3;
+             padding: 2px 8px; border-radius: 999px; margin-right: 8px; vertical-align: 1px; }
+  .eab-cta { font-weight: 600; text-decoration: underline; text-underline-offset: 3px; white-space: nowrap; }
+  .eab a:hover .eab-cta { text-decoration-thickness: 2px; }
+  @media (max-width: 600px) { .eab { font-size: 13px; } .eab-tag { display: none; } }
+  .fig .base .stem { stroke: var(--mark); opacity: .45; } .fig .base circle { fill: var(--mark); opacity: .6; }
+  figure.vid { margin: 8px 0 0; }
+  figure.vid video { width: 100%; height: auto; display: block; border-radius: 8px; border: 1px solid var(--rule); background: #0c0c10; }
+</style>
+</head>
+<body>
+<div class="eab"><a href="mailto:founders@getdecido.ai?subject=Early%20access%3A%20Decido%20API%20%2F%20fine-tuning"><span class="eab-tag">Early access</span> A higher-volume API, and Decido fine-tuned on your own decisions. <span class="eab-cta">Request access →</span></a></div>
+
+<header class="nav"><div class="wrap">
+  <a class="brand" href="/"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="4" y="6" width="32" height="30" rx="10"/><circle class="e" cx="15" cy="19" r="4.5"/><circle class="e" cx="26" cy="19" r="4.5"/><circle class="p" cx="16" cy="20" r="2"/><circle class="p" cx="27" cy="20" r="2"/></svg>Decido</a>
+  <nav class="menu" aria-label="Main"><a href="/#models">Models</a><a href="https://getdecido.ai/playground">Playground</a><a href="https://getdecido.ai/api">API</a><a href="/research" aria-current="page">Research</a></nav>
+</div></header>
+
+<main class="wrap">
+<header>
+  <p class="crumb"><a href="/research">← All research</a></p>
+  <h1>Decido-1 (web-trained): choosing the next action in a browser agent</h1>
+  <div class="byline">Gaurav Agarwal · November 2026</div>
+  <nav class="toc" aria-label="Contents">Contents: <a href="#results">Offline results</a> · <a href="#video">Live example</a> · <a href="#live">Live tasks</a> · <a href="#limitations">Limitations</a> · <a href="#contact">Work with us</a></nav>
+  <div class="stats">
+    <div class="stat"><div class="v">78.6%</div><div class="t">Mind2Web test steps right (Jev 1.14: 59.9%), same agent, identical requests</div></div>
+    <div class="stat"><div class="v">78.2%</div><div class="t">on websites and domains it was never trained on (Jev 1.14: 58.6%)</div></div>
+    <div class="stat"><div class="v">94.1%</div><div class="t">right operation, e.g. click, type or stop (Jev 1.14: 86.8%)</div></div>
+    <div class="stat"><div class="v">74%</div><div class="t">of 100 live tasks completed (Jev 1.14: 75%): on par live</div></div>
+  </div>
+  <div class="abstract">
+    <b class="h">ABSTRACT</b>
+    <p>A browser agent makes one decision at every step: given the page, what should it do next, and to which element? Fast browser agents send this decision to a small decision model instead of a large LLM. We trained a version of Decido-1 for this decision, Decido-1 (web-trained), put it into Jev Ultrafast, Browser Use's open-source browser agent built around TypeSafe's Jev, and compared it with Jev on exactly the same requests. The released Decido-1 has no web training. On 1,500 steps from the Mind2Web test sets, Decido-1 (web-trained) chooses the right action on the right element 78.6% of the time, against 59.9% for Jev 1.14 and 54.4% for Jev 1.13. It is ahead on all three test sets, including websites and whole domains that were not in its training data. On live websites the two are on par today (74% vs 75% of 100 new tasks); we report that too, along with what the live Decido system adds.</p>
+  </div>
+</header>
+
+<section id="results">
+  <h2><span class="n">1</span>Offline results</h2>
+  <p><b>Harness.</b> We used <a href="https://github.com/browser-use/jev-ultrafast">Jev Ultrafast</a>, Browser Use's open-source browser agent built around TypeSafe's Jev (commit <a href="https://github.com/browser-use/jev-ultrafast/commit/8251e27"><code>8251e27</code></a>). At every step it turns the page into a table of the elements you can interact with and asks the decision model two questions: which operation (click, type text, select, scroll up or down, wait, done or blocked), and which element. A small LLM writes text only when the operation is "type text". For the offline test we ran the agent's own request builder, unmodified, on Mind2Web's saved pages and sent the identical requests to each model, Jev through the TypeSafe API.</p>
+  <p>The steps come from <a href="https://osu-nlp-group.github.io/Mind2Web/">Mind2Web</a>, a benchmark of real tasks recorded by people on real websites: 500 steps from each of its three test sets, with 50 candidate elements per step (the correct one and 49 others from the same page). A step counts as right only if both the operation and the element are right.</p>
+  <div class="tw"><table>
+    <thead><tr><th>Model</th><th>New tasks<small>KNOWN WEBSITES</small></th><th>New websites<small>UNSEEN</small></th><th>New domains<small>UNSEEN</small></th><th>All 1,500</th><th>Element</th><th>Operation</th></tr></thead>
+    <tbody>
+      <tr class="us"><td><b>Decido-1 (web-trained)</b></td><td class="b">79.4</td><td class="b">79.6</td><td class="b">76.8</td><td class="b">78.6</td><td class="b">80.7</td><td class="b">94.1</td></tr>
+      <tr><td>Jev 1.14</td><td>62.4</td><td>59.0</td><td>58.2</td><td>59.9</td><td>62.3</td><td>86.8</td></tr>
+      <tr><td>Jev 1.13</td><td>55.8</td><td>52.0</td><td>55.4</td><td>54.4</td><td>56.9</td><td>80.0</td></tr>
+      <tr><td>Decido-1 (released, no web training)</td><td>42.0</td><td>39.8</td><td>45.8</td><td>42.5</td><td>44.8</td><td>65.2</td></tr>
+    </tbody>
+  </table></div>
+  <p class="cap"><b>TABLE 1</b> Step accuracy (%) on 1,500 Mind2Web test steps, 500 per test set. Bold: best per column. "Unseen": no website from that test set was in Decido's training data. Element and Operation: each part right on its own. Failed requests count as wrong (Decido: 6 over its 32,768-token limit; Jev: 7). Jev scored through the TypeSafe API, November 2026.</p>
+
+<svg class="fig" viewBox="0 0 640 154" role="img" aria-labelledby="fig1cap">
+<line class="grid" x1="210.0" x2="210.0" y1="6" y2="122"/><text class="tick" x="210.0" y="142" text-anchor="middle">30</text>
+<line class="grid" x1="275.0" x2="275.0" y1="6" y2="122"/><text class="tick" x="275.0" y="142" text-anchor="middle">40</text>
+<line class="grid" x1="340.0" x2="340.0" y1="6" y2="122"/><text class="tick" x="340.0" y="142" text-anchor="middle">50</text>
+<line class="grid" x1="405.0" x2="405.0" y1="6" y2="122"/><text class="tick" x="405.0" y="142" text-anchor="middle">60</text>
+<line class="grid" x1="470.0" x2="470.0" y1="6" y2="122"/><text class="tick" x="470.0" y="142" text-anchor="middle">70</text>
+<line class="grid" x1="535.0" x2="535.0" y1="6" y2="122"/><text class="tick" x="535.0" y="142" text-anchor="middle">80</text>
+<line class="grid" x1="600.0" x2="600.0" y1="6" y2="122"/><text class="tick" x="600.0" y="142" text-anchor="middle">90</text>
+<line class="ref" x1="404.4" x2="404.4" y1="6" y2="122"/>
+<g class="ours"><title>Decido-1 (web-trained): 78.6% of 1,500 steps</title><rect class="hit" x="0" y="6" width="640" height="28"/><text class="name" x="196" y="25" text-anchor="end">Decido-1 (web-trained)</text><line class="stem" x1="210.0" x2="525.9" y1="20" y2="20"/><circle cx="525.9" cy="20" r="5.5"/><text class="val" x="536.9" y="24">78.6</text></g>
+<g class="refrow"><title>Jev 1.14 (TypeSafe API): 59.9%</title><rect class="hit" x="0" y="34" width="640" height="28"/><text class="name" x="196" y="53" text-anchor="end">Jev 1.14</text><line class="stem" x1="210.0" x2="404.4" y1="48" y2="48"/><circle cx="404.4" cy="48" r="5.5"/><text class="val" x="415.4" y="52">59.9</text></g>
+<g class="refrow"><title>Jev 1.13 (TypeSafe API): 54.4%</title><rect class="hit" x="0" y="62" width="640" height="28"/><text class="name" x="196" y="81" text-anchor="end">Jev 1.13</text><line class="stem" x1="210.0" x2="368.6" y1="76" y2="76"/><circle cx="368.6" cy="76" r="5.5"/><text class="val" x="379.6" y="80">54.4</text></g>
+<g class="base"><title>Decido-1 as released, without web training: 42.5%</title><rect class="hit" x="0" y="90" width="640" height="28"/><text class="name" x="196" y="109" text-anchor="end">Decido-1 (released)</text><line class="stem" x1="210.0" x2="291.3" y1="104" y2="104"/><circle cx="291.3" cy="104" r="5.5"/><text class="val" x="302.3" y="108">42.5</text></g>
+</svg>
+  <p class="cap" id="fig1cap"><b>FIG. 1</b> Step accuracy (%), all 1,500 steps. Dashed line: Jev 1.14. Same agent, same requests; only the decision model differs.</p>
+
+  <p style="margin-top:22px"><b>Head to head.</b> On the same steps, Decido-1 (web-trained) is right where Jev 1.14 is wrong 356 times; the reverse happens 75 times.</p>
+  <div class="tw"><table>
+    <thead><tr><th>Test set</th><th>Steps</th><th class="us">Decido-1 (web-trained) − Jev 1.14<small>95% CI</small></th><th>Only Decido right</th><th>Only Jev right</th><th>Decido-1 (web-trained) − Jev 1.13<small>95% CI</small></th></tr></thead>
+    <tbody>
+      <tr><td>New tasks (seen websites)</td><td>500</td><td class="us">+17.0 [+12.8, +21.2]</td><td>110</td><td>25</td><td>+23.6 [+19.2, +28.2]</td></tr>
+      <tr><td>New websites</td><td>500</td><td class="us">+20.6 [+16.2, +25.0]</td><td>125</td><td>22</td><td>+27.6 [+22.8, +32.4]</td></tr>
+      <tr><td>New domains</td><td>500</td><td class="us">+18.6 [+14.4, +23.2]</td><td>121</td><td>28</td><td>+21.4 [+16.8, +26.0]</td></tr>
+      <tr class="mean"><td>All</td><td>1,500</td><td class="us">+18.7 [+16.2, +21.3]</td><td>356</td><td>75</td><td>+24.2 [+21.7, +26.9]</td></tr>
+    </tbody>
+  </table></div>
+  <p class="cap"><b>TABLE 2</b> Paired differences in step accuracy (points), bootstrap 95% confidence intervals over steps.</p>
+
+  <p style="margin-top:22px"><b>Where it still slips.</b> Accuracy depends on how many elements the agent offers: 85.0% with 25 candidates, 77.3% with 50 and 74.7% with 100 (measured on 300 of the steps, the first 100 of each test set). If the elements are shuffled instead of listed in page order, accuracy drops to 71.0% and the chosen action changes on 20% of steps (not measured for Jev). Real pages arrive in page order, but this is the model's main weakness. Typical misses are near-ties, such as two filters with the same label.</p>
+  <p><b>Speed.</b> One decision takes 0.9 s at the median on one A100 GPU (2.7 s for the slowest 5%), against 0.15–0.19 s for Jev's API in our runs: about 5–6× slower. It is the same size as the released Decido-1 (a 26B mixture-of-experts model that uses 4B parameters per token).</p>
+</section>
+
+<section id="video">
+  <h2><span class="n">2</span>Live example</h2>
+  <p>Jev Ultrafast with Decido on the live Google Flights site, start to finish: enter the route and date, search (reloading once when Google shows an error page), switch to the cheapest results, sort by price, pick the cheapest flight and stop on its booking page. 24 actions in 26 seconds, real time and unedited.</p>
+  <figure class="vid">
+    <video controls muted playsinline preload="metadata" aria-label="Screen recording: Decido completing a Google Flights search for the cheapest flight" poster="/research/media/decido-1-web-google-flights.jpg" aria-describedby="vidcap">
+      <source src="/research/media/decido-1-web-google-flights.mp4" type="video/mp4">
+      <a href="/research/media/decido-1-web-google-flights.mp4">Download the video (MP4, 1 MB)</a>
+    </video>
+  </figure>
+  <p class="cap" id="vidcap"><b>VIDEO 1</b> A demo, not part of any evaluation. It uses the live Decido system from Table 3 plus one extra rule: wait while results are loading. Google showed new prices after the list was re-sorted (the cheapest went from $345 to $408); the agent picked the cheapest flight on the sorted list. We recorded four runs. By our reading of the recordings, the first two failed for both Decido and Jev 1.14 (a flight picked before the cheapest list had loaded, or Google's error page). We then added the wait rule to the Decido system only; the next two runs succeeded for both systems (Jev's ended on a $345 fare, at a different time).</p>
+</section>
+
+<section id="live">
+  <h2><span class="n">3</span>Live tasks</h2>
+  <p>Offline replay checks one decision at a time with the earlier steps given. A live task also needs the agent to recover from its own mistakes and to know when to stop. We wrote 100 new tasks on live websites, mostly navigation on Wikipedia, GitHub and documentation sites. We froze the systems and the success check for each task (a rule on the final page's address or text) before the first run, and ran each system twice per task in Jev Ultrafast. For these runs the agent had three small changes to how it reads the page, the same for every system: it skips elements hidden under cookie banners, it isn't thrown off by unrelated page text changing, and it reports values already chosen in tag-style inputs. Text for "type text" steps came from Qwen3-4B for every system.</p>
+  <p>The Decido system is more than one model. Decido-1 (web-trained) picks each action; before stopping, the released Decido-1 is asked whether the goal is visibly done; and three fixed rules apply: ignore a stop when the action model is at least 90% sure of another action, wait once instead of repeating an action that left the page unchanged, and give up after the same action three times. Jev ran on its own, as the agent is designed.</p>
+  <div class="tw"><table style="min-width:0">
+    <thead><tr><th>Decision system in Jev Ultrafast</th><th>Tasks completed<small>100 TASKS × 2 RUNS</small></th></tr></thead>
+    <tbody>
+      <tr class="us"><td>Decido (web-trained + released Decido-1 + rules)</td><td>74.0</td></tr>
+      <tr><td>Jev 1.14</td><td>75.0</td></tr>
+      <tr><td>Jev 1.13</td><td>72.0</td></tr>
+    </tbody>
+  </table></div>
+  <p class="cap"><b>TABLE 3</b> Live websites, % of 200 runs that passed the task's check. Decido − Jev 1.14: −1.0 points (95% CI −9.0 to +7.0); Decido − Jev 1.13: +2.0 (−5.5 to +9.5). Median time per decision in these runs: 2.1 s for Decido (two models sharing two GPUs) vs 0.12 s for Jev.</p>
+  <p>Live, the two are on par: the 19-point offline lead does not carry over yet, even with the extra stop check. Most of Decido's live failures are stopping too early, when the page mentions the target before the task is done, and repeating an action that does nothing. We are training on the agent's own live runs to fix both and will report the result on a new set of tasks, whichever way it goes.</p>
+</section>
+
+<section id="limitations">
+  <h2><span class="n">4</span>Limitations</h2>
+  <ul>
+    <li>Decido-1 (web-trained)'s training data is separate from the test sets: no shared tasks or near-duplicate goals, and no websites from the "new websites" and "new domains" sets; "new tasks" uses websites it was trained on, by design. Jev's training data is not public. No outputs from Jev or any closed model were used.</li>
+    <li>Offline replay gives the model the true earlier steps and 50 candidate elements; a live agent sees its own history and every element on the page. The text typed into fields is not scored offline; live, it can affect whether a task passes, equally for every system.</li>
+    <li>Decido is about 5–6× slower per decision than Jev's API offline and about 17× slower in the live system, and it needs a GPU for interactive use.</li>
+    <li>Decido-1 (web-trained) is not yet released; the released Decido-1 scores 42.5% on these steps.</li>
+  </ul>
+</section>
+
+<section id="contact">
+  <h2><span class="n">5</span>Work with us</h2>
+  <p>If you're building a browser agent and want to try Decido-1 (web-trained) on your tasks, or want a decision model trained on your own agent's steps, write to us.</p>
+  <p><a class="cta" href="mailto:founders@getdecido.ai?subject=Decido-1%20(web-trained)">founders@getdecido.ai</a><a class="cta alt" href="/research/decido-1">Decido 1 report</a></p>
+</section>
+</main>
+
+<footer><div class="wrap">
+  <span>© 2026 Decido</span>
+  <span class="fl"><a href="/research">Research</a><a href="https://getdecido.ai/playground">Playground</a><a href="https://getdecido.ai/api">API</a><a href="/quickstart">Quickstart</a><a href="https://huggingface.co/collections/decido-ai/decido-1-6aed66fd09af05c057795ca8">Hugging Face</a><a href="https://pypi.org/project/decido-ai/">PyPI</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="mailto:founders@getdecido.ai">Contact</a></span>
+</div></footer>
+</body>
+</html>
