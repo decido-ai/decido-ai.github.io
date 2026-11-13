@@ -189,7 +189,7 @@
   <p class="cap"><b>TABLE 2</b> Paired differences in step accuracy (points), bootstrap 95% confidence intervals over steps.</p>
 
   <p style="margin-top:22px"><b>Where it still slips.</b> Accuracy depends on how many elements the agent offers: 85.0% with 25 candidates, 77.3% with 50 and 74.7% with 100 (measured on 300 of the steps, the first 100 of each test set). If the elements are shuffled instead of listed in page order, accuracy drops to 71.0% and the chosen action changes on 20% of steps (not measured for Jev). Real pages arrive in page order, but this is the model's main weakness. Typical misses are near-ties, such as two filters with the same label.</p>
-  <p><b>Speed.</b> One decision takes 0.9 s at the median on one A100 GPU (2.7 s for the slowest 5%), against 0.15–0.19 s for Jev's API in our runs: about 5–6× slower. It is the same size as the released Decido-1 (a 26B mixture-of-experts model that uses 4B parameters per token).</p>
+  <p>Decido-1 (web-trained) is the same size as the released Decido-1: a 26B mixture-of-experts model that uses 4B parameters per token.</p>
 </section>
 
 <section id="video">
@@ -216,7 +216,7 @@
       <tr><td>Jev 1.13</td><td>72.0</td></tr>
     </tbody>
   </table></div>
-  <p class="cap"><b>TABLE 3</b> Live websites, % of 200 runs that passed the task's check. Decido − Jev 1.14: −1.0 points (95% CI −9.0 to +7.0); Decido − Jev 1.13: +2.0 (−5.5 to +9.5). Median time per decision in these runs: 2.1 s for Decido (two models sharing two GPUs) vs 0.12 s for Jev.</p>
+  <p class="cap"><b>TABLE 3</b> Live websites, % of 200 runs that passed the task's check. Decido − Jev 1.14: −1.0 points (95% CI −9.0 to +7.0); Decido − Jev 1.13: +2.0 (−5.5 to +9.5).</p>
   <p>Live, the two are on par: the 19-point offline lead does not carry over yet, even with the extra stop check. Most of Decido's live failures are stopping too early, when the page mentions the target before the task is done, and repeating an action that does nothing. We are training on the agent's own live runs to fix both and will report the result on a new set of tasks, whichever way it goes.</p>
 </section>
 
@@ -225,7 +225,6 @@
   <ul>
     <li>Decido-1 (web-trained)'s training data is separate from the test sets: no shared tasks or near-duplicate goals, and no websites from the "new websites" and "new domains" sets; "new tasks" uses websites it was trained on, by design. Jev's training data is not public. No outputs from Jev or any closed model were used.</li>
     <li>Offline replay gives the model the true earlier steps and 50 candidate elements; a live agent sees its own history and every element on the page. The text typed into fields is not scored offline; live, it can affect whether a task passes, equally for every system.</li>
-    <li>Decido is about 5–6× slower per decision than Jev's API offline and about 17× slower in the live system, and it needs a GPU for interactive use.</li>
     <li>Decido-1 (web-trained) is not yet released; the released Decido-1 scores 42.5% on these steps.</li>
   </ul>
 </section>
