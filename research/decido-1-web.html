@@ -225,7 +225,7 @@
   <ul>
     <li>Decido-1 (web-trained)'s training data is separate from the test sets: no shared tasks or near-duplicate goals, and no websites from the "new websites" and "new domains" sets; "new tasks" uses websites it was trained on, by design. Jev's training data is not public. No outputs from Jev or any closed model were used.</li>
     <li>Offline replay gives the model the true earlier steps and 50 candidate elements; a live agent sees its own history and every element on the page. The text typed into fields is not scored offline; live, it can affect whether a task passes, equally for every system.</li>
-    <li>Decido-1 (web-trained) is not yet released; the released Decido-1 scores 42.5% on these steps.</li>
+    <li>Decido-1 (web-trained) is open: <a href="https://huggingface.co/decido-ai/decido-1-web-26b-a4b">weights on Hugging Face</a> (Apache-2.0, one 80 GB GPU), drop-in for Jev Ultrafast via <code>decido serve</code>. Decido-1 without web training scores 42.5% on these steps.</li>
   </ul>
 </section>
 
