@@ -186,7 +186,7 @@
   <ul>
     <li><b>Data.</b> The LLM-AggreFact test split, all 29,320 claims (<a href="https://huggingface.co/datasets/lytang/LLM-AggreFact">lytang/LLM-AggreFact</a>). Metric: balanced accuracy per dataset, then the unweighted mean of the 11, as on the leaderboard. A failed request would count as "not supported"; there were none.</li>
     <li><b>No tuning on test.</b> Every choice (prompt, models, decision threshold) was made on the dev split and frozen before the system saw test. One global threshold for all datasets, since a real checker doesn't know where a claim came from: 0.55 for Decido-1 Grounding, 0.5 for Decido-1. Each configuration was frozen on dev before it was scored on test; four were scored in total (77.9 to 79.3). We report this one because it uses only our own models.</li>
-    <li><b>No test data in training.</b> Nothing from LLM-AggreFact dev or test, or from the test splits it was drawn from, was used to train Decido-1 Grounding. Every grounding training example was checked for exact, normalised and near-duplicate overlap with dev and test. No outputs of GPT, Claude or Jev were used.</li>
+    <li><b>No test data in training.</b> Nothing from LLM-AggreFact dev or test, or from the test splits it was drawn from, was used to train Decido-1 Grounding. Every grounding training example was checked for exact, normalised and near-duplicate overlap with dev and test. We did not use GPT, Claude or Jev to generate or label any training data.</li>
     <li><b>Decido-1 Grounding</b> is a proprietary system built only from models we trained. It runs on a GPU. We don't publish its recipe.</li>
   </ul>
 </section>
