@@ -208,7 +208,7 @@ p = out["answers"]["supported"]["noul"]   <span class="c"># P(supported); "suppo
   <h2><span class="n">4</span>Limitations</h2>
   <ul>
     <li>The margin over the next entries is small: 79.2 vs 79.0 for Clef and 78.7 for Jev 1.13 is inside our 95% interval (78.2–80.2). We are #2, not #1: nimble-v4-max scores 79.5.</li>
-    <li>Leaderboard numbers for other systems are taken from the public leaderboard, not rerun by us. Our numbers are not yet listed there.</li>
+    <li>Leaderboard numbers for other systems are taken from the public leaderboard, not rerun by us. We submitted our numbers to the leaderboard maintainers on November 21, 2026; they are not listed yet.</li>
     <li>Decido-1 was scored on a GPU (bf16). The laptop build gives the same answer on 99.6% of 231 checked claims and accepts documents up to 32k tokens; a few test documents are longer. Decido-1's own training data, built before this work and also the starting point of Decido-1 Grounding, was not separately audited against LLM-AggreFact.</li>
     <li>ExpertQA stays near 60 for every system, which suggests label noise or claims that need outside knowledge.</li>
   </ul>
