@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Decido-1 Grounding: #2 on LLM-AggreFact | Decido Research</title>
+<meta name="description" content="Decido-1 Grounding scores 79.2 mean balanced accuracy on the LLM-AggreFact test split (29,320 claims, 11 datasets), second only to nimble-v4-max (79.5). The released Decido-1, with no extra training, scores 78.5, within 0.2 of Jev 1.13.">
+<link rel="canonical" href="https://getdecido.ai/research/grounding">
+<meta property="og:title" content="Decido-1 Grounding: #2 on LLM-AggreFact">
+<meta property="og:description" content="Decido-1 Grounding scores 79.2 mean balanced accuracy on the LLM-AggreFact test split (29,320 claims, 11 datasets), second only to nimble-v4-max (79.5). The released Decido-1, with no extra training, scores 78.5, within 0.2 of Jev 1.13.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://getdecido.ai/research/grounding">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23141414'/%3E%3Ccircle cx='16' cy='16' r='6' fill='%232a78d6'/%3E%3C/svg%3E">
+<style>
+  :root { --paper: #fffcf3; --panel: #fff7e0; --ink: #1c1b19; --muted: #5a5853; --faint: #6f6c66; --rule: #e9e3d3;
+          --accent: #2a78d6; --mark: #2a78d6; --accent-ink: #1d5fb3; --accent-soft: #e3edfb; --gray: #8f8d86;
+          --serif: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Helvetica, Arial, sans-serif;
+          --mono: ui-monospace, Menlo, "SF Mono", Consolas, monospace; }
+  @media (prefers-color-scheme: dark) {
+    :root { --paper: #111111; --panel: #1a1a19; --ink: #ecebe7; --muted: #a6a39b; --faint: #8a877f; --rule: #34332f;
+            --accent: #5b9bea; --mark: #5592e3; --accent-ink: #7fb2f0; --accent-soft: #1b2a3d; --gray: #77746d; }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-padding-top: 80px; }               /* anchors land below the sticky top bar */
+  @media (max-width: 760px) { html { scroll-padding-top: 100px; } }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 17px/1.6 var(--serif); -webkit-font-smoothing: antialiased; }
+  a { color: var(--accent-ink); }
+  .wrap { max-width: 740px; margin: 0 auto; padding: 0 24px; }
+  /* top bar: same as the other pages */
+  header.nav { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--paper) 92%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--ink); }
+  header.nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 64px; max-width: 1080px; padding: 0 28px; margin: 0 auto; }
+  .brand { display: flex; align-items: center; gap: 10px; font: 700 19px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: .02em; text-decoration: none; color: var(--ink); }
+  .brand svg { width: 30px; height: 30px; }
+  .brand rect { fill: var(--accent); stroke: var(--ink); stroke-width: 3; } .brand .e { fill: #fff; stroke: var(--ink); stroke-width: 2; } .brand .p { fill: #1c1b19; }
+  .menu { display: flex; align-items: center; gap: 24px; font: 500 15px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+  .menu a { text-decoration: none; color: var(--muted); } .menu a:hover, .menu a[aria-current=page] { color: var(--ink); }
+  @media (max-width: 760px) {
+    header.nav .wrap { flex-wrap: wrap; height: auto; padding: 10px 24px 8px; row-gap: 4px; }
+    .menu { order: 3; width: 100%; justify-content: space-between; gap: 10px; font-size: 15px; padding-bottom: 2px; }
+  }
+  footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+  footer .fl { display: flex; flex-wrap: wrap; gap: 6px 16px; } footer .fl a { color: var(--muted); text-decoration: none; } footer .fl a:hover { color: var(--ink); }
+
+  main > header { padding: 56px 0 8px; }
+  .toc { font: 13px var(--mono); color: var(--faint); margin-top: 10px; } .toc a { color: var(--muted); }
+  h1 { font-size: clamp(32px, 5vw, 44px); line-height: 1.12; letter-spacing: -.025em; font-weight: 600; margin: 0; }
+  .byline { font: 13px var(--mono); color: var(--muted); margin-top: 14px; }
+  .crumb { font: 13px var(--mono); margin: 0 0 14px; } .crumb a { color: var(--muted); text-decoration: none; } .crumb a:hover { color: var(--ink); }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin: 34px 0 0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+  .stat { padding: 16px 14px 14px 0; }
+  .stat + .stat { padding-left: 14px; border-left: 1px solid var(--rule); }
+  .stat .v { font-size: 30px; font-weight: 600; line-height: 1.1; }
+  .stat .t { font-size: 14px; color: var(--muted); margin-top: 4px; line-height: 1.4; }
+  @media (max-width: 640px) { .stats { grid-template-columns: 1fr 1fr; } .stat:nth-child(3) { border-left: 0; padding-left: 0; } }
+
+  section { padding: 30px 0 6px; }
+  h2 { font-size: 24px; margin: 0 0 10px; letter-spacing: -.005em; }
+  h2 .n { font: 600 13px var(--mono); color: var(--accent-ink); margin-right: 10px; vertical-align: 3px; }
+  p { margin: 0 0 14px; }
+  .abstract { background: var(--panel); border-radius: 8px; padding: 20px 22px; margin-top: 30px; }
+  .abstract b.h { font: 600 12px var(--mono); letter-spacing: .08em; color: var(--muted); display: block; margin-bottom: 6px; }
+  .abstract p { margin: 0; }
+  ul { padding-left: 22px; margin: 0 0 14px; }
+  li { margin: 4px 0; }
+
+  table { border-collapse: collapse; width: 100%; font-size: 15.5px; margin: 6px 0 0; font-variant-numeric: tabular-nums; }
+  th, td { padding: 8px 10px; border-bottom: 1px solid var(--rule); text-align: right; vertical-align: top; }
+  th:first-child, td:first-child { text-align: left; }
+  thead th { border-top: 1.5px solid var(--ink); border-bottom: 1px solid var(--ink); font-weight: 600; line-height: 1.3; }
+  thead th small { display: block; font: 11px var(--mono); color: var(--faint); font-weight: 400; }
+  tbody tr:last-child td { border-bottom: 1.5px solid var(--ink); }
+  tr.mean td { font-weight: 600; }
+  td.b { font-weight: 600; }
+  .us { background: var(--accent-soft); }
+  .tw { overflow-x: auto; }
+  .tw table { min-width: 600px; }
+  .cap { font-size: 14.5px; color: var(--muted); margin: 10px 0 0; line-height: 1.5; }
+  .cap b { font: 600 12px var(--mono); color: var(--ink); letter-spacing: .04em; margin-right: 4px; }
+
+  .fig { width: 100%; height: auto; display: block; margin-top: 8px; font-family: var(--serif); }
+  @media (max-width: 600px) { .fig .tick { font-size: 15px; } .fig .name { font-size: 16px; } .fig .val { font-size: 15px; } }
+  .fig .grid { stroke: var(--rule); stroke-width: 1; }
+  .fig .ref { stroke: var(--faint); stroke-width: 1; stroke-dasharray: 3 3; }
+  .fig .tick { font: 11px var(--mono); fill: var(--faint); }
+  .fig .name { font-size: 14px; fill: var(--muted); }
+  .fig .val { font: 12px var(--mono); fill: var(--ink); }
+  .fig .stem { stroke-width: 2; }
+  .fig circle { stroke: var(--paper); stroke-width: 2; }
+  .fig .hit { fill: transparent; }
+  .fig .ours .stem { stroke: var(--mark); } .fig .ours circle { fill: var(--mark); } .fig .ours .name { fill: var(--ink); font-weight: 600; }
+  .fig .refrow .stem, .fig .other .stem { stroke: var(--gray); } .fig .refrow circle, .fig .other circle { fill: var(--gray); }
+  .fig .other .stem { opacity: .55; } .fig .refrow .name { fill: var(--ink); font-weight: 600; }
+  .fig .other .val { display: none; }
+  .fig g:hover .name { text-decoration: underline; }
+
+  pre { font: 13.5px/1.55 var(--mono); background: var(--panel); border-radius: 8px; padding: 14px 16px; overflow-x: auto; margin: 6px 0 0; }
+  pre .c { color: var(--faint); }
+  .cta { display: inline-block; font: 600 14px var(--serif); padding: 11px 18px; border-radius: 8px; background: #ffe27a; color: #1c1b19; border: 1px solid #1c1b19; text-decoration: none; margin: 4px 10px 4px 0; box-shadow: 2px 2px 0 #1c1b19; }
+  .cta.alt { background: transparent; color: var(--ink); border: 1px solid var(--ink); }
+  footer { border-top: 1px solid var(--rule); margin-top: 40px; padding: 20px 0 36px; font: 12px var(--mono); color: var(--faint); }
+  b, strong { font-weight: 600; }
+  /* header edge: a chart axis (baseline + minor ticks every 12px, major every 48px) */
+  header.nav { border-bottom: 0; }
+  header.nav::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 8px; pointer-events: none;
+    background: linear-gradient(var(--ink), var(--ink)) bottom / 100% 1px no-repeat,
+                repeating-linear-gradient(90deg, var(--ink) 0 1px, transparent 1px 48px) bottom / 100% 8px no-repeat,
+                repeating-linear-gradient(90deg, color-mix(in srgb, var(--ink) 55%, transparent) 0 1px, transparent 1px 12px) bottom / 100% 4px no-repeat; }
+  /* early-access bar above the header */
+  .eab { background: #ffe27a; border-bottom: 1px solid #1c1b19; text-align: center; font: 14px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Helvetica, Arial, sans-serif; }
+  .eab a { display: block; padding: 8px 16px; color: #1c1b19; text-decoration: none; }
+  .eab-tag { display: inline-block; font: 600 11px ui-monospace, Menlo, monospace; letter-spacing: .06em; text-transform: uppercase; background: #1c1b19; color: #fffcf3;
+             padding: 2px 8px; border-radius: 999px; margin-right: 8px; vertical-align: 1px; }
+  .eab-cta { font-weight: 600; text-decoration: underline; text-underline-offset: 3px; white-space: nowrap; }
+  .eab a:hover .eab-cta { text-decoration-thickness: 2px; }
+  @media (max-width: 600px) { .eab { font-size: 13px; } .eab-tag { display: none; } }
+  .fig .base .stem { stroke: var(--mark); opacity: .45; } .fig .base circle { fill: var(--mark); opacity: .6; }
+  figure.vid { margin: 8px 0 0; }
+  figure.vid video { width: 100%; height: auto; display: block; border-radius: 8px; border: 1px solid var(--rule); background: #0c0c10; }
+</style>
+</head>
+<body>
+<div class="eab"><a href="mailto:founders@getdecido.ai?subject=Early%20access%3A%20Decido%20API%20%2F%20fine-tuning"><span class="eab-tag">Early access</span> A higher-volume API, and Decido fine-tuned on your own decisions. <span class="eab-cta">Request access →</span></a></div>
+
+<header class="nav"><div class="wrap">
+  <a class="brand" href="/"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="4" y="6" width="32" height="30" rx="10"/><circle class="e" cx="15" cy="19" r="4.5"/><circle class="e" cx="26" cy="19" r="4.5"/><circle class="p" cx="16" cy="20" r="2"/><circle class="p" cx="27" cy="20" r="2"/></svg>Decido</a>
+  <nav class="menu" aria-label="Main"><a href="/#models">Models</a><a href="https://getdecido.ai/playground">Playground</a><a href="https://getdecido.ai/api">API</a><a href="/research" aria-current="page">Research</a></nav>
+</div></header>
+
+<main class="wrap">
+<header>
+  <p class="crumb"><a href="/research">← All research</a></p>
+  <h1>Decido-1 Grounding: #2 on LLM-AggreFact</h1>
+  <div class="byline">Gaurav Agarwal · November 2026</div>
+  <nav class="toc" aria-label="Contents">Contents: <a href="#results">Results</a> · <a href="#protocol">How we tested</a> · <a href="#try">Try it</a> · <a href="#limitations">Limitations</a> · <a href="#contact">Work with us</a></nav>
+  <div class="stats">
+    <div class="stat"><div class="v">79.2</div><div class="t">Decido-1 Grounding: #2 on the LLM-AggreFact leaderboard (#1: 79.5)</div></div>
+    <div class="stat"><div class="v">78.5</div><div class="t">released Decido-1 as is, no extra training (Jev 1.13: 78.7)</div></div>
+    <div class="stat"><div class="v">4B</div><div class="t">active parameters per token in Decido-1; open weights, runs on a laptop</div></div>
+    <div class="stat"><div class="v">29,320</div><div class="t">test claims over 11 datasets, each system scored once</div></div>
+  </div>
+  <div class="abstract">
+    <b class="h">ABSTRACT</b>
+    <p>An AI agent that answers from documents, such as a RAG assistant, a support agent or a research agent, needs to know whether what it is about to say is actually backed by its sources. LLM-AggreFact is the standard public test of that check: given a document and a claim, is the claim fully supported? It pools 11 human-labelled datasets, from news summaries and meeting notes to RAG answers and expert long-form answers. Decido-1 Grounding, our grounding checker, scores <b>79.2</b> mean balanced accuracy on the test split, second on the leaderboard after nimble-v4-max (79.5) and ahead of Clef (79.0), Decider v1.2 (78.7) and Jev 1.13 (78.7). The released, open Decido-1, a 4B-active model that runs on a laptop and was not trained further for this benchmark, scores <b>78.5</b>, ahead of Bespoke-MiniCheck-7B (77.4) and Claude-3.5 Sonnet (77.2).</p>
+  </div>
+</header>
+
+<section id="results">
+  <h2><span class="n">1</span>Results</h2>
+<svg class="fig" viewBox="0 0 640 286" role="img" aria-labelledby="fig1cap">
+<line class="grid" x1="230.0" x2="230.0" y1="6" y2="254"/><text class="tick" x="230.0" y="274" text-anchor="middle">76</text>
+<line class="grid" x1="322.5" x2="322.5" y1="6" y2="254"/><text class="tick" x="322.5" y="274" text-anchor="middle">77</text>
+<line class="grid" x1="415.0" x2="415.0" y1="6" y2="254"/><text class="tick" x="415.0" y="274" text-anchor="middle">78</text>
+<line class="grid" x1="507.5" x2="507.5" y1="6" y2="254"/><text class="tick" x="507.5" y="274" text-anchor="middle">79</text>
+<line class="grid" x1="600.0" x2="600.0" y1="6" y2="254"/><text class="tick" x="600.0" y="274" text-anchor="middle">80</text>
+<line class="ref" x1="479.8" x2="479.8" y1="6" y2="254"/>
+<g class="other"><title>nimble-v4-max: 79.5</title><rect class="hit" x="0" y="6" width="640" height="28"/><text class="name" x="216" y="25" text-anchor="end">nimble-v4-max</text><line class="stem" x1="230" x2="553.8" y1="20" y2="20"/><circle cx="553.8" cy="20" r="5.5"/><text class="val" x="564.8" y="24">79.5</text></g>
+<g class="ours"><title>Decido-1 Grounding: 79.2</title><rect class="hit" x="0" y="34" width="640" height="28"/><text class="name" x="216" y="53" text-anchor="end">Decido-1 Grounding</text><line class="stem" x1="230" x2="525.1" y1="48" y2="48"/><circle cx="525.1" cy="48" r="5.5"/><text class="val" x="536.1" y="52">79.2</text></g>
+<g class="other"><title>Clef: 79.0</title><rect class="hit" x="0" y="62" width="640" height="28"/><text class="name" x="216" y="81" text-anchor="end">Clef</text><line class="stem" x1="230" x2="507.5" y1="76" y2="76"/><circle cx="507.5" cy="76" r="5.5"/><text class="val" x="518.5" y="80">79.0</text></g>
+<g class="other"><title>Decider v1.2: 78.7</title><rect class="hit" x="0" y="90" width="640" height="28"/><text class="name" x="216" y="109" text-anchor="end">Decider v1.2</text><line class="stem" x1="230" x2="479.8" y1="104" y2="104"/><circle cx="479.8" cy="104" r="5.5"/><text class="val" x="490.8" y="108">78.7</text></g>
+<g class="refrow"><title>Jev 1.13: 78.7</title><rect class="hit" x="0" y="118" width="640" height="28"/><text class="name" x="216" y="137" text-anchor="end">Jev 1.13</text><line class="stem" x1="230" x2="479.8" y1="132" y2="132"/><circle cx="479.8" cy="132" r="5.5"/><text class="val" x="490.8" y="136">78.7</text></g>
+<g class="base"><title>Decido-1 (released, as is): 78.5</title><rect class="hit" x="0" y="146" width="640" height="28"/><text class="name" x="216" y="165" text-anchor="end">Decido-1 (released, as is)</text><line class="stem" x1="230" x2="464.0" y1="160" y2="160"/><circle cx="464.0" cy="160" r="5.5"/><text class="val" x="475.0" y="164">78.5</text></g>
+<g class="other"><title>d1-ultra: 78.5</title><rect class="hit" x="0" y="174" width="640" height="28"/><text class="name" x="216" y="193" text-anchor="end">d1-ultra</text><line class="stem" x1="230" x2="461.2" y1="188" y2="188"/><circle cx="461.2" cy="188" r="5.5"/><text class="val" x="472.2" y="192">78.5</text></g>
+<g class="other"><title>Bespoke-MiniCheck-7B: 77.4</title><rect class="hit" x="0" y="202" width="640" height="28"/><text class="name" x="216" y="221" text-anchor="end">Bespoke-MiniCheck-7B</text><line class="stem" x1="230" x2="359.5" y1="216" y2="216"/><circle cx="359.5" cy="216" r="5.5"/><text class="val" x="370.5" y="220">77.4</text></g>
+<g class="other"><title>Claude-3.5 Sonnet: 77.2</title><rect class="hit" x="0" y="230" width="640" height="28"/><text class="name" x="216" y="249" text-anchor="end">Claude-3.5 Sonnet</text><line class="stem" x1="230" x2="341.0" y1="244" y2="244"/><circle cx="341.0" cy="244" r="5.5"/><text class="val" x="352.0" y="248">77.2</text></g>
+</svg>
+  <p class="cap" id="fig1cap"><b>FIG. 1</b> Mean balanced accuracy over the 11 LLM-AggreFact test sets. Blue: Decido. Dashed line: Jev 1.13. Other systems: leaderboard values (llm-aggrefact.github.io, November 21, 2026).</p>
+
+  <p style="margin-top:22px"><b>Per dataset.</b> No system wins everywhere. Among the systems shown, Decido-1 Grounding is best on the news-summary set (AggreFact-CNN) and on ClaimVerify, and close to the top on most others. Its weak spot is shared by every system: ExpertQA, where no entry passes 61.</p>
+<div class="tw"><table style="min-width:860px;font-size:14px">
+<thead><tr><th>Model</th><th>Size</th><th>Mean</th><th>CNN</th><th>XSum</th><th>MediaS</th><th>MeetB</th><th>WiCE</th><th>REVEAL</th><th>ClaimV</th><th>FactChk</th><th>ExpQA</th><th>LFQA</th><th>RAGT</th></tr></thead><tbody>
+<tr><td>nimble-v4-max</td><td style="white-space:nowrap">27B</td><td class="b">79.5</td><td>67.6</td><td class=b>78.6</td><td>73.3</td><td>82.4</td><td class=b>87.1</td><td>89.0</td><td>75.9</td><td>80.2</td><td>60.4</td><td>89.0</td><td class=b>90.5</td></tr>
+<tr class=us><td><b>Decido-1 Grounding</b></td><td style="white-space:nowrap">—</td><td class="b">79.2</td><td class=b>70.1</td><td>76.5</td><td>73.4</td><td>81.9</td><td>82.8</td><td>90.1</td><td class=b>80.0</td><td>79.4</td><td>59.6</td><td class=b>89.3</td><td>87.9</td></tr>
+<tr><td>Clef</td><td style="white-space:nowrap">27B</td><td class="b">79.0</td><td>67.3</td><td>75.7</td><td>75.3</td><td>81.1</td><td>85.8</td><td>89.6</td><td>78.6</td><td class=b>80.8</td><td>59.0</td><td>89.0</td><td>87.3</td></tr>
+<tr><td>Decider v1.2</td><td style="white-space:nowrap">27B</td><td class="b">78.7</td><td>65.5</td><td>77.9</td><td>72.4</td><td>80.3</td><td class=b>87.1</td><td>90.3</td><td>75.8</td><td>78.7</td><td>60.6</td><td>88.4</td><td>89.0</td></tr>
+<tr><td>Jev 1.13</td><td style="white-space:nowrap">—</td><td class="b">78.7</td><td>67.2</td><td>75.5</td><td>74.5</td><td>83.7</td><td>83.9</td><td>90.9</td><td>76.9</td><td>77.0</td><td>59.9</td><td>89.2</td><td>87.0</td></tr>
+<tr class=us><td><b>Decido-1 (released, as is)</b></td><td style="white-space:nowrap">26B · 4B active</td><td class="b">78.5</td><td>69.7</td><td>77.2</td><td>70.8</td><td>81.2</td><td>84.5</td><td>89.0</td><td>75.1</td><td>79.5</td><td>60.8</td><td>88.2</td><td>87.7</td></tr>
+<tr><td>d1-ultra</td><td style="white-space:nowrap">—</td><td class="b">78.5</td><td>63.9</td><td>77.6</td><td>74.4</td><td>79.9</td><td>82.7</td><td class=b>91.6</td><td>76.8</td><td>79.0</td><td>60.2</td><td>87.9</td><td>89.2</td></tr>
+<tr><td>Bespoke-MiniCheck-7B</td><td style="white-space:nowrap">7B</td><td class="b">77.4</td><td>65.5</td><td>77.8</td><td class=b>76.0</td><td>78.3</td><td>83.0</td><td>88.0</td><td>75.3</td><td>77.7</td><td>59.2</td><td>86.7</td><td>84.0</td></tr>
+<tr><td>Claude-3.5 Sonnet</td><td style="white-space:nowrap">—</td><td class="b">77.2</td><td>67.6</td><td>75.1</td><td>73.4</td><td class=b>84.6</td><td>77.7</td><td>89.1</td><td>71.4</td><td>77.8</td><td class=b>60.9</td><td>85.6</td><td>86.1</td></tr>
+</tbody></table></div>
+  <p class="cap"><b>TABLE 1</b> Balanced accuracy (%) per test set, in the leaderboard's column order. Bold: best per column. Decido rows: our runs on the full test split; the 95% bootstrap interval is 78.2–80.2 for Decido-1 Grounding and 77.6–79.5 for Decido-1. Other rows: leaderboard values. Size "—": not published.</p>
+</section>
+
+<section id="protocol">
+  <h2><span class="n">2</span>How we tested</h2>
+  <ul>
+    <li><b>Data.</b> The LLM-AggreFact test split, all 29,320 claims (<a href="https://huggingface.co/datasets/lytang/LLM-AggreFact">lytang/LLM-AggreFact</a>). Metric: balanced accuracy per dataset, then the unweighted mean of the 11, as on the leaderboard. A failed request would count as "not supported"; there were none.</li>
+    <li><b>No tuning on test.</b> Every choice (prompt, models, decision threshold) was made on the dev split and frozen before the system saw test. One global threshold for all datasets, since a real checker doesn't know where a claim came from: 0.55 for Decido-1 Grounding, 0.5 for Decido-1. Each configuration was frozen on dev before it was scored on test; four were scored in total (77.9 to 79.3). We report this one because it uses only our own models.</li>
+    <li><b>No test data in training.</b> Nothing from LLM-AggreFact dev or test, or from the test splits it was drawn from, was used to train Decido-1 Grounding. Every grounding training example was checked for exact, normalised and near-duplicate overlap with dev and test. No outputs of GPT, Claude or Jev were used.</li>
+    <li><b>Decido-1 Grounding</b> is a proprietary system built only from models we trained. It runs on a GPU. We don't publish its recipe.</li>
+  </ul>
+</section>
+
+<section id="try">
+  <h2><span class="n">3</span>Try it</h2>
+  <p>The open Decido-1 checks a claim in one call (<code>pip install decido-ai</code>; weights on <a href="https://huggingface.co/decido-ai/decido-1-26b-a4b">Hugging Face</a>). This is the exact question we used for the 78.5 result:</p>
+<pre>from decido import Decido
+m = Decido("decido-ai/decido-1-26b-a4b")
+q = ("Is the following claim fully supported by the document? Answer yes only if every part of the "
+     "claim is stated in the document or follows directly from it. Judge only from the document, "
+     "not from outside knowledge.\n\nClaim: " + claim)
+out = m.predict({"state": {"document": document}, "questions": {"supported": {"type": "noul", "instructions": q}}})
+p = out["answers"]["supported"]["noul"]   <span class="c"># P(supported); "supported" if p &gt;= 0.5</span></pre>
+  <p>Decido-1 Grounding is not public yet; write to us to try it on your own data.</p>
+</section>
+
+<section id="limitations">
+  <h2><span class="n">4</span>Limitations</h2>
+  <ul>
+    <li>The margin over the next entries is small: 79.2 vs 79.0 for Clef and 78.7 for Jev 1.13 is inside our 95% interval (78.2–80.2). We are #2, not #1: nimble-v4-max scores 79.5.</li>
+    <li>Leaderboard numbers for other systems are taken from the public leaderboard, not rerun by us. Our numbers are not yet listed there.</li>
+    <li>Decido-1 was scored on a GPU (bf16). The laptop build gives the same answer on 99.6% of 231 checked claims and accepts documents up to 32k tokens; a few test documents are longer. Decido-1's own training data, built before this work and also the starting point of Decido-1 Grounding, was not separately audited against LLM-AggreFact.</li>
+    <li>ExpertQA stays near 60 for every system, which suggests label noise or claims that need outside knowledge.</li>
+  </ul>
+</section>
+
+<section id="contact">
+  <h2><span class="n">5</span>Work with us</h2>
+  <p>If your agent answers from documents and you want a grounding check on its answers, as a second opinion before it replies or as a filter for RAG output, write to us.</p>
+  <p><a class="cta" href="mailto:founders@getdecido.ai?subject=Decido%20grounding">founders@getdecido.ai</a><a class="cta alt" href="/research/decido-1">Decido 1 report</a></p>
+</section>
+</main>
+
+<footer><div class="wrap">
+  <span>© 2026 Decido</span>
+  <span class="fl"><a href="/research">Research</a><a href="https://getdecido.ai/playground">Playground</a><a href="https://getdecido.ai/api">API</a><a href="/quickstart">Quickstart</a><a href="https://huggingface.co/collections/decido-ai/decido-1-6aed66fd09af05c057795ca8">Hugging Face</a><a href="https://pypi.org/project/decido-ai/">PyPI</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="mailto:founders@getdecido.ai">Contact</a></span>
+</div></footer>
+</body>
+</html>
